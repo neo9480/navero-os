@@ -10,10 +10,10 @@ const DB_PORT = process.env.DB_PORT;
 const DB_NAME = process.env.DB_NAME;
 
 const db = new pg.Client({
-  user: `${DB_USER}`,
-  host: `${DB_HOST}`,
-  database: `${DB_NAME}`,
-  password: `${ DB_PASSWORD }`,
+  user: DB_USER,
+  host: DB_HOST,
+  database: DB_NAME,
+  password:  DB_PASSWORD ,
   port: DB_PORT,
 } );
 
