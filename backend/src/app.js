@@ -1,5 +1,7 @@
 // Server routes
 import express from 'express'
+import authRoutes from './routes/auth.routes.js'
+import adminRoutes from './routes/admin.routes.js'
 
 
 const app = express();
@@ -13,5 +15,8 @@ app.get( '/', async ( req, res ) => {
   }
   
 } );
+
+app.use( '/api/auth', authRoutes );
+app.use( '/api/admin', adminRoutes );
 
 export default app;
