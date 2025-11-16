@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const JWT_TOKEN = process.env.JWT_TOKEN;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 async function registerUser( req, res ) {
   try {
@@ -36,7 +36,7 @@ async function registerUser( req, res ) {
       }
     } );
   
-    const token = jwt.sign( { id: user.id, role: user.role }, JWT_TOKEN, { expiresIn: "7d" } );
+    const token = jwt.sign( { id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "7d" } );
   
     return res.status( 200 ).json( {
       message: "user registered successfully",
@@ -77,7 +77,7 @@ async function loginUser( req, res ) {
 
   const token = jwt.sign( {
     id: user._id,
-  }, JWT_TOKEN)
+  }, JWT_SECRET)
 
   res.cookie( 'token', token );
   res.status( 200 ).json( {
@@ -90,8 +90,20 @@ async function loginUser( req, res ) {
   })
 }
 
+async function logoutUser( req, res ) {
+try {
+    res.clearCookie( 'token' );
+  res.status( 200 ).json( {
+    message: "user logged out successfully"
+  })
+  } catch (err) {
+    console.error('failed to logout user:', err);
+  }
+  
+}
 
 export default {
   registerUser,
-  loginUser
+  loginUser,
+  logoutUser
 }

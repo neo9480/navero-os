@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-import { prisma } from '../db/prismaClient.js'
+import prisma from '../db/prismaClient.js'
 
 dotenv.config();
 
@@ -15,12 +15,15 @@ async function authUserMiddlware( req, res, next ) {
     })
   }
 
- try {
-   const decoded = jwt.verify( token, `${ JWT_TOKEN }` );
-   const user = await prisma.user.findUnique( decoded.id );
-   next();
+  try {
+    const decoded = jwt.verify( token, JWT_TOKEN );
+    const user = await prisma.user.findUnique( { where: { id: decoded.id } } );
+    req.user = user
+    next();
 
- } catch (err) {
-   console.error('', err);
- }
+  } catch (err) {
+    return res.status( 401 ).json( {
+      message
+    });
+  }
 }
