@@ -40,7 +40,6 @@ async function registerUser( req, res ) {
   
     return res.status( 200 ).json( {
       message: "user registered successfully",
-      token,
       user: {
         id: user.id,
         owner_name: user.owner_name,
@@ -76,24 +75,25 @@ async function loginUser( req, res ) {
   };
 
   const token = jwt.sign( {
-    id: user._id,
+    id: user.id,
   }, JWT_SECRET)
 
   res.cookie( 'token', token );
   res.status( 200 ).json( {
     message: "login successfull",
     user: {
-      _id: user.id,
+      id: user.id,
       email: user.business_email,
       password: user.password
     }
-  })
+  } )
+  
 }
 
 async function logoutUser( req, res ) {
 try {
     res.clearCookie( 'token' );
-  res.status( 200 ).json( {
+    res.status( 200 ).json( {
     message: "user logged out successfully"
   })
   } catch (err) {
@@ -102,8 +102,86 @@ try {
   
 }
 
+async function getUserProfile( req, res ) {
+  try {
+    const userId = req.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        owner_name: true,
+        business_email: true,
+        company_name: true,
+        phone: true,
+        address: true,
+        role: true,
+        createdAt: true,
+      },
+    } );
+    
+    res.status(200).json({
+      message: "fetched user profile successfully",
+      user
+    });
+
+  } catch (err) {
+    console.error('failed to fetch user profile:', err);
+  }
+}
+
+async function updateUserProfile( req, res ) {
+  try {
+    const userId = req.user.id;
+    const { owner_name, company_name, phone, address } = req.body;
+  
+    const updatedUser = await prisma.user.update( {
+      where: {
+        id: userId
+      },
+      data: {
+        owner_name,
+        company_name,
+        phone,
+        address
+      }
+    } );
+  
+    res.status( 200 ).json( {
+      message: "user updated successfully",
+      user: updatedUser
+    } );
+
+  } catch (err) {
+    console.error('failed to update user:', err);
+  }
+}
+
+async function deleteUser( req, res ) {
+  try {
+    const userId = req.user.id;
+  
+    await prisma.user.delete( {
+      where: {id: userId}
+    } )
+    
+    res.clearCookie( 'token' );
+    
+    return res.status( 200 ).json( {
+      message: "user deleted successfully"
+    } );
+  
+  } catch (err) {
+    console.error('failed to delete user:', err);
+  }
+
+}
+
 export default {
   registerUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  deleteUser
 }
