@@ -14,7 +14,7 @@ router.delete( '/user/:id' );
 // Admin to shipment routes
 router.get( '/shipments' );
 router.get( '/shipments/:id' );
-router.delete( '/shipment/:id' );
+router.delete( '/shipments/:id' );
 
 // Admin to transactions routes
 router.get( '/transactions' );

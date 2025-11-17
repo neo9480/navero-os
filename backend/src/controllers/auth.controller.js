@@ -37,7 +37,8 @@ async function registerUser( req, res ) {
     } );
   
     const token = jwt.sign( { id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "7d" } );
-  
+
+    res.cookie( "token", token );
     return res.status( 200 ).json( {
       message: "user registered successfully",
       user: {
@@ -48,6 +49,8 @@ async function registerUser( req, res ) {
         role: user.role
       }
     } );
+    
+
   
   } catch (err) {
     console.error('failed to register user:', err);
@@ -56,9 +59,11 @@ async function registerUser( req, res ) {
 }
 
 async function loginUser( req, res ) {
-  const { email, password } = req.body;
+  const { business_email, password } = req.body;
 
-  const user = await prisma.user.findUnique( { where: { business_email: email } } );
+  const user = await prisma.user.findUnique({
+    where: { business_email: business_email },
+  });
   
   if ( !user ) {
     return res.status( 400 ).json( {
@@ -74,18 +79,17 @@ async function loginUser( req, res ) {
     })
   };
 
-  const token = jwt.sign( {
-    id: user.id,
-  }, JWT_SECRET)
+  const token = jwt.sign(
+    {
+      id: user.id,
+    },
+    JWT_SECRET,
+    { expiresIn: "7d" },
+  );
 
   res.cookie( 'token', token );
   res.status( 200 ).json( {
-    message: "login successfull",
-    user: {
-      id: user.id,
-      email: user.business_email,
-      password: user.password
-    }
+    message: "login successfull"
   } )
   
 }
@@ -117,7 +121,7 @@ async function getUserProfile( req, res ) {
         address: true,
         role: true,
         createdAt: true,
-      },
+      }
     } );
     
     res.status(200).json({
@@ -135,17 +139,27 @@ async function updateUserProfile( req, res ) {
     const userId = req.user.id;
     const { owner_name, company_name, phone, address } = req.body;
   
-    const updatedUser = await prisma.user.update( {
+    const updatedUser = await prisma.user.update({
       where: {
-        id: userId
+        id: userId,
       },
       data: {
         owner_name,
         company_name,
         phone,
-        address
-      }
-    } );
+        address,
+      },
+      select: {
+        id: true,
+        owner_name: true,
+        business_email: true,
+        company_name: true,
+        phone: true,
+        address: true,
+        role: true,
+        createdAt: true,
+      },
+    });
   
     res.status( 200 ).json( {
       message: "user updated successfully",

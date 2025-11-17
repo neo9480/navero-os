@@ -2,10 +2,11 @@ import express from "express";
 
 const router = express.Router();
 
-router.post( '/services/create' );
-router.get( '/services/my' );
-router.get( '/srvices/:id' );
-router.put( '/services/update/:id' );
-router.delete( '/services/delete/:id' );
+router.post( '/create' );
+router.get( '/my' );
+router.get( '/:id' );
+router.put( '/:id' );
+router.delete( '/:id/delete' );
+
 
 export default router;

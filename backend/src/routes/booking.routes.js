@@ -2,9 +2,9 @@ import express from "express";
 
 const router = express.Router();
 
-router.post( '/bookings/create' );
-router.get( '/bookings/my' );
-router.put( '/bookings/update/:id' );
-router.delete( '/bookings/delete/:id' );
+router.post( '/create' );
+router.get( '/my' );
+router.put("/:id");
+router.delete("/:id/delete");
 
 export default router;

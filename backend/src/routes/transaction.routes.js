@@ -2,9 +2,9 @@ import express from "express";
 
 const router = express.Router();
 
-router.post( '/transactions/create' );
-router.get( '/transactions/:id' );
-router.get( '/transactions/my' );
-router.put( '/transactions/update-status' );
+router.post( '/create' );
+router.get( '/:id' );
+router.get( '/my' );
+router.put( '/:id/update-status' );
 
 export default router;

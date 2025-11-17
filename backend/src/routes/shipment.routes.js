@@ -3,15 +3,15 @@ import express from "express";
 const router = express.Router();
 
 // User specific routes
-router.post( '/shipments/create' );
-router.get( '/shipments/my-shipments' );
-router.get( '/shipments/:trackingId' );
-router.get( '/shipments/location' );
-router.put( '/shipments/location/update' ); // Update real-time co-ordinates from IoT
-router.get( '/shipments/status' );
-router.put( '/shipments/status/update' );
+router.post( "/create" );
+router.get( "/my" );
+router.get( "/:id" );
+router.get( "/:id/location" );
+router.put("/:id/location"); // Update real-time co-ordinates from IoT
+router.get("/:id/status");
+router.put("/:id/status");  // Update shipment status
 
 // Broker specific routes
-router.put( '/shipment/assign-broker' );
+router.put("/shipment/:id/broker"); // Assign broker
 
 export default router;

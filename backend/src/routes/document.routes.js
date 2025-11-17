@@ -2,8 +2,8 @@ import express from "express";
 
 const router = express.Router();
 
-router.post( '/documents/upload' );
-router.get( '/documents/shipments/:shipmentId' );
-router.delete( '/documents/:id' );
+router.post( '/upload' );
+router.get( '/shipments/:shipmentId' );
+router.delete( '/:id' );
 
 export default router;
