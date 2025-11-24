@@ -2,29 +2,58 @@ import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 
 /**
- * Create a new user in the system.
- * Handles hashing the password before storing it in the database.
+ * User service
+ * Responsible for user CRUD, password hashing/verification and safe user shape returns.
+ *
+ * NOTE: Schema fields:
+ *  - User.id (String cuid)
+ *  - User.email
+ *  - User.passwordHash
+ *  - User.role (UserRole enum)
+ *  - User.companyName, phone, createdAt, updatedAt
  */
-async function createUser(
-  owner_name,
-  company_name,
-  business_email,
+
+/**
+ * Create a new user.
+ * - hashes password into passwordHash
+ * - returns created user (without passwordHash)
+ *
+ * @param {Object} payload
+ * @param {string} payload.email
+ * @param {string} payload.password
+ * @param {string} payload.role
+ * @param {string} [payload.companyName]
+ * @param {string} [payload.phone]
+ * @returns {Promise<Object>} user
+ */
+async function createUser({
+  email,
   password,
-  phone,
-  address,
   role,
-) {
-  const hashedPassword = await bcrypt.hash(password, 10);
+  companyName = null,
+  phone = null,
+}) {
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) throw new Error("USER_EXISTS");
+
+  const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
-      owner_name,
-      business_email,
-      company_name,
-      password: hashedPassword,
-      phone,
-      address,
+      email,
+      passwordHash,
       role,
+      companyName,
+      phone,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      companyName: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 
@@ -32,71 +61,84 @@ async function createUser(
 }
 
 /**
- * Find a user by their business email.
- * Used during login and validation processes.
+ * Find user record by email. Returns full DB record (including passwordHash).
+ * Use carefully (auth only).
+ * @param {string} email
+ * @returns {Promise<Object|null>}
  */
-async function findUserByEmail(business_email) {
-  return await prisma.user.findUnique({
-    where: { business_email },
+async function findByEmail(email) {
+  return prisma.user.findUnique({
+    where: { email },
   });
 }
 
 /**
- * Fetch a user by ID.
- * Returns a redacted set of fields (excludes password).
+ * Find user by id and return safe public fields (no passwordHash).
+ * @param {string} id
+ * @returns {Promise<Object|null>}
  */
-async function findUserById(userId) {
-  return await prisma.user.findUnique({
-    where: { id: userId },
+async function findById(id) {
+  return prisma.user.findUnique({
+    where: { id },
     select: {
       id: true,
-      owner_name: true,
-      business_email: true,
-      company_name: true,
-      phone: true,
-      address: true,
+      email: true,
       role: true,
+      companyName: true,
+      phone: true,
       createdAt: true,
+      updatedAt: true,
+      // relations optional to include later
     },
   });
 }
 
 /**
- * Update a user's basic profile fields.
+ * Update user basic profile fields.
+ * Returns the updated user (safe fields only).
+ * @param {string} id
+ * @param {Object} updates
+ * @returns {Promise<Object>}
  */
-async function updateUser(userId, owner_name, company_name, phone, address) {
-  return await prisma.user.update({
-    where: { id: userId },
-    data: {
-      owner_name,
-      company_name,
-      phone,
-      address,
-    },
+async function updateUser(id, updates = {}) {
+  const allowed = ["companyName", "phone"];
+  const data = {};
+
+  for (const k of allowed) {
+    if (k in updates) data[k] = updates[k];
+  }
+
+  const updated = await prisma.user.update({
+    where: { id },
+    data,
     select: {
       id: true,
-      owner_name: true,
-      business_email: true,
-      company_name: true,
-      phone: true,
-      address: true,
+      email: true,
       role: true,
+      companyName: true,
+      phone: true,
       createdAt: true,
+      updatedAt: true,
     },
   });
+
+  return updated;
 }
 
 /**
- * Compare user-provided password with stored hashed password.
+ * Verify plaintext password against bcrypt hash
+ * @param {string} plaintext
+ * @param {string} hash
+ * @returns {Promise<boolean>}
  */
-async function verifyPassword(password, hashedPassword) {
-  return await bcrypt.compare(password, hashedPassword);
+async function verifyPassword(plaintext, hash) {
+  return bcrypt.compare(plaintext, hash);
 }
 
 export default {
   createUser,
-  findUserByEmail,
-  findUserById,
-  verifyPassword,
+  findByEmail,
+  findById,
   updateUser,
+  verifyPassword,
 };

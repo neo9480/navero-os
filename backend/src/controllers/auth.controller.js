@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import prisma from "../db/prismaClient.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userService from "../services/user.service.js";
 

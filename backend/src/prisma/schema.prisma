@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+
+enum UserRole {
+  ADMIN
+  IMPORTER
+  EXPORTER
+  BANK
+  BROKER
+  CUSTOMS
+}
+
+enum DocumentType {
+  COMMERCIAL_INVOICE
+  PACKING_LIST
+  BILL_OF_LADING
+  AIRWAY_BILL
+  CERTIFICATE_OF_ORIGIN
+  INSURANCE_CERT
+  EXPORT_DECLARATION
+  IMPORT_DECLARATION
+  CUSTOMS_CLEARANCE
+  PAYMENT_RECEIPT
+  OTHER
+}
+
+enum LCStatus {
+  APPLIED
+  APPROVED
+  REJECTED
+  ACTIVE
+  CLOSED
+}
+
+enum ShipmentStatus {
+  CREATED
+  IN_TRANSIT
+  CUSTOMS_HOLD
+  CLEARED
+  DELIVERED
+}
+
+enum ShipmentEventType {
+  CUSTOMS_CHECK
+  DOCUMENT_VERIFIED
+  RELEASED
+  DELAYED
+  ARRIVED
+}
+
+//////////////////////////////
+// MODELS
+//////////////////////////////
+
+// Core users of the platform
+model User {
+  id           String    @id @default(cuid())
+  role         UserRole
+  email        String    @unique
+  passwordHash String
+  companyName  String?
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Document relations (must match names exactly)
+  uploadedDocuments Document[] @relation("UploadedDocuments")
+  verifiedDocuments Document[] @relation("VerifiedDocuments")
+
+  // Everything else stays unchanged...
+  services          Service[]
+  quoteRequests     QuoteRequest[]   @relation("ImporterQuoteRequests")
+  quoteResponses    QuoteResponse[]
+  lettersOfCreditAsImporter LC[]     @relation("ImporterLC")
+  lettersOfCreditAsExporter LC[]     @relation("ExporterLC")
+  lettersOfCreditAsBank     LC[]     @relation("BankLC")
+  shipmentsAsImporter Shipment[]     @relation("ImporterShipments")
+  shipmentsAsExporter Shipment[]     @relation("ExporterShipments")
+  shipmentsAsBroker   Shipment[]     @relation("BrokerShipments")
+  shipmentEvents  ShipmentEvent[]
+  notifications  Notification[]
+  refreshTokens  RefreshToken[]
+}
+
+
+// Services created by brokers or freight providers
+model Service {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  providerId  String
+
+  provider User @relation(fields: [providerId], references: [id])
+
+  // ADD THIS
+  shipments Shipment[]
+
+  createdAt DateTime @default(now())
+}
+
+
+// Importer creates a quote request
+model QuoteRequest {
+  id            String     @id @default(cuid())
+  importerId    String
+  productName   String
+  quantity      Int
+  unit          String?
+  incoterm      String?
+  originCountry String?
+  destCountry   String?
+  createdAt     DateTime @default(now())
+
+  importer User @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
+  responses QuoteResponse[]
+}
+
+// Exporters respond to quote requests
+model QuoteResponse {
+  id             String   @id @default(cuid())
+  quoteRequestId String
+  exporterId     String
+  price          Float
+  validityDays   Int?
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  quoteRequest QuoteRequest @relation(fields: [quoteRequestId], references: [id])
+  exporter     User         @relation(fields: [exporterId], references: [id])
+}
+
+// Letter of Credit (Importer → Bank → Exporter)
+model LC {
+  id          String   @id @default(cuid())
+  lcNumber    String   @unique
+  amount      Float
+  currency    String
+  status      LCStatus @default(APPLIED)
+  createdAt   DateTime @default(now())
+
+  importerId  String
+  exporterId  String
+  bankId      String
+
+  importer User @relation("ImporterLC", fields: [importerId], references: [id])
+  exporter User @relation("ExporterLC", fields: [exporterId], references: [id])
+  bank     User @relation("BankLC",     fields: [bankId],     references: [id])
+
+  documents Document[]
+}
+
+// Shipments (Exporter → Importer, handled by broker and services)
+model Shipment {
+  id            String         @id @default(cuid())
+  status        ShipmentStatus @default(CREATED)
+  vesselName    String?
+  airwayBill    String?
+  etd           DateTime?
+  eta           DateTime?
+  createdAt     DateTime @default(now())
+
+  importerId    String
+  exporterId    String
+  brokerId      String?
+  serviceId     String?
+
+  importer User   @relation("ImporterShipments", fields: [importerId], references: [id])
+  exporter User   @relation("ExporterShipments", fields: [exporterId], references: [id])
+  broker   User?  @relation("BrokerShipments",   fields: [brokerId], references: [id])
+  service  Service? @relation(fields: [serviceId], references: [id])
+
+  documents Document[]
+  events    ShipmentEvent[]
+}
+
+// Events emitted by customs or system for tracking
+model ShipmentEvent {
+  id          String            @id @default(cuid())
+  shipmentId  String
+  userId      String?
+  type        ShipmentEventType
+  message     String?
+  createdAt   DateTime @default(now())
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id])
+  user     User?    @relation(fields: [userId], references: [id])
+}
+
+// Trade documents
+model Document {
+  id           String        @id @default(cuid())
+  type         DocumentType
+  fileUrl      String
+  verified     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  // Relations
+  uploadedById String
+  verifiedById String?
+  shipmentId   String?
+  lcId         String?
+
+  // Properly named relations
+  uploadedBy User @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  verifiedBy User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
+
+  shipment Shipment? @relation(fields: [shipmentId], references: [id])
+  lc       LC?       @relation(fields: [lcId], references: [id])
+}
+
+
+// In-app notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// Refresh tokens for login sessions
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
