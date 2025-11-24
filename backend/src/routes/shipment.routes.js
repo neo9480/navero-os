@@ -12,6 +12,6 @@ router.get("/:id/status");
 router.put("/:id/status");  // Update shipment status
 
 // Broker specific routes
-router.put("/shipment/:id/broker"); // Assign broker
+router.put("/shipment/:id/assign-broker"); // Assign broker
 
 export default router;

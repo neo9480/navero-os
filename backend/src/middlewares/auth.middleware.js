@@ -1,12 +1,18 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import prisma from "../db/prismaClient.js";
+import userService from "../services/user.service.js";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-async function authUserMiddlware(req, res, next) {
+async function authUserMiddlware( req, res, next ) {
+  
+  if (!JWT_SECRET) {
+    console.error("JWT_SECRET is missing in environment variables");
+    return res.status(500).json({ message: "internal server error" });
+  }
+
   const token = req.cookies.token;
 
   if (!token) {
@@ -18,7 +24,7 @@ async function authUserMiddlware(req, res, next) {
   
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    const user = await userService.findUserById( decoded.id );
     if (!user) {
       return res.status(401).json({
         message: "access denied: user no longer exists",
