@@ -1,6 +1,10 @@
 import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 
+/**
+ * Create a new user in the system.
+ * Handles hashing the password before storing it in the database.
+ */
 async function createUser(
   owner_name,
   company_name,
@@ -8,9 +12,9 @@ async function createUser(
   password,
   phone,
   address,
-  role ) {
-  
-  const hashedPassword = await bcrypt.hash( password, 10 );
+  role,
+) {
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
@@ -22,17 +26,25 @@ async function createUser(
       address,
       role,
     },
-  } );
-  
-  return user;
-} 
+  });
 
+  return user;
+}
+
+/**
+ * Find a user by their business email.
+ * Used during login and validation processes.
+ */
 async function findUserByEmail(business_email) {
   return await prisma.user.findUnique({
-    where: { business_email }
+    where: { business_email },
   });
 }
 
+/**
+ * Fetch a user by ID.
+ * Returns a redacted set of fields (excludes password).
+ */
 async function findUserById(userId) {
   return await prisma.user.findUnique({
     where: { id: userId },
@@ -45,15 +57,16 @@ async function findUserById(userId) {
       address: true,
       role: true,
       createdAt: true,
-    }
+    },
   });
 }
 
+/**
+ * Update a user's basic profile fields.
+ */
 async function updateUser(userId, owner_name, company_name, phone, address) {
   return await prisma.user.update({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
     data: {
       owner_name,
       company_name,
@@ -73,8 +86,11 @@ async function updateUser(userId, owner_name, company_name, phone, address) {
   });
 }
 
-async function verifyPassword( password, hashedPassword ) {
-  return await bcrypt.compare( password, hashedPassword );
+/**
+ * Compare user-provided password with stored hashed password.
+ */
+async function verifyPassword(password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
 }
 
 export default {
@@ -82,5 +98,5 @@ export default {
   findUserByEmail,
   findUserById,
   verifyPassword,
-  updateUser
-}
+  updateUser,
+};
