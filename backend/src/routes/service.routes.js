@@ -1,36 +1,68 @@
 import express from "express";
+import auth from "../middlewares/auth.middleware.js";
+import * as serviceController from "../controllers/service.controller.js";
+import {
+  createServiceValidator,
+  updateServiceValidator,
+} from "../validators/service.validators.js";
 
 const router = express.Router();
 
 /**
- * Create a new service listing.
- * Only authenticated service providers can hit this.
- * Typical payload: service name, pricing, category, description, etc.
+ * Create a new service
+ * Route: POST /api/services/
+ * Access: PROVIDER (broker or logistics provider)
  */
-router.post("/");
+router.post(
+  "/",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]), // Adjust if needed
+  createServiceValidator,
+  serviceController.createService,
+);
 
 /**
- * Retrieve all services created by the currently logged-in provider.
- * Useful for dashboard views and managing listings.
+ * Get all services of logged-in provider
+ * Route: GET /api/services/my
+ * Access: PROVIDER ONLY
  */
-router.get("/my");
+router.get(
+  "/my",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  serviceController.getMyServices,
+);
 
 /**
- * Fetch details of a single service by ID.
- * Returned data usually includes provider info, pricing, and metadata.
+ * Get a single service by ID
+ * Route: GET /api/services/:id
+ * Access: Public
  */
-router.get("/:id");
+router.get("/:id", serviceController.getServiceById);
 
 /**
- * Update an existing service.
- * Provider can adjust price, availability, description, etc.
+ * Update a service
+ * Route: PUT /api/services/:id
+ * Access: Provider who owns it
  */
-router.put("/:id");
+router.put(
+  "/:id",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  updateServiceValidator,
+  serviceController.updateService,
+);
 
 /**
- * Permanently delete a service listing.
- * Soft-delete or hard-delete depends on your controller logic.
+ * Delete a service
+ * Route: DELETE /api/services/:id
+ * Access: Provider who owns it
  */
-router.delete("/:id");
+router.delete(
+  "/:id",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  serviceController.deleteService,
+);
 
 export default router;

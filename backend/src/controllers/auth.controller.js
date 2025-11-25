@@ -1,157 +1,150 @@
-import dotenv from "dotenv";
 import prisma from "../db/prismaClient.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import userService from "../services/user.service.js";
+import {
+  createRefreshToken,
+  revokeRefreshToken,
+  revokeAllForUser,
+  findRefreshToken,
+} from "../services/token.service.js";
 
-dotenv.config();
+const ACCESS_TOKEN_TTL = "15m"; // short-lived
+const REFRESH_TOKEN_DAYS = 30; // persistent login
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-async function registerUser( req, res ) {
-  try {
-    
-    const { owner_name, company_name, business_email, password, phone, address, role } = req.body;
-    
-    const isUserAlreadyExists = await userService.findUserByEmail(business_email);
-    
-    if ( isUserAlreadyExists ) {
-      return res.status( 400 ).json( {
-        message: "user already exists"
-      } );
-    }
-    
-    const user = await userService.createUser(
-      owner_name,
-      company_name,
-      business_email,
-      password,
-      phone,
-      address,
-      role);
-    
-    const token = jwt.sign( { id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "7d" } );
-
-    res.cookie( "token", token );
-    return res.status( 200 ).json( {
-      message: "user registered successfully"
-    } );
-    
-  } catch (err) {
-    console.error('failed to register user:', err);
-  }
-  
-}
-
-async function loginUser( req, res ) {
-  const { business_email, password } = req.body;
-
-  const user = await userService.findUserByEmail( business_email );
-  
-  if ( !user ) {
-    return res.status( 400 ).json( {
-      message: "failed to login: invalid email or password"
-    })
-  }
-  const hashedPassword = user.password;
-  const isPasswordValid = await userService.verifyPassword( password, hashedPassword );
-  
-  if ( !isPasswordValid ) {
-    return res.status( 400 ).json( {
-      message: "failed to login: invalid email or password"
-    })
-  };
-
-  const token = jwt.sign(
-    {
-      id: user.id,
-    },
-    JWT_SECRET,
-    { expiresIn: "7d" },
+// Generate JWT access token
+function generateAccessToken(user) {
+  return jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: ACCESS_TOKEN_TTL },
   );
-
-  res.cookie( 'token', token );
-  res.status( 200 ).json( {
-    message: "login successfull"
-  } )
-  
 }
 
-async function logoutUser( req, res ) {
-try {
-    res.clearCookie( 'token' );
-    res.status( 200 ).json( {
-    message: "user logged out successfully"
-  })
-  } catch (err) {
-    console.error('failed to logout user:', err);
-  }
-  
+// Set httpOnly refresh cookie
+function setRefreshCookie(res, token, expiresAt) {
+  res.cookie("refresh_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    expires: expiresAt,
+    path: "/api/auth",
+  });
 }
 
-async function getUserProfile( req, res ) {
+// POST /register
+async function register(req, res, next) {
   try {
-    const userId = req.user.id;
+    const { email, password, role, companyName, phone } = req.body;
 
-    const user = await userService.findUserById( userId );
-    
-    res.status(200).json({
-      message: "fetched user profile successfully",
-      user
+    const exists = await prisma.user.findUnique({ where: { email } });
+    if (exists) return res.status(400).json({ error: "Email already in use" });
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+      data: { email, passwordHash, role, companyName, phone },
     });
 
+    res.status(201).json({ message: "User registered", userId: user.id });
   } catch (err) {
-    console.error('failed to fetch user profile:', err);
+    next(err);
   }
 }
 
-async function updateUserProfile( req, res ) {
+// POST /login
+async function login(req, res, next) {
   try {
-    const userId = req.user.id;
-    const { owner_name, company_name, phone, address } = req.body;
-  
-    const updatedUser = await userService.updateUser(
-      userId,
-      owner_name,
-      company_name,
-      phone,
-      address,
-    );
-  
-    res.status( 200 ).json( {
-      message: "user updated successfully",
-      user: updatedUser
-    } );
+    const { email, password } = req.body;
 
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(400).json({ error: "Invalid credentials" });
+
+    const valid = await bcrypt.compare(password, user.passwordHash);
+    if (!valid) return res.status(400).json({ error: "Invalid credentials" });
+
+    const accessToken = generateAccessToken(user);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
+    const refreshToken = await createRefreshToken(user.id, expiresAt);
+
+    setRefreshCookie(res, refreshToken, expiresAt);
+
+    res.json({
+      accessToken,
+      user: { id: user.id, role: user.role, email: user.email },
+    });
   } catch (err) {
-    console.error('failed to update user:', err);
+    next(err);
   }
 }
 
-async function deleteUser( req, res ) {
+// POST /refresh
+async function refresh(req, res, next) {
   try {
-    const userId = req.user.id;
-  
-    await prisma.user.delete( {
-      where: {id: userId}
-    } )
-    
-    res.clearCookie( 'token' );
-    
-    return res.status( 200 ).json( {
-      message: "user deleted successfully"
-    } );
-  
-  } catch (err) {
-    console.error('failed to delete user:', err);
-  }
+    const token = req.cookies.refresh_token;
+    if (!token) return res.status(401).json({ error: "No refresh token" });
 
+    const record = await findRefreshToken(token);
+    if (!record || record.revoked)
+      return res.status(401).json({ error: "Invalid refresh token" });
+
+    const user = await prisma.user.findUnique({ where: { id: record.userId } });
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    // Rotate refresh token
+    await revokeRefreshToken(token);
+    const newExpiresAt = new Date();
+    newExpiresAt.setDate(newExpiresAt.getDate() + REFRESH_TOKEN_DAYS);
+    const newRefreshToken = await createRefreshToken(user.id, newExpiresAt);
+    setRefreshCookie(res, newRefreshToken, newExpiresAt);
+
+    const accessToken = generateAccessToken(user);
+    res.json({ accessToken });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST /logout
+async function logout(req, res, next) {
+  try {
+    const token = req.cookies.refresh_token;
+    if (token) {
+      await revokeRefreshToken(token);
+      res.clearCookie("refresh_token", { path: "/api/auth" });
+    }
+    res.json({ message: "Logged out" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST /logout-all
+async function logoutAll(req, res, next) {
+  try {
+    const token = req.cookies.refresh_token;
+    if (!token) return res.status(401).json({ error: "No refresh token" });
+
+    const record = await findRefreshToken(token);
+    if (!record)
+      return res.status(401).json({ error: "Invalid refresh token" });
+
+    await revokeAllForUser(record.userId);
+    res.clearCookie("refresh_token", { path: "/api/auth" });
+
+    res.json({ message: "Logged out from all devices" });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export default {
-  registerUser,
-  loginUser,
-  logoutUser,
-  getUserProfile,
-  updateUserProfile,
-  deleteUser
-}
+  generateAccessToken,
+  setRefreshCookie,
+  register,
+  login,
+  refresh,
+  logout,
+  logoutAll,
+};

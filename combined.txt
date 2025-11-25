@@ -1,0 +1,1722 @@
+
+------------------------------
+FILE: backend\server.js
+------------------------------
+// Start server
+import app from './src/app.js'
+import dotenv from 'dotenv'
+import prisma from './src/db/prismaClient.js';
+
+dotenv.config();
+const PORT = process.env.PORT;
+
+async function startServer() {
+  try {
+    await prisma.$connect();
+    console.log( 'connected to navero-database' );
+    
+    app.listen( PORT, () => {
+      console.log( `server is running on http://localhost:${PORT}` );
+    } );
+  } catch (err) {
+    console.error( 'failed to start server', err );
+  }
+  
+};
+
+startServer();
+
+
+
+------------------------------
+FILE: backend\src\app.js
+------------------------------
+// Main server setup for Navero backend.
+// Loads middlewares, registers all route groups, and exposes the API.
+
+import express from "express";
+import cookieParser from "cookie-parser";
+import errorMiddleware from "./middlewares/error.middleware.js";
+
+// Role-based routing modules
+import adminRoutes from "./routes/admin.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import bankRoutes from "./routes/bank.routes.js";
+import brokerRoutes from "./routes/broker.routes.js";
+import customsRoutes from "./routes/customs.routes.js";
+import exporterRoutes from "./routes/exporter.routes.js";
+import importerRoutes from "./routes/importer.routes.js";
+import serviceRoutes from "./routes/service.routes.js";
+
+const app = express();
+
+// Parse cookies for session / auth tokens
+app.use(cookieParser());
+
+// Parse incoming JSON payloads
+app.use(express.json());
+
+// Global error handler (kept last among middleware but before routes)
+app.use(errorMiddleware.errorHandler);
+
+// Health check / root route
+app.get("/", async (req, res) => {
+  try {
+    res.send("This is navero backend");
+  } catch (err) {
+    console.error("CANNOT GET /:", err);
+  }
+});
+
+/*  
+  Route groups
+  Each category is logically separated:
+  - /api/admin        Super admin actions (manage users, shipments, stats, etc.)
+  - /api/auth         Authentication for all roles
+  - /api/bank         Banks (importer/exporter) handling LC + payments
+  - /api/broker       Freight/customs brokers handling docs + tasks
+  - /api/customs      Customs integrations: status, events, submissions
+  - /api/exporter     Exporter operations: quotes, LC, shipments
+  - /api/importer     Importer operations: quotes, LC, shipments
+  - /api/services     Marketplace services listed by providers
+*/
+
+app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/bank", bankRoutes);
+app.use("/api/broker", brokerRoutes);
+app.use("/api/customs", customsRoutes);
+app.use("/api/exporter", exporterRoutes);
+app.use("/api/importer", importerRoutes);
+app.use("/api/services", serviceRoutes);
+
+export default app;
+
+
+------------------------------
+FILE: backend\src\controllers\admin.controller.js
+------------------------------
+
+
+------------------------------
+FILE: backend\src\controllers\auth.controller.js
+------------------------------
+import dotenv from "dotenv";
+import prisma from "../db/prismaClient.js";
+import jwt from "jsonwebtoken";
+import userService from "../services/user.service.js";
+
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+async function registerUser( req, res ) {
+  try {
+    
+    const { owner_name, company_name, business_email, password, phone, address, role } = req.body;
+    
+    const isUserAlreadyExists = await userService.findUserByEmail(business_email);
+    
+    if ( isUserAlreadyExists ) {
+      return res.status( 400 ).json( {
+        message: "user already exists"
+      } );
+    }
+    
+    const user = await userService.createUser(
+      owner_name,
+      company_name,
+      business_email,
+      password,
+      phone,
+      address,
+      role);
+    
+    const token = jwt.sign( { id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "7d" } );
+
+    res.cookie( "token", token );
+    return res.status( 200 ).json( {
+      message: "user registered successfully"
+    } );
+    
+  } catch (err) {
+    console.error('failed to register user:', err);
+  }
+  
+}
+
+async function loginUser( req, res ) {
+  const { business_email, password } = req.body;
+
+  const user = await userService.findUserByEmail( business_email );
+  
+  if ( !user ) {
+    return res.status( 400 ).json( {
+      message: "failed to login: invalid email or password"
+    })
+  }
+  const hashedPassword = user.password;
+  const isPasswordValid = await userService.verifyPassword( password, hashedPassword );
+  
+  if ( !isPasswordValid ) {
+    return res.status( 400 ).json( {
+      message: "failed to login: invalid email or password"
+    })
+  };
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+    },
+    JWT_SECRET,
+    { expiresIn: "7d" },
+  );
+
+  res.cookie( 'token', token );
+  res.status( 200 ).json( {
+    message: "login successfull"
+  } )
+  
+}
+
+async function logoutUser( req, res ) {
+try {
+    res.clearCookie( 'token' );
+    res.status( 200 ).json( {
+    message: "user logged out successfully"
+  })
+  } catch (err) {
+    console.error('failed to logout user:', err);
+  }
+  
+}
+
+async function getUserProfile( req, res ) {
+  try {
+    const userId = req.user.id;
+
+    const user = await userService.findUserById( userId );
+    
+    res.status(200).json({
+      message: "fetched user profile successfully",
+      user
+    });
+
+  } catch (err) {
+    console.error('failed to fetch user profile:', err);
+  }
+}
+
+async function updateUserProfile( req, res ) {
+  try {
+    const userId = req.user.id;
+    const { owner_name, company_name, phone, address } = req.body;
+  
+    const updatedUser = await userService.updateUser(
+      userId,
+      owner_name,
+      company_name,
+      phone,
+      address,
+    );
+  
+    res.status( 200 ).json( {
+      message: "user updated successfully",
+      user: updatedUser
+    } );
+
+  } catch (err) {
+    console.error('failed to update user:', err);
+  }
+}
+
+async function deleteUser( req, res ) {
+  try {
+    const userId = req.user.id;
+  
+    await prisma.user.delete( {
+      where: {id: userId}
+    } )
+    
+    res.clearCookie( 'token' );
+    
+    return res.status( 200 ).json( {
+      message: "user deleted successfully"
+    } );
+  
+  } catch (err) {
+    console.error('failed to delete user:', err);
+  }
+
+}
+
+export default {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  deleteUser
+}
+
+------------------------------
+FILE: backend\src\db\prismaClient.js
+------------------------------
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+
+export default prisma;
+
+
+------------------------------
+FILE: backend\src\middlewares\auth.middleware.js
+------------------------------
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import userService from "../services/user.service.js";
+
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+async function authUserMiddlware( req, res, next ) {
+  
+  if (!JWT_SECRET) {
+    console.error("JWT_SECRET is missing in environment variables");
+    return res.status(500).json({ message: "internal server error" });
+  }
+
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "access denied: please login first",
+    });
+  }
+
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await userService.findUserById( decoded.id );
+    if (!user) {
+      return res.status(401).json({
+        message: "access denied: user no longer exists",
+      });
+    }
+    const { password, ...safeUser } = user;
+    req.user = safeUser;
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      message: "access denied: invalid token"
+    });
+  }
+}
+
+export default {
+  authUserMiddlware,
+};
+
+
+------------------------------
+FILE: backend\src\middlewares\error.middleware.js
+------------------------------
+function errorHandler(err, req, res, next) {
+  console.error(err);
+
+  res.status(err.status || 500).json({
+    message: err.message || "internal server error",
+  });
+}
+
+export default {
+  errorHandler,
+};
+
+
+------------------------------
+FILE: backend\src\prisma\schema.prisma
+------------------------------
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+
+enum UserRole {
+  ADMIN
+  IMPORTER
+  EXPORTER
+  BANK
+  BROKER
+  CUSTOMS
+}
+
+enum DocumentType {
+  COMMERCIAL_INVOICE
+  PACKING_LIST
+  BILL_OF_LADING
+  AIRWAY_BILL
+  CERTIFICATE_OF_ORIGIN
+  INSURANCE_CERT
+  EXPORT_DECLARATION
+  IMPORT_DECLARATION
+  CUSTOMS_CLEARANCE
+  PAYMENT_RECEIPT
+  OTHER
+}
+
+enum LCStatus {
+  APPLIED
+  APPROVED
+  REJECTED
+  ACTIVE
+  CLOSED
+}
+
+enum ShipmentStatus {
+  CREATED
+  IN_TRANSIT
+  CUSTOMS_HOLD
+  CLEARED
+  DELIVERED
+}
+
+enum ShipmentEventType {
+  CUSTOMS_CHECK
+  DOCUMENT_VERIFIED
+  RELEASED
+  DELAYED
+  ARRIVED
+}
+
+//////////////////////////////
+// MODELS
+//////////////////////////////
+
+// Core users of the platform
+model User {
+  id           String    @id @default(cuid())
+  role         UserRole
+  email        String    @unique
+  passwordHash String
+  companyName  String?
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Document relations (must match names exactly)
+  uploadedDocuments Document[] @relation("UploadedDocuments")
+  verifiedDocuments Document[] @relation("VerifiedDocuments")
+
+  // Everything else stays unchanged...
+  services          Service[]
+  quoteRequests     QuoteRequest[]   @relation("ImporterQuoteRequests")
+  quoteResponses    QuoteResponse[]
+  lettersOfCreditAsImporter LC[]     @relation("ImporterLC")
+  lettersOfCreditAsExporter LC[]     @relation("ExporterLC")
+  lettersOfCreditAsBank     LC[]     @relation("BankLC")
+  shipmentsAsImporter Shipment[]     @relation("ImporterShipments")
+  shipmentsAsExporter Shipment[]     @relation("ExporterShipments")
+  shipmentsAsBroker   Shipment[]     @relation("BrokerShipments")
+  shipmentEvents  ShipmentEvent[]
+  notifications  Notification[]
+  refreshTokens  RefreshToken[]
+}
+
+
+// Services created by brokers or freight providers
+model Service {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  providerId  String
+
+  provider User @relation(fields: [providerId], references: [id])
+
+  // ADD THIS
+  shipments Shipment[]
+
+  createdAt DateTime @default(now())
+}
+
+
+// Importer creates a quote request
+model QuoteRequest {
+  id            String     @id @default(cuid())
+  importerId    String
+  productName   String
+  quantity      Int
+  unit          String?
+  incoterm      String?
+  originCountry String?
+  destCountry   String?
+  createdAt     DateTime @default(now())
+
+  importer User @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
+  responses QuoteResponse[]
+}
+
+// Exporters respond to quote requests
+model QuoteResponse {
+  id             String   @id @default(cuid())
+  quoteRequestId String
+  exporterId     String
+  price          Float
+  validityDays   Int?
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  quoteRequest QuoteRequest @relation(fields: [quoteRequestId], references: [id])
+  exporter     User         @relation(fields: [exporterId], references: [id])
+}
+
+// Letter of Credit (Importer → Bank → Exporter)
+model LC {
+  id          String   @id @default(cuid())
+  lcNumber    String   @unique
+  amount      Float
+  currency    String
+  status      LCStatus @default(APPLIED)
+  createdAt   DateTime @default(now())
+
+  importerId  String
+  exporterId  String
+  bankId      String
+
+  importer User @relation("ImporterLC", fields: [importerId], references: [id])
+  exporter User @relation("ExporterLC", fields: [exporterId], references: [id])
+  bank     User @relation("BankLC",     fields: [bankId],     references: [id])
+
+  documents Document[]
+}
+
+// Shipments (Exporter → Importer, handled by broker and services)
+model Shipment {
+  id            String         @id @default(cuid())
+  status        ShipmentStatus @default(CREATED)
+  vesselName    String?
+  airwayBill    String?
+  etd           DateTime?
+  eta           DateTime?
+  createdAt     DateTime @default(now())
+
+  importerId    String
+  exporterId    String
+  brokerId      String?
+  serviceId     String?
+
+  importer User   @relation("ImporterShipments", fields: [importerId], references: [id])
+  exporter User   @relation("ExporterShipments", fields: [exporterId], references: [id])
+  broker   User?  @relation("BrokerShipments",   fields: [brokerId], references: [id])
+  service  Service? @relation(fields: [serviceId], references: [id])
+
+  documents Document[]
+  events    ShipmentEvent[]
+}
+
+// Events emitted by customs or system for tracking
+model ShipmentEvent {
+  id          String            @id @default(cuid())
+  shipmentId  String
+  userId      String?
+  type        ShipmentEventType
+  message     String?
+  createdAt   DateTime @default(now())
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id])
+  user     User?    @relation(fields: [userId], references: [id])
+}
+
+// Trade documents
+model Document {
+  id           String        @id @default(cuid())
+  type         DocumentType
+  fileUrl      String
+  verified     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  // Relations
+  uploadedById String
+  verifiedById String?
+  shipmentId   String?
+  lcId         String?
+
+  // Properly named relations
+  uploadedBy User @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  verifiedBy User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
+
+  shipment Shipment? @relation(fields: [shipmentId], references: [id])
+  lc       LC?       @relation(fields: [lcId], references: [id])
+}
+
+
+// In-app notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// Refresh tokens for login sessions
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+
+
+------------------------------
+FILE: backend\src\prisma.config.ts
+------------------------------
+// This file was generated by Prisma and assumes you have installed the following:
+// npm install --save-dev prisma dotenv
+import "dotenv/config";
+import { defineConfig, env } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+  },
+  datasource: {
+    url: env("DB_URL"),
+  },
+});
+
+
+------------------------------
+FILE: backend\src\routes\admin.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+/*
+|--------------------------------------------------------------------------
+| Admin Authentication Routes
+|--------------------------------------------------------------------------
+| These routes handle admin account creation and login. In a real system,
+| registration should probably be restricted or disabled entirely.
+*/
+router.post("/register"); // Create a new admin account
+router.post("/login"); // Log in as admin and receive a token/session
+
+/*
+|--------------------------------------------------------------------------
+| Admin User Management
+|--------------------------------------------------------------------------
+| Full trust zone. Admin can view all users, inspect a single user, or
+| remove user accounts entirely.
+*/
+router.get("/user"); // Fetch list of all users
+router.get("/user/:id"); // Fetch details of a specific user
+router.delete("/user/:id"); // Delete a user by ID
+
+/*
+|--------------------------------------------------------------------------
+| Admin Shipment Oversight
+|--------------------------------------------------------------------------
+| Admin can inspect all shipments and remove shipments if required
+| (fraud, abuse, error correction, etc.).
+*/
+router.get("/shipments"); // Get all shipments
+router.get("/shipments/:id"); // Get specific shipment details
+router.delete("/shipments/:id"); // Delete shipment
+
+/*
+|--------------------------------------------------------------------------
+| Admin Transaction Control
+|--------------------------------------------------------------------------
+| Admin can audit transactions system-wide and delete them only in
+| exceptional cases (e.g., fraud or failed test data cleanup).
+*/
+router.get("/transactions"); // Fetch all transactions
+router.get("/transactions/:id"); // Fetch single transaction details
+router.delete("/transactions/:id"); // Delete a transaction
+
+/*
+|--------------------------------------------------------------------------
+| Admin Service Marketplace Controls
+|--------------------------------------------------------------------------
+| Admin can inspect or remove services listed in the marketplace.
+*/
+router.get("/services"); // List all services
+router.get("/services/:id"); // View a specific service
+router.delete("/services/:id"); // Remove a service
+
+/*
+|--------------------------------------------------------------------------
+| Admin Booking Oversight
+|--------------------------------------------------------------------------
+| Admin has visibility into all bookings created by users.
+*/
+router.get("/bookings"); // Get all bookings
+router.get("/bookings/:id"); // Get specific booking
+router.delete("/bookings/:id"); // Delete booking
+
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard / Platform Statistics
+|--------------------------------------------------------------------------
+| Metrics, analytics, dashboards, whatever the admin panel needs.
+*/
+router.get("/stats"); // Fetch system-wide statistics
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\auth.routes.js
+------------------------------
+import express from "express";
+import authController from "../controllers/auth.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+
+const router = express.Router();
+
+/*
+|--------------------------------------------------------------------------
+| Public Authentication Routes
+|--------------------------------------------------------------------------
+| These routes handle user registration, login, and logout.
+| No authentication required here, obviously.
+*/
+router.post(
+  "/user/register",
+  authController.registerUser, // Create a new user
+);
+
+router.post(
+  "/user/login",
+  authController.loginUser, // Authenticate user & issue token/cookie
+);
+
+router.get(
+  "/user/logout",
+  authController.logoutUser, // Clear session/token
+);
+
+/*
+|--------------------------------------------------------------------------
+| Protected User Account Routes
+|--------------------------------------------------------------------------
+| Only logged-in users can access or modify their profile.
+| Token/cookie is validated through authMiddleware.
+*/
+router.get(
+  "/user/profile",
+  authMiddleware.authUserMiddlware, // Check if user is authenticated
+  authController.getUserProfile, // Return profile of logged-in user
+);
+
+router.put(
+  "/user/profile/update",
+  authMiddleware.authUserMiddlware, // Ensure session is valid
+  authController.updateUserProfile, // Update profile fields
+);
+
+router.delete(
+  "/user/profile/delete",
+  authMiddleware.authUserMiddlware, // Protect deletion route
+  authController.deleteUser, // Permanently delete user account
+);
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\bank.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+/*
+|--------------------------------------------------------------------------
+| BANK ROUTES
+| These endpoints cover LC issuance, advising, document checks,
+| and payment release. Each action corresponds to a bank-side module
+| in your system architecture.
+|--------------------------------------------------------------------------
+*/
+
+/*
+ * Importer Bank:
+ * Issues a Letter of Credit after the importer submits an application.
+ * Triggers the LC Issuance Engine.
+ */
+router.post("/lc/issue");
+
+/*
+ * Exporter Bank:
+ * Advises the LC to the exporter after receiving it from the importer bank.
+ * Triggers the LC Advising Service.
+ */
+router.post("/lc/advise");
+
+/*
+ * Both Banks:
+ * Validates the shipment documents submitted by exporter.
+ * Triggers DocumentVerificationEngine.
+ */
+router.post("/lc/verify-docs");
+
+/*
+ * Importer Bank:
+ * Releases payment to exporter after document approval and LC conditions are met.
+ * Triggers PaymentReleaseService.
+ */
+router.post("/payment/release");
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\broker.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+// Validate exporter documents
+router.post("/validate-docs");
+
+// Submit docs to customs
+router.post("/customs/submit");
+
+// Assigned shipments
+router.get("/shipments/my");
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\customs.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+/**
+ * Check the current customs status of a shipment.
+ * Used by internal systems to poll clearance progress.
+ */
+router.get("/status/:shipmentId");
+
+/**
+ * Receive customs events (clearance, holds, inspections, etc.).
+ * Works like a webhook endpoint for external customs systems.
+ */
+router.post("/event");
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\exporter.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+/**
+ * Respond to importer quote requests.
+ * Exporter sends pricing/terms here.
+ */
+router.post("/quote-response");
+
+/**
+ * Get all quote responses created by this exporter.
+ */
+router.get("/quote-response/my");
+
+/**
+ * Upload shipment documents (invoice, packing list, BL, etc.).
+ */
+router.post("/docs/upload");
+
+/**
+ * Fetch all documents uploaded by this exporter.
+ */
+router.get("/docs/my");
+
+/**
+ * Trigger the start of shipment after documents are ready.
+ */
+router.post("/shipment/trigger");
+
+/**
+ * Get all shipments initiated by this exporter.
+ */
+router.get("/shipments/my");
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\importer.routes.js
+------------------------------
+import express from "express";
+
+const router = express.Router();
+
+/**
+ * Create a new quote request.
+ * Importer sends product details, quantity, incoterms, etc.
+ * Exporters will later respond to this request.
+ */
+router.post("/quote-request");
+
+/**
+ * Fetch all quote requests made by this importer,
+ * including responses received from exporters.
+ */
+router.get("/quotes/my");
+
+/**
+ * Submit an LC (Letter of Credit) application to importer’s bank.
+ * Usually includes proforma invoice, contract details, and terms.
+ */
+router.post("/lc/apply");
+
+/**
+ * Get all LC applications submitted by this importer,
+ * along with their current status (pending, issued, rejected).
+ */
+router.get("/lc/my");
+
+/**
+ * Fetch all shipments linked to this importer.
+ * Includes status updates from exporter, broker, and customs.
+ */
+router.get("/shipments/my");
+
+/**
+ * Fetch details of a specific shipment by ID.
+ */
+router.get("/shipment/:id");
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\routes\service.routes.js
+------------------------------
+import express from "express";
+import auth from "../middlewares/auth.middleware.js";
+import * as serviceController from "../controllers/service.controller.js";
+import {
+  createServiceValidator,
+  updateServiceValidator,
+} from "../validators/service.validators.js";
+
+const router = express.Router();
+
+/**
+ * Create a new service
+ * Route: POST /api/services/
+ * Access: PROVIDER (broker or logistics provider)
+ */
+router.post(
+  "/",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]), // Adjust if needed
+  createServiceValidator,
+  serviceController.createService,
+);
+
+/**
+ * Get all services of logged-in provider
+ * Route: GET /api/services/my
+ * Access: PROVIDER ONLY
+ */
+router.get(
+  "/my",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  serviceController.getMyServices,
+);
+
+/**
+ * Get a single service by ID
+ * Route: GET /api/services/:id
+ * Access: Public
+ */
+router.get("/:id", serviceController.getServiceById);
+
+/**
+ * Update a service
+ * Route: PUT /api/services/:id
+ * Access: Provider who owns it
+ */
+router.put(
+  "/:id",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  updateServiceValidator,
+  serviceController.updateService,
+);
+
+/**
+ * Delete a service
+ * Route: DELETE /api/services/:id
+ * Access: Provider who owns it
+ */
+router.delete(
+  "/:id",
+  auth.requireUser,
+  auth.requireRole(["BROKER", "EXPORTER"]),
+  serviceController.deleteService,
+);
+
+export default router;
+
+
+------------------------------
+FILE: backend\src\services\auth.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+import crypto from "crypto";
+
+/**
+ * Auth helpers: refresh token creation/revocation.
+ * We keep tokens in DB as RefreshToken model.
+ *
+ * Schema fields:
+ *  - RefreshToken.id, token (unique), userId, createdAt, expiresAt, revoked
+ */
+
+/**
+ * Create and persist a refresh token record for a user.
+ * Returns the raw token that should be sent to client (store httpOnly cookie).
+ *
+ * @param {string} userId
+ * @param {Date} expiresAt
+ * @returns {Promise<string>} token
+ */
+async function createRefreshToken(userId, expiresAt) {
+  const token = crypto.randomBytes(48).toString("hex");
+
+  await prisma.refreshToken.create({
+    data: {
+      token,
+      userId,
+      expiresAt,
+    },
+  });
+
+  return token;
+}
+
+/**
+ * Revoke a refresh token by token string (mark revoked)
+ * @param {string} token
+ * @returns {Promise<void>}
+ */
+async function revokeRefreshToken(token) {
+  await prisma.refreshToken.updateMany({
+    where: { token },
+    data: { revoked: true },
+  });
+}
+
+/**
+ * Find a refresh token record by token string
+ * @param {string} token
+ * @returns {Promise<Object|null>}
+ */
+async function findRefreshToken(token) {
+  return prisma.refreshToken.findUnique({ where: { token } });
+}
+
+/**
+ * Delete all refresh tokens for a user (logout everywhere)
+ * @param {string} userId
+ * @returns {Promise<void>}
+ */
+async function revokeAllForUser(userId) {
+  await prisma.refreshToken.updateMany({
+    where: { userId, revoked: false },
+    data: { revoked: true },
+  });
+}
+
+export default {
+  createRefreshToken,
+  revokeRefreshToken,
+  findRefreshToken,
+  revokeAllForUser,
+};
+
+
+------------------------------
+FILE: backend\src\services\document.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Document service:
+ * - upload trade documents referencing shipment or LC
+ * - verify documents (broker/bank/customs)
+ */
+
+/**
+ * Upload a document and attach to shipment or LC
+ * @param {Object} payload { uploadedById, type, fileUrl, shipmentId?, lcId?, metadata? }
+ */
+async function uploadDocument({
+  uploadedById,
+  type,
+  fileUrl,
+  shipmentId = null,
+  lcId = null,
+  metadata = null,
+}) {
+  return prisma.tradeDocument.create({
+    data: {
+      uploaderId: uploadedById,
+      type,
+      fileUrl,
+      shipmentId,
+      lcId,
+      metadata,
+    },
+  });
+}
+
+/**
+ * Get documents for a shipment
+ * @param {string} shipmentId
+ */
+async function getDocumentsByShipment(shipmentId) {
+  return prisma.tradeDocument.findMany({
+    where: { shipmentId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      uploadedBy: { select: { id: true, email: true, companyName: true } },
+    },
+  });
+}
+
+/**
+ * Mark document as verified and set verifier
+ * @param {string} documentId
+ * @param {string} verifierId
+ */
+async function verifyDocument(documentId, verifierId) {
+  return prisma.tradeDocument.update({
+    where: { id: documentId },
+    data: {
+      verified: true,
+      verifiedById: verifierId,
+    },
+  });
+}
+
+/**
+ * Delete a document
+ * @param {string} documentId
+ */
+async function deleteDocument(documentId) {
+  return prisma.tradeDocument.delete({ where: { id: documentId } });
+}
+
+export default {
+  uploadDocument,
+  getDocumentsByShipment,
+  verifyDocument,
+  deleteDocument,
+};
+
+
+------------------------------
+FILE: backend\src\services\lc.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Letter of Credit service
+ * Basic flows:
+ *  - importer applies (create LC record with status APPLIED)
+ *  - bank issues LC (update status to APPROVED/ACTIVE, set lcNumber)
+ *  - exporter bank may advise (status ADVISING/ADVISED)
+ */
+
+/**
+ * Apply for an LC (importer)
+ * @param {Object} payload
+ */
+async function applyLC(payload) {
+  // payload should include: importerId, exporterId, bankId, amount, currency
+  return prisma.lC.create({
+    data: {
+      lcNumber: payload.lcNumber || null,
+      amount: payload.amount,
+      currency: payload.currency || "USD",
+      importerId: payload.importerId,
+      exporterId: payload.exporterId,
+      bankId: payload.bankId,
+      status: "APPLIED",
+    },
+  });
+}
+
+/**
+ * Bank issues an LC (sets lcNumber, status APPROVED or ACTIVE)
+ * @param {string} lcId
+ * @param {Object} updates { lcNumber, status, issueDate, expiryDate }
+ */
+async function issueLC(lcId, updates = {}) {
+  const data = {};
+  if (updates.lcNumber) data.lcNumber = updates.lcNumber;
+  if (updates.status) data.status = updates.status;
+  if (updates.issueDate) data.issueDate = updates.issueDate;
+  if (updates.expiryDate) data.expiryDate = updates.expiryDate;
+
+  return prisma.lC.update({
+    where: { id: lcId },
+    data,
+  });
+}
+
+/**
+ * Attach a document to LC (presented docs)
+ * @param {string} lcId
+ * @param {string} documentId
+ */
+async function attachDocumentToLC(lcId, documentId) {
+  return prisma.tradeDocument.update({
+    where: { id: documentId },
+    data: { lcId },
+  });
+}
+
+/**
+ * Get LC by id (with related docs & transactions)
+ * @param {string} id
+ */
+async function getLCById(id) {
+  return prisma.lC.findUnique({
+    where: { id },
+    include: {
+      documents: true,
+      transactions: true,
+      importer: true,
+      exporter: true,
+      bank: true,
+    },
+  });
+}
+
+export default {
+  applyLC,
+  issueLC,
+  attachDocumentToLC,
+  getLCById,
+};
+
+
+------------------------------
+FILE: backend\src\services\notification.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Simple notification service to persist in-app notifications.
+ */
+
+/**
+ * Push a notification for a user
+ * @param {string} userId
+ * @param {string} title
+ * @param {string} message
+ */
+async function pushNotification(userId, title, message) {
+  return prisma.notification.create({
+    data: { userId, title, message },
+  });
+}
+
+/**
+ * List notifications for a user
+ * @param {string} userId
+ */
+async function listNotifications(userId) {
+  return prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export default {
+  pushNotification,
+  listNotifications,
+};
+
+
+------------------------------
+FILE: backend\src\services\quote.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Quote Request & Response service
+ * - Importers create QuoteRequest
+ * - Exporters create QuoteResponse tied to a QuoteRequest
+ */
+
+/**
+ * Create a quote request (importer)
+ * @param {Object} payload
+ * @param {string} payload.importerId
+ * @param {string} payload.productName
+ * @param {number} payload.quantity
+ * @param {string} [payload.unit]
+ * @param {string} [payload.incoterm]
+ * @param {string} [payload.originCountry]
+ * @param {string} [payload.destCountry]
+ */
+async function createQuoteRequest(payload) {
+  return prisma.quoteRequest.create({
+    data: payload,
+  });
+}
+
+/**
+ * List quote requests for an importer
+ * @param {string} importerId
+ */
+async function listQuoteRequestsForImporter(importerId) {
+  return prisma.quoteRequest.findMany({
+    where: { importerId },
+    orderBy: { createdAt: "desc" },
+    include: { responses: true },
+  });
+}
+
+/**
+ * Exporter responds to a quote
+ * @param {Object} payload
+ * @param {string} payload.quoteRequestId
+ * @param {string} payload.exporterId
+ * @param {number} payload.price
+ * @param {number} [payload.validityDays]
+ * @param {string} [payload.notes]
+ */
+async function respondToQuote(payload) {
+  // Basic existance check
+  const qr = await prisma.quoteRequest.findUnique({
+    where: { id: payload.quoteRequestId },
+  });
+  if (!qr) throw new Error("QUOTE_REQUEST_NOT_FOUND");
+
+  return prisma.quoteResponse.create({ data: payload });
+}
+
+/**
+ * Get responses for a quote request
+ * @param {string} quoteRequestId
+ */
+async function getResponsesForRequest(quoteRequestId) {
+  return prisma.quoteResponse.findMany({
+    where: { quoteRequestId },
+    orderBy: { createdAt: "asc" },
+    include: {
+      exporter: { select: { id: true, email: true, companyName: true } },
+    },
+  });
+}
+
+export default {
+  createQuoteRequest,
+  listQuoteRequestsForImporter,
+  respondToQuote,
+  getResponsesForRequest,
+};
+
+
+------------------------------
+FILE: backend\src\services\service.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Marketplace Service layer
+ * Responsible for creating/listing/updating/deleting broker/provider services.
+ *
+ * Schema: Service { id, name, description, price, providerId, createdAt, shipments[] }
+ */
+
+/**
+ * Create a new marketplace service item
+ * @param {Object} payload
+ * @param {string} payload.providerId
+ * @param {string} payload.name
+ * @param {string} [payload.description]
+ * @param {number} payload.price
+ */
+async function createService({ providerId, name, description = null, price }) {
+  return prisma.service.create({
+    data: { providerId, name, description, price },
+  });
+}
+
+/**
+ * Get services list (optionally by provider)
+ * @param {Object} opts
+ * @param {string} [opts.providerId]
+ * @returns {Promise<Array>}
+ */
+async function listServices({ providerId } = {}) {
+  const where = providerId ? { providerId } : {};
+  return prisma.service.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: {
+      provider: { select: { id: true, email: true, companyName: true } },
+    },
+  });
+}
+
+/**
+ * Get service by id
+ * @param {string} id
+ */
+async function getServiceById(id) {
+  return prisma.service.findUnique({
+    where: { id },
+    include: {
+      provider: { select: { id: true, email: true, companyName: true } },
+    },
+  });
+}
+
+/**
+ * Update a service (only provider should call)
+ * @param {string} id
+ * @param {Object} updates
+ */
+async function updateService(id, updates = {}) {
+  const allowed = ["name", "description", "price"];
+  const data = {};
+  for (const k of allowed) if (k in updates) data[k] = updates[k];
+
+  return prisma.service.update({
+    where: { id },
+    data,
+  });
+}
+
+/**
+ * Delete a service
+ * @param {string} id
+ */
+async function deleteService(id) {
+  return prisma.service.delete({ where: { id } });
+}
+
+export default {
+  createService,
+  listServices,
+  getServiceById,
+  updateService,
+  deleteService,
+};
+
+
+------------------------------
+FILE: backend\src\services\shipment.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Shipment service: create shipments, assign broker, add events, link documents.
+ */
+
+/**
+ * Create a shipment (exporter)
+ * payload should include: exporterId, importerId (optional), origin, destination, serviceId (optional), vessel/airway fields
+ */
+async function createShipment(payload) {
+  const data = {
+    exporterId: payload.exporterId,
+    importerId: payload.importerId || null,
+    brokerId: payload.brokerId || null,
+    serviceId: payload.serviceId || null,
+    origin: payload.origin,
+    destination: payload.destination,
+    vesselName: payload.vesselName || null,
+    airwayBill: payload.airwayBill || null,
+    etd: payload.etd || null,
+    eta: payload.eta || null,
+  };
+
+  return prisma.shipment.create({ data });
+}
+
+/**
+ * Assign a broker to a shipment
+ * @param {string} shipmentId
+ * @param {string} brokerId
+ */
+async function assignBroker(shipmentId, brokerId) {
+  return prisma.shipment.update({
+    where: { id: shipmentId },
+    data: { brokerId },
+  });
+}
+
+/**
+ * Add an event to a shipment (customs update, document verified, etc.)
+ * @param {string} shipmentId
+ * @param {Object} payload { userId, type, message }
+ */
+async function addShipmentEvent(
+  shipmentId,
+  { userId = null, type, message = null },
+) {
+  return prisma.shipmentEvent.create({
+    data: {
+      shipmentId,
+      userId,
+      type,
+      message,
+    },
+  });
+}
+
+/**
+ * Get shipments by exporter or importer
+ * @param {Object} opts { exporterId, importerId, brokerId }
+ */
+async function findShipments({ exporterId, importerId, brokerId } = {}) {
+  const where = {};
+  if (exporterId) where.exporterId = exporterId;
+  if (importerId) where.importerId = importerId;
+  if (brokerId) where.brokerId = brokerId;
+
+  return prisma.shipment.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: { documents: true, events: true, service: true },
+  });
+}
+
+export default {
+  createShipment,
+  assignBroker,
+  addShipmentEvent,
+  findShipments,
+};
+
+
+------------------------------
+FILE: backend\src\services\transaction.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+
+/**
+ * Transaction service: create and query transactions
+ */
+
+/**
+ * Create a transaction (user-centric)
+ * payload: { userId, amount, currency, type, shipmentId?, lcApplicationId?, reference? }
+ */
+async function createTransaction(payload) {
+  return prisma.transaction.create({
+    data: {
+      userId: payload.userId,
+      amount: payload.amount,
+      currency: payload.currency || "USD",
+      type: payload.type,
+      shipmentId: payload.shipmentId || null,
+      lcApplicationId: payload.lcApplicationId || null,
+      reference: payload.reference || null,
+    },
+  });
+}
+
+/**
+ * Find transactions for a user
+ * @param {string} userId
+ */
+async function findByUser(userId) {
+  return prisma.transaction.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export default {
+  createTransaction,
+  findByUser,
+};
+
+
+------------------------------
+FILE: backend\src\services\user.service.js
+------------------------------
+import prisma from "../db/prismaClient.js";
+import bcrypt from "bcryptjs";
+
+/**
+ * User service
+ * Responsible for user CRUD, password hashing/verification and safe user shape returns.
+ *
+ * NOTE: Schema fields:
+ *  - User.id (String cuid)
+ *  - User.email
+ *  - User.passwordHash
+ *  - User.role (UserRole enum)
+ *  - User.companyName, phone, createdAt, updatedAt
+ */
+
+/**
+ * Create a new user.
+ * - hashes password into passwordHash
+ * - returns created user (without passwordHash)
+ *
+ * @param {Object} payload
+ * @param {string} payload.email
+ * @param {string} payload.password
+ * @param {string} payload.role
+ * @param {string} [payload.companyName]
+ * @param {string} [payload.phone]
+ * @returns {Promise<Object>} user
+ */
+async function createUser({
+  email,
+  password,
+  role,
+  companyName = null,
+  phone = null,
+}) {
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) throw new Error("USER_EXISTS");
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      passwordHash,
+      role,
+      companyName,
+      phone,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      companyName: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return user;
+}
+
+/**
+ * Find user record by email. Returns full DB record (including passwordHash).
+ * Use carefully (auth only).
+ * @param {string} email
+ * @returns {Promise<Object|null>}
+ */
+async function findByEmail(email) {
+  return prisma.user.findUnique({
+    where: { email },
+  });
+}
+
+/**
+ * Find user by id and return safe public fields (no passwordHash).
+ * @param {string} id
+ * @returns {Promise<Object|null>}
+ */
+async function findById(id) {
+  return prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      companyName: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+      // relations optional to include later
+    },
+  });
+}
+
+/**
+ * Update user basic profile fields.
+ * Returns the updated user (safe fields only).
+ * @param {string} id
+ * @param {Object} updates
+ * @returns {Promise<Object>}
+ */
+async function updateUser(id, updates = {}) {
+  const allowed = ["companyName", "phone"];
+  const data = {};
+
+  for (const k of allowed) {
+    if (k in updates) data[k] = updates[k];
+  }
+
+  const updated = await prisma.user.update({
+    where: { id },
+    data,
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      companyName: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return updated;
+}
+
+/**
+ * Verify plaintext password against bcrypt hash
+ * @param {string} plaintext
+ * @param {string} hash
+ * @returns {Promise<boolean>}
+ */
+async function verifyPassword(plaintext, hash) {
+  return bcrypt.compare(plaintext, hash);
+}
+
+export default {
+  createUser,
+  findByEmail,
+  findById,
+  updateUser,
+  verifyPassword,
+};
+

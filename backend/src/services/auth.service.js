@@ -2,20 +2,28 @@ import prisma from "../db/prismaClient.js";
 import crypto from "crypto";
 
 /**
- * Auth helpers: refresh token creation/revocation.
- * We keep tokens in DB as RefreshToken model.
+ * Token Service: unified refresh-token helper built
+ * to match the current Prisma schema:
  *
- * Schema fields:
- *  - RefreshToken.id, token (unique), userId, createdAt, expiresAt, revoked
+ * model RefreshToken {
+ *   id        String   @id @default(cuid())
+ *   userId    String
+ *   token     String   @unique
+ *   createdAt DateTime @default(now())
+ *   expiresAt DateTime
+ *   user      User @relation(fields: [userId], references: [id])
+ * }
+ *
+ * No "revoked" field. No legacy behavior.
+ * Tokens are created, validated, and removed on logout.
  */
 
 /**
- * Create and persist a refresh token record for a user.
- * Returns the raw token that should be sent to client (store httpOnly cookie).
+ * Generate a new refresh token for a user and store it.
  *
- * @param {string} userId
- * @param {Date} expiresAt
- * @returns {Promise<string>} token
+ * @param {string} userId - ID of the user receiving the new token.
+ * @param {Date}   expiresAt - Expiry timestamp for token.
+ * @returns {Promise<string>} raw token string to send as httpOnly cookie.
  */
 async function createRefreshToken(userId, expiresAt) {
   const token = crypto.randomBytes(48).toString("hex");
@@ -32,41 +40,60 @@ async function createRefreshToken(userId, expiresAt) {
 }
 
 /**
- * Revoke a refresh token by token string (mark revoked)
+ * Find a refresh token record via token string.
+ * Returns null if not found or expired.
+ *
+ * @param {string} token
+ * @returns {Promise<object|null>}
+ */
+async function findRefreshToken(token) {
+  const record = await prisma.refreshToken.findUnique({
+    where: { token },
+  });
+
+  if (!record) return null;
+
+  // Token found but expired
+  if (record.expiresAt < new Date()) {
+    // Cleanup expired token
+    await prisma.refreshToken.delete({
+      where: { token },
+    });
+    return null;
+  }
+
+  return record;
+}
+
+/**
+ * Remove a specific refresh token from DB (standard logout)
+ *
  * @param {string} token
  * @returns {Promise<void>}
  */
-async function revokeRefreshToken(token) {
-  await prisma.refreshToken.updateMany({
-    where: { token },
-    data: { revoked: true },
-  });
+async function deleteRefreshToken(token) {
+  await prisma.refreshToken
+    .delete({
+      where: { token },
+    })
+    .catch(() => {});
 }
 
 /**
- * Find a refresh token record by token string
- * @param {string} token
- * @returns {Promise<Object|null>}
- */
-async function findRefreshToken(token) {
-  return prisma.refreshToken.findUnique({ where: { token } });
-}
-
-/**
- * Delete all refresh tokens for a user (logout everywhere)
+ * Remove all refresh tokens for a user (logout everywhere)
+ *
  * @param {string} userId
  * @returns {Promise<void>}
  */
-async function revokeAllForUser(userId) {
-  await prisma.refreshToken.updateMany({
-    where: { userId, revoked: false },
-    data: { revoked: true },
+async function deleteAllTokensForUser(userId) {
+  await prisma.refreshToken.deleteMany({
+    where: { userId },
   });
 }
 
 export default {
   createRefreshToken,
-  revokeRefreshToken,
   findRefreshToken,
-  revokeAllForUser,
+  deleteRefreshToken,
+  deleteAllTokensForUser,
 };
