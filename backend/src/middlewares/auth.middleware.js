@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import userService from "../services/user.service.js";
-import refreshTokenService from "../services/refreshToken.service.js";
+import userUtils from "../utils/user.utils.js";
+import refreshTokenUtils from "../utils/token.utils.js";
 
 dotenv.config();
 
@@ -58,7 +58,7 @@ async function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(accessToken, JWT_SECRET);
-    const user = await userService.findUserById(decoded.id);
+    const user = await userUtils.findUserById(decoded.id);
     if (!user) throw new Error("User not found");
 
     const { password, ...safeUser } = user;
@@ -71,7 +71,7 @@ async function authMiddleware(req, res, next) {
     }
 
     // Validate refresh token
-    const tokenRecord = await refreshTokenService.findRefreshToken(
+    const tokenRecord = await refreshTokenUtils.findRefreshToken(
       refreshToken,
     );
     if (
@@ -84,14 +84,14 @@ async function authMiddleware(req, res, next) {
         .json({ message: "Access denied: refresh token invalid" });
     }
 
-    const user = await userService.findUserById(tokenRecord.userId);
+    const user = await userUtils.findUserById(tokenRecord.userId);
     if (!user) {
       return res.status(401).json({ message: "Access denied: user not found" });
     }
 
     // Rotate refresh token
-    await refreshTokenService.revokeRefreshToken(refreshToken);
-    const newRefreshToken = await refreshTokenService.createRefreshToken(
+    await refreshTokenUtils.revokeRefreshToken(refreshToken);
+    const newRefreshToken = await refreshTokenUtils.createRefreshToken(
       user.id,
       new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION)),
     );
@@ -105,4 +105,4 @@ async function authMiddleware(req, res, next) {
   }
 }
 
-export default authenticate;
+export default authMiddleware;

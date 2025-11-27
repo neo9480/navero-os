@@ -3,17 +3,19 @@
 
 import express from "express";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import dotenv from "dotenv"
 
 // Role-based routing modules
-import adminRoutes from "./routes/admin.routes.js";
+// import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-import bankRoutes from "./routes/bank.routes.js";
-import brokerRoutes from "./routes/broker.routes.js";
-import customsRoutes from "./routes/customs.routes.js";
-import exporterRoutes from "./routes/exporter.routes.js";
-import importerRoutes from "./routes/importer.routes.js";
-import serviceRoutes from "./routes/service.routes.js";
+// import bankRoutes from "./routes/bank.routes.js";
+// import brokerRoutes from "./routes/broker.routes.js";
+// import customsRoutes from "./routes/customs.routes.js";
+// import exporterRoutes from "./routes/exporter.routes.js";
+// import importerRoutes from "./routes/importer.routes.js";
+// import serviceRoutes from "./routes/service.routes.js";
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use(express.json());
 // Global error handler (kept last among middleware but before routes)
 app.use(errorMiddleware.errorHandler);
 
+app.use(morgan("dev"));
+
 // Health check / root route
 app.get("/", async (req, res) => {
   try {
@@ -34,6 +38,8 @@ app.get("/", async (req, res) => {
     console.error("CANNOT GET /:", err);
   }
 });
+
+console.log()
 
 /*  
   Route groups
@@ -48,13 +54,13 @@ app.get("/", async (req, res) => {
   - /api/services     Marketplace services listed by providers
 */
 
-app.use("/api/admin", adminRoutes);
+// app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/bank", bankRoutes);
-app.use("/api/broker", brokerRoutes);
-app.use("/api/customs", customsRoutes);
-app.use("/api/exporter", exporterRoutes);
-app.use("/api/importer", importerRoutes);
-app.use("/api/services", serviceRoutes);
+// app.use("/api/bank", bankRoutes);
+// app.use("/api/broker", brokerRoutes);
+// app.use("/api/customs", customsRoutes);
+// app.use("/api/exporter", exporterRoutes);
+// app.use("/api/importer", importerRoutes);
+// app.use("/api/services", serviceRoutes);
 
 export default app;

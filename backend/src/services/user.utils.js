@@ -17,10 +17,11 @@ async function createUser(
     data: {
       email,
       passwordHash,
+      ownerName,
       companyName,
       phone,
+      address,
       role,
-      // you didn’t include owner_name or address in schema, adjust later
     },
   });
 }
@@ -50,8 +51,9 @@ async function updateUser(id, ownerName, companyName, phone, address) {
     where: { id },
     data: {
       companyName,
+      ownerName,
       phone,
-      // again: address & ownerName missing in schema
+      address
     },
   });
 }

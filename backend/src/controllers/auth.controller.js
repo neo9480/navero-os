@@ -1,12 +1,7 @@
 import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {
-  createRefreshToken,
-  revokeRefreshToken,
-  revokeAllForUser,
-  findRefreshToken,
-} from "../services/token.service.js";
+import refreshTokenUtils from "../services/token.utils.js";
 
 const ACCESS_TOKEN_TTL = "15m"; // short-lived
 const REFRESH_TOKEN_DAYS = 30; // persistent login
@@ -66,7 +61,7 @@ async function login(req, res, next) {
 
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
-    const refreshToken = await createRefreshToken(user.id, expiresAt);
+    const refreshToken = await refreshTokenUtils.createRefreshToken(user.id, expiresAt);
 
     setRefreshCookie(res, refreshToken, expiresAt);
 
@@ -85,7 +80,7 @@ async function refresh(req, res, next) {
     const token = req.cookies.refresh_token;
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const record = await findRefreshToken(token);
+    const record = await refreshTokenUtils.findRefreshToken(token);
     if (!record || record.revoked)
       return res.status(401).json({ error: "Invalid refresh token" });
 
@@ -93,10 +88,13 @@ async function refresh(req, res, next) {
     if (!user) return res.status(401).json({ error: "User not found" });
 
     // Rotate refresh token
-    await revokeRefreshToken(token);
+    await refreshTokenUtils.revokeRefreshToken(token);
     const newExpiresAt = new Date();
     newExpiresAt.setDate(newExpiresAt.getDate() + REFRESH_TOKEN_DAYS);
-    const newRefreshToken = await createRefreshToken(user.id, newExpiresAt);
+    const newRefreshToken = await refreshTokenUtils.createRefreshToken(
+      user.id,
+      newExpiresAt,
+    );
     setRefreshCookie(res, newRefreshToken, newExpiresAt);
 
     const accessToken = generateAccessToken(user);
@@ -111,7 +109,7 @@ async function logout(req, res, next) {
   try {
     const token = req.cookies.refresh_token;
     if (token) {
-      await revokeRefreshToken(token);
+      await refreshTokenUtils.revokeRefreshToken(token);
       res.clearCookie("refresh_token", { path: "/api/auth" });
     }
     res.json({ message: "Logged out" });
@@ -126,11 +124,11 @@ async function logoutAll(req, res, next) {
     const token = req.cookies.refresh_token;
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const record = await findRefreshToken(token);
+    const record = await refreshTokenUtils.findRefreshToken(token);
     if (!record)
       return res.status(401).json({ error: "Invalid refresh token" });
 
-    await revokeAllForUser(record.userId);
+    await refreshTokenUtils.revokeAllForUser(record.userId);
     res.clearCookie("refresh_token", { path: "/api/auth" });
 
     res.json({ message: "Logged out from all devices" });

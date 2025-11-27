@@ -1,9 +1,7 @@
-
 generator client {
   provider = "prisma-client-js"
-  output = "./generated/prisma/client"
+  output   = "./generated/prisma/client"
 }
-
 
 datasource db {
   provider = "postgresql"
@@ -64,38 +62,37 @@ enum ShipmentEventType {
 
 // Core users of the platform
 model User {
-  id           String    @id @default(cuid())
+  id           String   @id @default(cuid())
   role         UserRole
-  email        String    @unique
+  email        String   @unique
   passwordHash String
   companyName  String?
   phone        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Document relations (must match names exactly)
   uploadedDocuments Document[] @relation("UploadedDocuments")
   verifiedDocuments Document[] @relation("VerifiedDocuments")
 
   // Everything else stays unchanged...
-  services          Service[]
-  quoteRequests     QuoteRequest[]   @relation("ImporterQuoteRequests")
-  quoteResponses    QuoteResponse[]
-  lettersOfCreditAsImporter LC[]     @relation("ImporterLC")
-  lettersOfCreditAsExporter LC[]     @relation("ExporterLC")
-  lettersOfCreditAsBank     LC[]     @relation("BankLC")
-  shipmentsAsImporter Shipment[]     @relation("ImporterShipments")
-  shipmentsAsExporter Shipment[]     @relation("ExporterShipments")
-  shipmentsAsBroker   Shipment[]     @relation("BrokerShipments")
-  shipmentEvents  ShipmentEvent[]
-  notifications  Notification[]
-  refreshTokens  RefreshToken[]
+  services                  Service[]
+  quoteRequests             QuoteRequest[]  @relation("ImporterQuoteRequests")
+  quoteResponses            QuoteResponse[]
+  lettersOfCreditAsImporter LC[]            @relation("ImporterLC")
+  lettersOfCreditAsExporter LC[]            @relation("ExporterLC")
+  lettersOfCreditAsBank     LC[]            @relation("BankLC")
+  shipmentsAsImporter       Shipment[]      @relation("ImporterShipments")
+  shipmentsAsExporter       Shipment[]      @relation("ExporterShipments")
+  shipmentsAsBroker         Shipment[]      @relation("BrokerShipments")
+  shipmentEvents            ShipmentEvent[]
+  notifications             Notification[]
+  refreshTokens             RefreshToken[]
 }
-
 
 // Services created by brokers or freight providers
 model Service {
-  id          String       @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   description String?
   price       Float
@@ -109,10 +106,9 @@ model Service {
   createdAt DateTime @default(now())
 }
 
-
 // Importer creates a quote request
 model QuoteRequest {
-  id            String     @id @default(cuid())
+  id            String   @id @default(cuid())
   importerId    String
   productName   String
   quantity      Int
@@ -122,7 +118,7 @@ model QuoteRequest {
   destCountry   String?
   createdAt     DateTime @default(now())
 
-  importer User @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
+  importer  User            @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
   responses QuoteResponse[]
 }
 
@@ -142,42 +138,42 @@ model QuoteResponse {
 
 // Letter of Credit (Importer → Bank → Exporter)
 model LC {
-  id          String   @id @default(cuid())
-  lcNumber    String   @unique
-  amount      Float
-  currency    String
-  status      LCStatus @default(APPLIED)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  lcNumber  String   @unique
+  amount    Float
+  currency  String
+  status    LCStatus @default(APPLIED)
+  createdAt DateTime @default(now())
 
-  importerId  String
-  exporterId  String
-  bankId      String
+  importerId String
+  exporterId String
+  bankId     String
 
   importer User @relation("ImporterLC", fields: [importerId], references: [id])
   exporter User @relation("ExporterLC", fields: [exporterId], references: [id])
-  bank     User @relation("BankLC",     fields: [bankId],     references: [id])
+  bank     User @relation("BankLC", fields: [bankId], references: [id])
 
   documents Document[]
 }
 
 // Shipments (Exporter → Importer, handled by broker and services)
 model Shipment {
-  id            String         @id @default(cuid())
-  status        ShipmentStatus @default(CREATED)
-  vesselName    String?
-  airwayBill    String?
-  etd           DateTime?
-  eta           DateTime?
-  createdAt     DateTime @default(now())
+  id         String         @id @default(cuid())
+  status     ShipmentStatus @default(CREATED)
+  vesselName String?
+  airwayBill String?
+  etd        DateTime?
+  eta        DateTime?
+  createdAt  DateTime       @default(now())
 
-  importerId    String
-  exporterId    String
-  brokerId      String?
-  serviceId     String?
+  importerId String
+  exporterId String
+  brokerId   String?
+  serviceId  String?
 
-  importer User   @relation("ImporterShipments", fields: [importerId], references: [id])
-  exporter User   @relation("ExporterShipments", fields: [exporterId], references: [id])
-  broker   User?  @relation("BrokerShipments",   fields: [brokerId], references: [id])
+  importer User     @relation("ImporterShipments", fields: [importerId], references: [id])
+  exporter User     @relation("ExporterShipments", fields: [exporterId], references: [id])
+  broker   User?    @relation("BrokerShipments", fields: [brokerId], references: [id])
   service  Service? @relation(fields: [serviceId], references: [id])
 
   documents Document[]
@@ -186,12 +182,12 @@ model Shipment {
 
 // Events emitted by customs or system for tracking
 model ShipmentEvent {
-  id          String            @id @default(cuid())
-  shipmentId  String
-  userId      String?
-  type        ShipmentEventType
-  message     String?
-  createdAt   DateTime @default(now())
+  id         String            @id @default(cuid())
+  shipmentId String
+  userId     String?
+  type       ShipmentEventType
+  message    String?
+  createdAt  DateTime          @default(now())
 
   shipment Shipment @relation(fields: [shipmentId], references: [id])
   user     User?    @relation(fields: [userId], references: [id])
@@ -199,11 +195,11 @@ model ShipmentEvent {
 
 // Trade documents
 model Document {
-  id           String        @id @default(cuid())
-  type         DocumentType
-  fileUrl      String
-  verified     Boolean       @default(false)
-  createdAt    DateTime      @default(now())
+  id        String       @id @default(cuid())
+  type      DocumentType
+  fileUrl   String
+  verified  Boolean      @default(false)
+  createdAt DateTime     @default(now())
 
   // Relations
   uploadedById String
@@ -212,13 +208,12 @@ model Document {
   lcId         String?
 
   // Properly named relations
-  uploadedBy User @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  uploadedBy User  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
   verifiedBy User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
 
   shipment Shipment? @relation(fields: [shipmentId], references: [id])
   lc       LC?       @relation(fields: [lcId], references: [id])
 }
-
 
 // In-app notifications
 model Notification {

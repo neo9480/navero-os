@@ -1,10 +1,5 @@
 import express from "express";
-import auth from "../middlewares/auth.middleware.js";
-import * as serviceController from "../controllers/service.controller.js";
-import {
-  createServiceValidator,
-  updateServiceValidator,
-} from "../validators/service.validators.js";
+
 
 const router = express.Router();
 
@@ -14,11 +9,7 @@ const router = express.Router();
  * Access: PROVIDER (broker or logistics provider)
  */
 router.post(
-  "/",
-  auth.requireUser,
-  auth.requireRole(["BROKER", "EXPORTER"]), // Adjust if needed
-  createServiceValidator,
-  serviceController.createService,
+  "/"
 );
 
 /**
@@ -27,10 +18,7 @@ router.post(
  * Access: PROVIDER ONLY
  */
 router.get(
-  "/my",
-  auth.requireUser,
-  auth.requireRole(["BROKER", "EXPORTER"]),
-  serviceController.getMyServices,
+  "/my"
 );
 
 /**
@@ -38,7 +26,7 @@ router.get(
  * Route: GET /api/services/:id
  * Access: Public
  */
-router.get("/:id", serviceController.getServiceById);
+router.get("/:id");
 
 /**
  * Update a service
@@ -46,11 +34,7 @@ router.get("/:id", serviceController.getServiceById);
  * Access: Provider who owns it
  */
 router.put(
-  "/:id",
-  auth.requireUser,
-  auth.requireRole(["BROKER", "EXPORTER"]),
-  updateServiceValidator,
-  serviceController.updateService,
+  "/:id"
 );
 
 /**
@@ -59,10 +43,7 @@ router.put(
  * Access: Provider who owns it
  */
 router.delete(
-  "/:id",
-  auth.requireUser,
-  auth.requireRole(["BROKER", "EXPORTER"]),
-  serviceController.deleteService,
+  "/:id"
 );
 
 export default router;
