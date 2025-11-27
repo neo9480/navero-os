@@ -8,6 +8,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: "postgresql://navero:navero123@localhost:5432/navero?schema=public",
+    url: "DATABASE_URL",
   },
 });
