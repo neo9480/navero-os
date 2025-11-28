@@ -144,5 +144,3 @@ vite.config.ts.timestamp-*
 combine.js
 
 .vscode
-
-prisma.config.ts
