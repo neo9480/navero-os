@@ -1,33 +1,25 @@
 import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import refreshTokenUtils from "../services/token.utils.js";
+import authUtils from "../utils/auth.utils.js";
 
-const ACCESS_TOKEN_TTL = "15m"; // short-lived
-const REFRESH_TOKEN_DAYS = 30; // persistent login
-
-// Generate JWT access token
 function generateAccessToken(user) {
-  return jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.JWT_ACCESS_SECRET,
-    { expiresIn: ACCESS_TOKEN_TTL },
-  );
+  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+  });
 }
 
-// Set httpOnly refresh cookie
 function setRefreshCookie(res, token, expiresAt) {
   res.cookie("refresh_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     expires: expiresAt,
-    path: "/api/auth",
+    path: "/",
   });
 }
 
-// POST /register
-async function register(req, res, next) {
+async function register(req, res) {
   try {
     const { email, password, role, companyName, phone } = req.body;
 
@@ -42,12 +34,11 @@ async function register(req, res, next) {
 
     res.status(201).json({ message: "User registered", userId: user.id });
   } catch (err) {
-    next(err);
+    console.error( "failed to register user:", err );
   }
 }
 
-// POST /login
-async function login(req, res, next) {
+async function login(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -60,80 +51,80 @@ async function login(req, res, next) {
     const accessToken = generateAccessToken(user);
 
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
-    const refreshToken = await refreshTokenUtils.createRefreshToken(user.id, expiresAt);
+    expiresAt.setDate(
+      expiresAt.getDate() + Number(process.env.REFRESH_TOKEN_DAYS),
+    );
+    const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
 
     setRefreshCookie(res, refreshToken, expiresAt);
 
     res.json({
+      message: "user login successfull",
       accessToken,
       user: { id: user.id, role: user.role, email: user.email },
     });
   } catch (err) {
-    next(err);
+    console.error("failed to login user:", err);
   }
 }
 
-// POST /refresh
-async function refresh(req, res, next) {
+async function refresh(req, res) {
   try {
     const token = req.cookies.refresh_token;
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const record = await refreshTokenUtils.findRefreshToken(token);
+    const record = await authUtils.findRefreshToken(token);
     if (!record || record.revoked)
       return res.status(401).json({ error: "Invalid refresh token" });
 
     const user = await prisma.user.findUnique({ where: { id: record.userId } });
     if (!user) return res.status(401).json({ error: "User not found" });
 
-    // Rotate refresh token
-    await refreshTokenUtils.revokeRefreshToken(token);
+    await authUtils.deleteRefreshToken(token);
+
     const newExpiresAt = new Date();
-    newExpiresAt.setDate(newExpiresAt.getDate() + REFRESH_TOKEN_DAYS);
-    const newRefreshToken = await refreshTokenUtils.createRefreshToken(
+    newExpiresAt.setDate(
+      newExpiresAt.getDate() + Number(process.env.REFRESH_TOKEN_DAYS),
+    );
+    const newRefreshToken = await authUtils.createRefreshToken(
       user.id,
       newExpiresAt,
     );
+
     setRefreshCookie(res, newRefreshToken, newExpiresAt);
 
     const accessToken = generateAccessToken(user);
     res.json({ accessToken });
   } catch (err) {
-    next(err);
+    console.error( "failed to refresh token:", err );
   }
 }
 
-// POST /logout
-async function logout(req, res, next) {
+async function logout(req, res) {
   try {
     const token = req.cookies.refresh_token;
     if (token) {
-      await refreshTokenUtils.revokeRefreshToken(token);
-      res.clearCookie("refresh_token", { path: "/api/auth" });
+      await authUtils.deleteRefreshToken(token);
+      res.clearCookie("refresh_token", { path: "/" });
     }
     res.json({ message: "Logged out" });
   } catch (err) {
-    next(err);
+    console.error( "failed to logout user:", err );
   }
 }
 
-// POST /logout-all
-async function logoutAll(req, res, next) {
+async function logoutAll(req, res) {
   try {
-    const token = req.cookies.refresh_token;
-    if (!token) return res.status(401).json({ error: "No refresh token" });
+    // You already have req.user from the middleware (access token verified)
+    const userId = req.user.id;
 
-    const record = await refreshTokenUtils.findRefreshToken(token);
-    if (!record)
-      return res.status(401).json({ error: "Invalid refresh token" });
+    await authUtils.deleteAllTokensForUser(userId);
 
-    await refreshTokenUtils.revokeAllForUser(record.userId);
-    res.clearCookie("refresh_token", { path: "/api/auth" });
+    res.clearCookie("refresh_token", { path: "/" });
 
     res.json({ message: "Logged out from all devices" });
   } catch (err) {
-    next(err);
+    console.error( "failed to logout all users:", err );
   }
 }
 

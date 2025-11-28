@@ -1,106 +1,93 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import userUtils from "../utils/user.utils.js";
-import refreshTokenUtils from "../utils/token.utils.js";
+import authUtils from "../utils/auth.utils.js";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRATION = process.env.JWT_EXPIRATION || "15m";
 const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
 
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET missing in environment variables");
-}
+if (!JWT_SECRET) throw new Error("JWT_SECRET missing");
 
-// Helper to convert durations like "15m", "7d" to milliseconds
 const parseDuration = (str) => {
   const match = /^(\d+)([smhd])$/.exec(str);
-  if (!match) throw new Error("Invalid duration format");
-
   const value = parseInt(match[1], 10);
   const unit = match[2];
 
-  switch (unit) {
-    case "s":
-      return value * 1000;
-    case "m":
-      return value * 60 * 1000;
-    case "h":
-      return value * 60 * 60 * 1000;
-    case "d":
-      return value * 24 * 60 * 60 * 1000;
-    default:
-      throw new Error("Unknown duration unit");
-  }
+  return {
+    s: value * 1000,
+    m: value * 60000,
+    h: value * 3600000,
+    d: value * 86400000,
+  }[unit];
 };
 
 const generateAccessToken = (userId) => {
-  return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
+  return jwt.sign({ id: userId }, JWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+  });
 };
 
-const setTokensCookies = (res, accessToken, refreshToken) => {
-  res.cookie("token", accessToken, { httpOnly: true, sameSite: "strict" });
-  if (refreshToken) {
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "strict",
-    });
-  }
+const setRefreshCookie = (res, token, expiresAt) => {
+  res.cookie("refresh_token", token, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    expires: expiresAt,
+    path: "/",
+  });
 };
 
 async function authMiddleware(req, res, next) {
-  const { token: accessToken, refreshToken } = req.cookies || {};
+  // const authHeader = req.headers.authorization;
+  // const accessToken = authHeader?.startsWith("Bearer ")
+  //   ? authHeader.split(" ")[1]
+  //   : null;
 
-  if (!accessToken) {
-    return res.status(401).json({ message: "Access denied: please login" });
-  }
+  const refreshToken = req.cookies?.refresh_token;
+
+  // if (!accessToken) {
+  //   return res.status(401).json({ message: "access token missing" });
+  // }
 
   try {
     const decoded = jwt.verify(accessToken, JWT_SECRET);
     const user = await userUtils.findUserById(decoded.id);
-    if (!user) throw new Error("User not found");
 
-    const { password, ...safeUser } = user;
-    req.user = safeUser;
+    if (!user) return res.status(401).json({ message: "user not found" });
+
+    req.user = { id: user.id, role: user.role, email: user.email };
     return next();
-  } catch (accessErr) {
-    // Access token expired or invalid
+  } catch {
     if (!refreshToken) {
-      return res.status(401).json({ message: "Access denied: please login" });
+      return res.status(401).json({ message: "login required" });
     }
 
-    // Validate refresh token
-    const tokenRecord = await refreshTokenUtils.findRefreshToken(
-      refreshToken,
+    const record = await authUtils.findRefreshToken(refreshToken);
+    if (!record || record.revoked || record.expiresAt < new Date()) {
+      return res.status(401).json({ message: "refresh token invalid" });
+    }
+
+    const user = await userUtils.findUserById(record.userId);
+
+    if (!user) return res.status(401).json({ message: "user not found" });
+
+    await authUtils.deleteRefreshToken(refreshToken);
+
+    const expiresAt = new Date(
+      Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION),
     );
-    if (
-      !tokenRecord ||
-      tokenRecord.revoked ||
-      tokenRecord.expiresAt < new Date()
-    ) {
-      return res
-        .status(401)
-        .json({ message: "Access denied: refresh token invalid" });
-    }
-
-    const user = await userUtils.findUserById(tokenRecord.userId);
-    if (!user) {
-      return res.status(401).json({ message: "Access denied: user not found" });
-    }
-
-    // Rotate refresh token
-    await refreshTokenUtils.revokeRefreshToken(refreshToken);
-    const newRefreshToken = await refreshTokenUtils.createRefreshToken(
+    const newRefreshToken = await authUtils.createRefreshToken(
       user.id,
-      new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION)),
+      expiresAt,
     );
-
     const newAccessToken = generateAccessToken(user.id);
-    setTokensCookies(res, newAccessToken, newRefreshToken);
 
-    const { password, ...safeUser } = user;
-    req.user = safeUser;
+    setRefreshCookie(res, newRefreshToken, expiresAt);
+    res.setHeader("x-access-token", newAccessToken);
+
+    req.user = { id: user.id, role: user.role, email: user.email };
     next();
   }
 }
