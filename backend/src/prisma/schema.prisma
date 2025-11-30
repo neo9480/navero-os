@@ -12,6 +12,7 @@ datasource db {
 // ENUMS
 
 enum UserRole {
+  SUPER_ADMIN
   ADMIN
   IMPORTER
   EXPORTER
@@ -69,7 +70,7 @@ model User {
   email        String    @unique
   passwordHash String
   companyName  String?
-  phone        String?
+  phone        String?   @unique
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -241,4 +242,15 @@ model RefreshToken {
   expiresAt DateTime
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model PendingAdmin {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String
+  otp             String
+  otpExpiresAt    DateTime
+  isOtpVerified   Boolean  @default(false)
+  isApproved      Boolean  @default(false)
+  createdAt       DateTime @default(now())
 }
