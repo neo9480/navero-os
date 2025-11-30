@@ -3,12 +3,10 @@ import bcrypt from "bcryptjs";
 
 // Create a user
 async function createUser(
-  ownerName,
   companyName,
   email,
   password,
   phone,
-  address,
   role,
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
@@ -17,10 +15,8 @@ async function createUser(
     data: {
       email,
       passwordHash,
-      ownerName,
       companyName,
       phone,
-      address,
       role,
     },
   });

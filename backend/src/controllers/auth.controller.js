@@ -2,6 +2,7 @@ import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
+import userUtils from "../utils/user.utils.js";
 
 function generateAccessToken(user) {
   return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
@@ -23,16 +24,22 @@ async function register(req, res) {
   try {
     const { email, password, role, companyName, phone } = req.body;
 
-    const exists = await prisma.user.findUnique({ where: { email } });
+    const exists = await userUtils.findUserByEmail( email );
     if (exists) return res.status(400).json({ error: "Email already in use" });
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: { email, passwordHash, role, companyName, phone },
-    });
+    const user = await userUtils.createUser(
+      email,
+      passwordHash,
+      role,
+      companyName,
+      phone,
+    );
 
-    res.status(201).json({ message: "User registered", userId: user.id });
+    const { passwordHash: _unused, ...safeUser } = user;
+
+    res.status( 201 ).json( { message: "User registered", user: safeUser   });
   } catch (err) {
     console.error( "failed to register user:", err );
   }
@@ -56,12 +63,14 @@ async function login(req, res) {
     );
     const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
 
-    setRefreshCookie(res, refreshToken, expiresAt);
+    setRefreshCookie( res, refreshToken, expiresAt );
+    
+    const { passwordHash: _unused, ...safeUser } = user;
 
     res.json({
       message: "user login successfull",
       accessToken,
-      user: { id: user.id, role: user.role, email: user.email },
+      user: safeUser,
     });
   } catch (err) {
     console.error("failed to login user:", err);

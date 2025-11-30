@@ -1,19 +1,5 @@
 import userUtils from "../utils/user.utils.js";
 
-
-async function register(req, res) {
-try {
-  const { role, email, password } = req.body;
-  
-} catch (err) {
-  console.error('', err);
-}
-}
-
-async function login(req, res) {
-  
-}
-
 async function getAllUsers(req, res) {
 
 }
@@ -83,8 +69,6 @@ async function getStats(req, res) {
 }
 
 export default {
-  register,
-  login,
   getAllUsers,
   getUserById,
   deleteUser,
