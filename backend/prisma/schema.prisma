@@ -71,6 +71,7 @@ model User {
   passwordHash String
   companyName  String?
   phone        String?   @unique
+  address      String?   
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

@@ -22,26 +22,25 @@ function setRefreshCookie(res, token, expiresAt) {
 
 async function register(req, res) {
   try {
-    const { email, password, role, companyName, phone } = req.body;
+    const { email, password, role, companyName, phone, address } = req.body;
 
-    const exists = await userUtils.findUserByEmail( email );
+    const exists = await userUtils.findUserByEmail(email);
     if (exists) return res.status(400).json({ error: "Email already in use" });
-
-    const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await userUtils.createUser(
       email,
-      passwordHash,
+      password,
       role,
       companyName,
       phone,
+      address,
     );
 
     const { passwordHash: _unused, ...safeUser } = user;
 
-    res.status( 201 ).json( { message: "User registered", user: safeUser   });
+    res.status(201).json({ message: "User registered", user: safeUser });
   } catch (err) {
-    console.error( "failed to register user:", err );
+    console.error("failed to register user:", err);
   }
 }
 
@@ -50,10 +49,11 @@ async function login(req, res) {
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ error: "Invalid credentials" });
+    if (!user) return res.status(400).json({ error: "invalid email or password" });
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid) return res.status(400).json({ error: "Invalid credentials" });
+    const valid = await userUtils.verifyPassword(password, user.passwordHash);
+    if (!valid)
+      return res.status(400).json({ error: "invalid email or password", valid });
 
     const accessToken = generateAccessToken(user);
 
@@ -63,8 +63,8 @@ async function login(req, res) {
     );
     const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
 
-    setRefreshCookie( res, refreshToken, expiresAt );
-    
+    setRefreshCookie(res, refreshToken, expiresAt);
+
     const { passwordHash: _unused, ...safeUser } = user;
 
     res.json({
@@ -105,7 +105,7 @@ async function refresh(req, res) {
     const accessToken = generateAccessToken(user);
     res.json({ accessToken });
   } catch (err) {
-    console.error( "failed to refresh token:", err );
+    console.error("failed to refresh token:", err);
   }
 }
 
@@ -118,7 +118,7 @@ async function logout(req, res) {
     }
     res.json({ message: "Logged out" });
   } catch (err) {
-    console.error( "failed to logout user:", err );
+    console.error("failed to logout user:", err);
   }
 }
 
@@ -133,7 +133,65 @@ async function logoutAll(req, res) {
 
     res.json({ message: "Logged out from all devices" });
   } catch (err) {
-    console.error( "failed to logout all users:", err );
+    console.error("failed to logout all users:", err);
+  }
+}
+
+async function getUserProfile(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const user = await userUtils.findUserById(userId);
+
+    const { passwordHash: _unused, ...safeUser } = user;
+
+    res.status(200).json({
+      message: "user profile fetched successfully",
+      user: safeUser,
+    });
+  } catch (err) {
+    console.error("failed to fetch user", err);
+  }
+}
+
+async function updateUserProfile(req, res) {
+  try {
+    const userId = req.user.id;
+    const { companyName, phone, address } = req.body;
+
+    // build dynamic update object
+    const updateData = {};
+    if (companyName !== undefined) updateData.companyName = companyName;
+    if (phone !== undefined) updateData.phone = phone;
+    if (address !== undefined) updateData.address = address;
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: "no valid fields to update" });
+    }
+
+    const updatedUser = await userUtils.updateUser(userId, updateData);
+
+    res.status(200).json({
+      message: "user profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error("failed to update user", err);
+  }
+}
+
+async function deleteUserProfile(req, res) {
+  try {
+    const userId = req.user.id;
+
+    await authUtils.deleteAllTokensForUser(userId);
+    await userUtils.deleteUser(userId);
+
+    res.status(200).json({
+      message: "user deleted successfully",
+    });
+  } catch (err) {
+    console.error("failed to delete user", err);
   }
 }
 
@@ -145,4 +203,7 @@ export default {
   refresh,
   logout,
   logoutAll,
+  getUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
 };

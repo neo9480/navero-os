@@ -69,6 +69,7 @@ export type RefreshToken = $Result.DefaultSelection<Prisma.$RefreshTokenPayload>
  */
 export namespace $Enums {
   export const UserRole: {
+  SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   IMPORTER: 'IMPORTER',
   EXPORTER: 'EXPORTER',
@@ -2049,6 +2050,7 @@ export namespace Prisma {
     passwordHash: string | null
     companyName: string | null
     phone: string | null
+    address: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2060,6 +2062,7 @@ export namespace Prisma {
     passwordHash: string | null
     companyName: string | null
     phone: string | null
+    address: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2071,6 +2074,7 @@ export namespace Prisma {
     passwordHash: number
     companyName: number
     phone: number
+    address: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2084,6 +2088,7 @@ export namespace Prisma {
     passwordHash?: true
     companyName?: true
     phone?: true
+    address?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2095,6 +2100,7 @@ export namespace Prisma {
     passwordHash?: true
     companyName?: true
     phone?: true
+    address?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2106,6 +2112,7 @@ export namespace Prisma {
     passwordHash?: true
     companyName?: true
     phone?: true
+    address?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2190,6 +2197,7 @@ export namespace Prisma {
     passwordHash: string
     companyName: string | null
     phone: string | null
+    address: string | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2218,6 +2226,7 @@ export namespace Prisma {
     passwordHash?: boolean
     companyName?: boolean
     phone?: boolean
+    address?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
@@ -2244,6 +2253,7 @@ export namespace Prisma {
     passwordHash?: boolean
     companyName?: boolean
     phone?: boolean
+    address?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2255,6 +2265,7 @@ export namespace Prisma {
     passwordHash?: boolean
     companyName?: boolean
     phone?: boolean
+    address?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2266,11 +2277,12 @@ export namespace Prisma {
     passwordHash?: boolean
     companyName?: boolean
     phone?: boolean
+    address?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "email" | "passwordHash" | "companyName" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "email" | "passwordHash" | "companyName" | "phone" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     verifiedDocuments?: boolean | User$verifiedDocumentsArgs<ExtArgs>
@@ -2316,6 +2328,7 @@ export namespace Prisma {
       passwordHash: string
       companyName: string | null
       phone: string | null
+      address: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2761,6 +2774,7 @@ export namespace Prisma {
     readonly passwordHash: FieldRef<"User", 'String'>
     readonly companyName: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
+    readonly address: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -13829,6 +13843,7 @@ export namespace Prisma {
     passwordHash: 'passwordHash',
     companyName: 'companyName',
     phone: 'phone',
+    address: 'address',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -14133,6 +14148,7 @@ export namespace Prisma {
     passwordHash?: StringFilter<"User"> | string
     companyName?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     uploadedDocuments?: DocumentListRelationFilter
@@ -14158,6 +14174,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     companyName?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     uploadedDocuments?: DocumentOrderByRelationAggregateInput
@@ -14179,13 +14196,14 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    phone?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     passwordHash?: StringFilter<"User"> | string
     companyName?: StringNullableFilter<"User"> | string | null
-    phone?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     uploadedDocuments?: DocumentListRelationFilter
@@ -14202,7 +14220,7 @@ export namespace Prisma {
     shipmentEvents?: ShipmentEventListRelationFilter
     notifications?: NotificationListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
-  }, "id" | "email">
+  }, "id" | "email" | "phone">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -14211,6 +14229,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     companyName?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -14228,6 +14247,7 @@ export namespace Prisma {
     passwordHash?: StringWithAggregatesFilter<"User"> | string
     companyName?: StringNullableWithAggregatesFilter<"User"> | string | null
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    address?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -14902,6 +14922,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -14927,6 +14948,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -14952,6 +14974,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -14977,6 +15000,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -15002,6 +15026,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15013,6 +15038,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15024,6 +15050,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15844,6 +15871,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     companyName?: SortOrder
     phone?: SortOrder
+    address?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15855,6 +15883,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     companyName?: SortOrder
     phone?: SortOrder
+    address?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15866,6 +15895,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     companyName?: SortOrder
     phone?: SortOrder
+    address?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18718,6 +18748,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -18742,6 +18773,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -18822,6 +18854,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -18846,6 +18879,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -18886,6 +18920,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -18910,6 +18945,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -18978,6 +19014,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19002,6 +19039,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19071,6 +19109,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19095,6 +19134,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19170,6 +19210,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19194,6 +19235,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19218,6 +19260,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19242,6 +19285,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19271,6 +19315,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19295,6 +19340,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19324,6 +19370,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19348,6 +19395,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19420,6 +19468,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19444,6 +19493,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19479,6 +19529,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19503,6 +19554,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19538,6 +19590,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19562,6 +19615,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19602,6 +19656,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19626,6 +19681,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19655,6 +19711,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19679,6 +19736,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19708,6 +19766,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -19732,6 +19791,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -19853,6 +19913,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19877,6 +19938,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19912,6 +19974,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19936,6 +19999,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -19971,6 +20035,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -19995,6 +20060,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -20115,6 +20181,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -20139,6 +20206,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -20220,6 +20288,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -20244,6 +20313,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -20268,6 +20338,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
@@ -20292,6 +20363,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
@@ -20321,6 +20393,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -20345,6 +20418,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -20449,6 +20523,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
@@ -20473,6 +20548,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
@@ -20508,6 +20584,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -20532,6 +20609,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -20632,6 +20710,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -20656,6 +20735,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -20696,6 +20776,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -20720,6 +20801,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
@@ -20744,6 +20826,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
@@ -20768,6 +20851,7 @@ export namespace Prisma {
     passwordHash: string
     companyName?: string | null
     phone?: string | null
+    address?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
@@ -20808,6 +20892,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
@@ -20832,6 +20917,7 @@ export namespace Prisma {
     passwordHash?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
