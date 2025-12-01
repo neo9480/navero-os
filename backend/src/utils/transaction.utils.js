@@ -84,5 +84,5 @@ export default {
   getUserTransactions,
   getAllUserTransactions,
   getTransactionById,
-  updateTransactionStatus
-}
+  updateTransactionStatus,
+};

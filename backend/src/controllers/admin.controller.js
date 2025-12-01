@@ -4,6 +4,7 @@ import shipmentUtils from "../utils/shipment.utils.js";
 import transactionUtils from "../utils/transaction.utils.js";
 import serviceUtils from "../utils/service.utils.js";
 import bookingUtils from "../utils/booking.utils.js";
+import statsUtils from "../utils/stats.utils.js";
 
 async function getAllUsers(req, res) {
   try {
@@ -183,10 +184,10 @@ async function deleteService(req, res) {
 async function getAllBookings(req, res) {
   try {
     const bookings = await bookingUtils.getAllUserBookings();
-    res.status( 200 ).json( {
+    res.status(200).json({
       message: "bookings fetched successfully",
-      Bookings: bookings
-    } );
+      Bookings: bookings,
+    });
   } catch (err) {
     console.error("failed to fetch bookings", err);
   }
@@ -195,16 +196,16 @@ async function getAllBookings(req, res) {
 async function getBookingById(req, res) {
   try {
     const bookingId = req.params.id;
-    const booking = await bookingUtils.getBookingById( bookingId );
+    const booking = await bookingUtils.getBookingById(bookingId);
     if (!booking) {
       return res.status(404).json({
         message: "booking not found",
       });
     }
-    res.status( 200 ).json( {
+    res.status(200).json({
       message: "booking fetched successfully",
-      Booking: booking
-    } );
+      Booking: booking,
+    });
   } catch (err) {
     console.error("failed to fetch booking", err);
   }
@@ -214,39 +215,33 @@ async function deleteBooking(req, res) {
   try {
     const bookingId = req.params.id;
 
-    await bookingUtils.deleteBooking( bookingId );
-    res.status( 200 ).json( {
-      message: "booking deleted successfully"
-    } );
+    await bookingUtils.deleteBooking(bookingId);
+    res.status(200).json({
+      message: "booking deleted successfully",
+    });
   } catch (err) {
     console.error("failed to delete booking", err);
   }
 }
 
-async function getStats(req, res) {
+export async function getStats(req, res) {
   try {
-    const [
-      totalUsers,
-      totalShipments,
-      totalTransactions,
-      totalServices,
-      totalBookings,
-    ] = await Promise.all([
-      userUtils.countUsers(),
-      shipmentUtils.countShipments(),
-      transactionUtils.countTransactions(),
-      serviceUtils.countServices(),
-      bookingUtils.countBookings(),
-    ]);
+    // live stats
+    const live = await statsUtils.computeLiveStats();
 
+    // trends: last 30 days
+    const trends = await statsUtils.getDailyTrends(30);
+
+    // growth: compare last 30 days vs previous 30 days
+    const growth = await statsUtils.computeGrowthMetrics({ windowDays: 30 });
+
+    // optional: quick breakdowns (top providers, pending shipments) - add if needed
     res.status(200).json({
       message: "stats fetched successfully",
       stats: {
-        totalUsers,
-        totalShipments,
-        totalTransactions,
-        totalServices,
-        totalBookings,
+        live,
+        trends,
+        growth,
       },
     });
   } catch (err) {
@@ -254,7 +249,6 @@ async function getStats(req, res) {
     res.status(500).json({ error: "failed to fetch stats" });
   }
 }
-
 
 export default {
   getAllUsers,

@@ -5,7 +5,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import errorMiddleware from "./middlewares/error.middleware.js";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
 // Role-based routing modules
 import adminRoutes from "./routes/admin.routes.js";
@@ -38,8 +38,6 @@ app.get("/", async (req, res) => {
     console.error("CANNOT GET /:", err);
   }
 });
-
-console.log()
 
 /*  
   Route groups

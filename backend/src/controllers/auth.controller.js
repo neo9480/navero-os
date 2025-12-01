@@ -49,11 +49,14 @@ async function login(req, res) {
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ error: "invalid email or password" });
+    if (!user)
+      return res.status(400).json({ error: "invalid email or password" });
 
     const valid = await userUtils.verifyPassword(password, user.passwordHash);
     if (!valid)
-      return res.status(400).json({ error: "invalid email or password", valid });
+      return res
+        .status(400)
+        .json({ error: "invalid email or password", valid });
 
     const accessToken = generateAccessToken(user);
 

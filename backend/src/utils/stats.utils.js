@@ -33,7 +33,7 @@ export async function computeLiveStats() {
     // revenue: sum of COMPLETED transactions for payment types
     sumRevenue({
       status: "COMPLETED",
-      type: "SUBSCRIPTION_FEE"
+      type: "SUBSCRIPTION_FEE",
     }),
   ]);
 

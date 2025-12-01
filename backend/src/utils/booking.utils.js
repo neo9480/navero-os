@@ -77,12 +77,11 @@ async function deleteBooking(bookingId) {
   });
 }
 
-
 export default {
   createBooking,
   getUserBookings,
   getAllUserBookings,
   getBookingById,
   updateBookingStatus,
-  deleteBooking
-}
+  deleteBooking,
+};

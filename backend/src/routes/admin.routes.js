@@ -1,5 +1,7 @@
 import express from "express";
 import adminController from "../controllers/admin.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import adminMiddleware from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 
@@ -10,9 +12,24 @@ const router = express.Router();
 | Full trust zone. Admin can view all users, inspect a single user, or
 | remove user accounts entirely.
 */
-router.get("/user", adminController.getAllUsers); // Fetch list of all users
-router.get("/user/:id", adminController.getUserById); // Fetch details of a specific user
-router.delete("/user/:id", adminController.deleteUser); // Delete a user by ID
+router.get(
+  "/user",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllUsers,
+); // Fetch list of all users
+router.get(
+  "/user/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getUserById,
+); // Fetch details of a specific user
+router.delete(
+  "/user/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.deleteUser,
+); // Delete a user by ID
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +38,24 @@ router.delete("/user/:id", adminController.deleteUser); // Delete a user by ID
 | Admin can inspect all shipments and remove shipments if required
 | (fraud, abuse, error correction, etc.).
 */
-router.get("/shipments", adminController.getAllShipments); // Get all shipments
-router.get("/shipments/:id", adminController.getServiceById); // Get specific shipment details
-router.delete("/shipments/:id", adminController.deleteService); // Delete shipment
+router.get(
+  "/shipments",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllShipments,
+); // Get all shipments
+router.get(
+  "/shipments/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getServiceById,
+); // Get specific shipment details
+router.delete(
+  "/shipments/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.deleteService,
+); // Delete shipment
 
 /*
 |--------------------------------------------------------------------------
@@ -32,8 +64,18 @@ router.delete("/shipments/:id", adminController.deleteService); // Delete shipme
 | Admin can audit transactions system-wide and delete them only in
 | exceptional cases (e.g., fraud or failed test data cleanup).
 */
-router.get("/transactions", adminController.getAllTransactions); // Fetch all transactions
-router.get("/transactions/:id", adminController.getTransactionById); // Fetch single transaction details
+router.get(
+  "/transactions",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllTransactions,
+); // Fetch all transactions
+router.get(
+  "/transactions/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getTransactionById,
+); // Fetch single transaction details
 
 /*
 |--------------------------------------------------------------------------
@@ -41,9 +83,24 @@ router.get("/transactions/:id", adminController.getTransactionById); // Fetch si
 |--------------------------------------------------------------------------
 | Admin can inspect or remove services listed in the marketplace.
 */
-router.get("/services", adminController.getAllServices); // List all services
-router.get("/services/:id", adminController.getServiceById); // View a specific service
-router.delete("/services/:id", adminController.deleteService); // Remove a service
+router.get(
+  "/services",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllServices,
+); // List all services
+router.get(
+  "/services/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getServiceById,
+); // View a specific service
+router.delete(
+  "/services/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.deleteService,
+); // Remove a service
 
 /*
 |--------------------------------------------------------------------------
@@ -51,9 +108,24 @@ router.delete("/services/:id", adminController.deleteService); // Remove a servi
 |--------------------------------------------------------------------------
 | Admin has visibility into all bookings created by users.
 */
-router.get("/bookings", adminController.getAllBookings); // Get all bookings
-router.get("/bookings/:id", adminController.getBookingById); // Get specific booking
-router.delete("/bookings/:id", adminController.deleteBooking); // Delete booking
+router.get(
+  "/bookings",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllBookings,
+); // Get all bookings
+router.get(
+  "/bookings/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getBookingById,
+); // Get specific booking
+router.delete(
+  "/bookings/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.deleteBooking,
+); // Delete booking
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +133,6 @@ router.delete("/bookings/:id", adminController.deleteBooking); // Delete booking
 |--------------------------------------------------------------------------
 | Metrics, analytics, dashboards, whatever the admin panel needs.
 */
-router.get("/stats", adminController.getStats); // Fetch system-wide statistics
+router.get("/stats", authMiddleware, adminMiddleware, adminController.getStats); // Fetch system-wide statistics
 
 export default router;
