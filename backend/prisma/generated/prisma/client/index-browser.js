@@ -227,6 +227,46 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
   expiresAt: 'expiresAt'
 };
 
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  type: 'type',
+  direction: 'direction',
+  status: 'status',
+  referenceId: 'referenceId',
+  referenceType: 'referenceType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BookingScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  serviceId: 'serviceId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DailyStatsScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  usersTotal: 'usersTotal',
+  usersNew: 'usersNew',
+  shipmentsTotal: 'shipmentsTotal',
+  shipmentsNew: 'shipmentsNew',
+  bookingsTotal: 'bookingsTotal',
+  bookingsNew: 'bookingsNew',
+  servicesTotal: 'servicesTotal',
+  servicesNew: 'servicesNew',
+  transactionsTotal: 'transactionsTotal',
+  transactionsNew: 'transactionsNew',
+  revenueTotal: 'revenueTotal',
+  revenueNew: 'revenueNew',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -289,6 +329,40 @@ exports.DocumentType = exports.$Enums.DocumentType = {
   OTHER: 'OTHER'
 };
 
+exports.TransactionType = exports.$Enums.TransactionType = {
+  SERVICE_PAYMENT: 'SERVICE_PAYMENT',
+  BOOKING_PAYMENT: 'BOOKING_PAYMENT',
+  LC_FEE: 'LC_FEE',
+  SHIPMENT_FEE: 'SHIPMENT_FEE',
+  SUBSCRIPTION_FEE: 'SUBSCRIPTION_FEE'
+};
+
+exports.TransactionDirection = exports.$Enums.TransactionDirection = {
+  DEBIT: 'DEBIT',
+  CREDIT: 'CREDIT'
+};
+
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TransactionReference = exports.$Enums.TransactionReference = {
+  SHIPMENT: 'SHIPMENT',
+  BOOKING: 'BOOKING',
+  LC: 'LC',
+  SERVICE: 'SERVICE',
+  OTHER: 'OTHER'
+};
+
+exports.BookingStatus = exports.$Enums.BookingStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Service: 'Service',
@@ -299,7 +373,10 @@ exports.Prisma.ModelName = {
   ShipmentEvent: 'ShipmentEvent',
   Document: 'Document',
   Notification: 'Notification',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Transaction: 'Transaction',
+  Booking: 'Booking',
+  DailyStats: 'DailyStats'
 };
 
 /**

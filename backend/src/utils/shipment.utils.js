@@ -45,6 +45,48 @@ async function getShipments() {
   });
 }
 
+async function getImporterShipments(userId) {
+  return prisma.shipment.findMany({
+    where: { importerId: userId },
+    include: {
+      importer: true,
+      exporter: true,
+      broker: true,
+      service: true,
+      events: true,
+      documents: true,
+    },
+  });
+}
+
+async function getExporterShipments(userId) {
+  return prisma.shipment.findMany({
+    where: { exporterId: userId },
+    include: {
+      importer: true,
+      exporter: true,
+      broker: true,
+      service: true,
+      events: true,
+      documents: true,
+    },
+  });
+}
+
+async function getBrokerShipments(userId) {
+  return prisma.shipment.findMany({
+    where: { brokerId: userId },
+    include: {
+      importer: true,
+      exporter: true,
+      broker: true,
+      service: true,
+      events: true,
+      documents: true,
+    },
+  });
+}
+
 async function deleteShipment(id) {
   return prisma.shipment.delete({
     where: { id },
@@ -55,5 +97,8 @@ export default {
   createShipment,
   getShipmentById,
   getShipments,
+  getImporterShipments,
+  getExporterShipments,
+  getBrokerShipments,
   deleteShipment,
 };

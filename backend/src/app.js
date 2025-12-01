@@ -8,7 +8,7 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 import dotenv from "dotenv"
 
 // Role-based routing modules
-// import adminRoutes from "./routes/admin.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 // import bankRoutes from "./routes/bank.routes.js";
 // import brokerRoutes from "./routes/broker.routes.js";
@@ -54,7 +54,7 @@ console.log()
   - /api/services     Marketplace services listed by providers
 */
 
-// app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 // app.use("/api/bank", bankRoutes);
 // app.use("/api/broker", brokerRoutes);

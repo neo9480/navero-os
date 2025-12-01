@@ -5,16 +5,6 @@ const router = express.Router();
 
 /*
 |--------------------------------------------------------------------------
-| Admin Authentication Routes
-|--------------------------------------------------------------------------
-| These routes handle admin account creation and login. In a real system,
-| registration should probably be restricted or disabled entirely.
-*/
-router.post("/register", adminController.register); // Create a new admin account
-router.post("/login", adminController.login); // Log in as admin and receive a token/session
-
-/*
-|--------------------------------------------------------------------------
 | Admin User Management
 |--------------------------------------------------------------------------
 | Full trust zone. Admin can view all users, inspect a single user, or
@@ -44,7 +34,6 @@ router.delete("/shipments/:id", adminController.deleteService); // Delete shipme
 */
 router.get("/transactions", adminController.getAllTransactions); // Fetch all transactions
 router.get("/transactions/:id", adminController.getTransactionById); // Fetch single transaction details
-router.delete("/transactions/:id", adminController.deleteTransaction); // Delete a transaction
 
 /*
 |--------------------------------------------------------------------------

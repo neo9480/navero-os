@@ -24,6 +24,15 @@ async function createUser(
   });
 }
 
+// Find all users
+async function findAllUsers() {
+  return await prisma.user.findMany({
+    where: {
+      role: { not: "ADMIN" },
+    },
+  });
+}
+
 // Find by email
 async function findUserByEmail(email) {
   return prisma.user.findUnique({
@@ -57,6 +66,7 @@ async function deleteUser( userId ) {
 
 export default {
   createUser,
+  findAllUsers,
   findUserByEmail,
   findUserById,
   verifyPassword,

@@ -59,6 +59,40 @@ enum ShipmentEventType {
   ARRIVED
 }
 
+enum TransactionType {
+  SERVICE_PAYMENT
+  BOOKING_PAYMENT
+  LC_FEE
+  SHIPMENT_FEE
+  SUBSCRIPTION_FEE
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TransactionDirection {
+  DEBIT   // money going OUT from user
+  CREDIT  // money coming IN to user
+}
+
+enum TransactionReference {
+  SHIPMENT
+  BOOKING
+  LC
+  SERVICE
+  OTHER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
 //////////////////////////////
 // MODELS
 //////////////////////////////
@@ -92,6 +126,8 @@ model User {
   shipmentEvents  ShipmentEvent[]
   notifications  Notification[]
   refreshTokens  RefreshToken[]
+  transactions  Transaction[]
+  bookings Booking[]
 }
 
 
@@ -107,6 +143,7 @@ model Service {
 
   // ADD THIS
   shipments Shipment[]
+  bookings Booking[]
 
   createdAt DateTime @default(now())
 }
@@ -159,7 +196,8 @@ model LC {
   exporter User @relation("ExporterLC", fields: [exporterId], references: [id])
   bank     User @relation("BankLC",     fields: [bankId],     references: [id])
 
-  documents Document[]
+  documents Document[] @relation("LC_Documents")
+
 }
 
 // Shipments (Exporter → Importer, handled by broker and services)
@@ -218,7 +256,7 @@ model Document {
   verifiedBy User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
 
   shipment Shipment? @relation(fields: [shipmentId], references: [id])
-  lc       LC?       @relation(fields: [lcId], references: [id])
+  lc   LC?      @relation("LC_Documents", fields: [lcId], references: [id])
 }
 
 
@@ -243,4 +281,49 @@ model RefreshToken {
   expiresAt DateTime
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id            String                 @id @default(uuid())
+  userId        String
+  amount        Float
+  type          TransactionType
+  direction     TransactionDirection
+  status        TransactionStatus      @default(PENDING)
+  referenceId   String?
+  referenceType TransactionReference?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  user          User                   @relation(fields: [userId], references: [id])
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  userId      String
+  serviceId   String
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+}
+
+model DailyStats {
+  id               String   @id @default(cuid())
+  date             DateTime @unique         // snapshot date (midnight)
+  usersTotal       Int
+  usersNew         Int
+  shipmentsTotal   Int
+  shipmentsNew     Int
+  bookingsTotal    Int
+  bookingsNew      Int
+  servicesTotal    Int
+  servicesNew      Int
+  transactionsTotal Int
+  transactionsNew   Int
+  revenueTotal     Float    @default(0)     // cumulative revenue up-to-date
+  revenueNew       Float    @default(0)     // revenue in that day
+  createdAt        DateTime @default(now())
 }
