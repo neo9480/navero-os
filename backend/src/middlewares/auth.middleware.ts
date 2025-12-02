@@ -36,9 +36,13 @@ const parseDuration = (str: any): number => {
 };
 
 const generateAccessToken = (userId: any) => {
-  return jwt.sign({ id: userId }, JWT_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
-  });
+  return jwt.sign(
+    { id: userId },
+    JWT_SECRET as jwt.Secret,
+    ({
+      expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+    } as unknown) as jwt.SignOptions,
+  );
 };
 
 const setRefreshCookie = (res: any, token: any, expiresAt: any) => {
@@ -64,7 +68,7 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decoded = jwt.verify(accessToken, JWT_SECRET);
+    const decoded = jwt.verify(accessToken, JWT_SECRET as jwt.Secret) as { id: string };
     const user = await userUtils.findUserById(decoded.id);
 
     if (!user) return res.status(401).json({ message: "user not found" });

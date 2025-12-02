@@ -1,4 +1,4 @@
-import logo from "../assets/light-navero-removebg.png"
+import logo from "../assets/light-navero-removebg.png";
 
 const Navbar = () => {
   return (
@@ -23,12 +23,16 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="flex flex-row gap-1">
-        <button className="text-xl text-[#0d192d] p-1 border-2 border-white hover:border-b-[#0d192d] cursor-pointer">login</button>
+        <button className="text-xl text-[#0d192d] p-1 border-2 border-white hover:border-b-[#0d192d] cursor-pointer">
+          login
+        </button>
         <p className="text-xl text-[#0d192d] p-1 cursor-default">/</p>
-        <button className="text-xl text-[#0d192d] p-1 border-2 border-white hover:border-b-[#0d192d] cursor-pointer">sign up</button>
+        <button className="text-xl text-[#0d192d] p-1 border-2 border-white hover:border-b-[#0d192d] cursor-pointer">
+          sign up
+        </button>
       </div>
     </div>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

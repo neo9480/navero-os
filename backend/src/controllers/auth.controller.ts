@@ -2,11 +2,22 @@ import prisma from "../db/prismaClient.js";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
+import dotenv from "dotenv"
+
+dotenv.config();
 
 function generateAccessToken(user: any) {
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
-  });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+
+  const jwtSecret: jwt.Secret = secret as jwt.Secret;
+  const options: jwt.SignOptions = {
+    expiresIn: (process.env.ACCESS_TOKEN_TTL || "15m") as jwt.SignOptions["expiresIn"],
+  };
+
+  return jwt.sign({ id: user.id, role: user.role }, jwtSecret, options);
 }
 
 function setRefreshCookie(res: any, token: any, expiresAt: any) {
