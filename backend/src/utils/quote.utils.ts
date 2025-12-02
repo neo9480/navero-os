@@ -1,7 +1,7 @@
 import prisma from "../db/prismaClient.js";
 
 // Importer creates quote request
-async function createQuoteRequest(importerId, payload) {
+async function createQuoteRequest(importerId: any, payload: any) {
   return prisma.quoteRequest.create({
     data: {
       importerId,
@@ -11,7 +11,11 @@ async function createQuoteRequest(importerId, payload) {
 }
 
 // Exporter responds
-async function createQuoteResponse(exporterId, quoteRequestId, payload) {
+async function createQuoteResponse(
+  exporterId: any,
+  quoteRequestId: any,
+  payload: any,
+) {
   return prisma.quoteResponse.create({
     data: {
       exporterId,

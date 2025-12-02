@@ -5,7 +5,7 @@ import { subDays, startOfDay, endOfDay } from "date-fns";
 /**
  * Helper: sum revenue for a given where clause
  */
-async function sumRevenue(where) {
+async function sumRevenue(where: any) {
   const res = await prisma.transaction.aggregate({
     _sum: { amount: true },
     where,
@@ -16,7 +16,7 @@ async function sumRevenue(where) {
 /**
  * Compute live totals (current totals from DB)
  */
-export async function computeLiveStats() {
+async function computeLiveStats() {
   const [
     usersTotal,
     shipmentsTotal,
@@ -50,9 +50,13 @@ export async function computeLiveStats() {
 /**
  * Count new records between start and end
  */
-async function countNewBetween(modelName, start, end) {
+async function countNewBetween(
+  modelName: "user" | "shipment" | "booking" | "service" | "transaction",
+  start: any,
+  end: any
+) {
   // modelName must match Prisma models: 'user', 'shipment', 'booking', 'service', 'transaction'
-  return prisma[modelName].count({
+  return (prisma[modelName] as any).count({
     where: {
       createdAt: {
         gte: start,
@@ -65,7 +69,7 @@ async function countNewBetween(modelName, start, end) {
 /**
  * Create daily snapshot for a specific date (dateAt should be a Date at midnight local time)
  */
-export async function recordDailySnapshot(dateAt = new Date()) {
+async function recordDailySnapshot(dateAt = new Date()) {
   // Normalize to startOfDay local time
   const dayStart = startOfDay(dateAt);
   const dayEnd = endOfDay(dateAt);
@@ -154,7 +158,7 @@ export async function recordDailySnapshot(dateAt = new Date()) {
  * Return daily trend arrays for the last N days (including today).
  * Each element: { date: ISOString, usersNew, shipmentsNew, bookingsNew, transactionsNew, revenueNew }
  */
-export async function getDailyTrends(days = 30) {
+async function getDailyTrends(days = 30) {
   const start = startOfDay(subDays(new Date(), days - 1));
   // Fetch rows from DailyStats where date >= start
   const rows = await prisma.dailyStats.findMany({
@@ -190,7 +194,7 @@ export async function getDailyTrends(days = 30) {
  * This implementation uses sums over windows:
  * - last N days vs previous N days for relative growth
  */
-export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
+async function computeGrowthMetrics({ windowDays = 30 } = {}) {
   const today = startOfDay(new Date());
   const endCurrent = today; // use current day as end (snapshots stored midnight)
   const startCurrent = subDays(endCurrent, windowDays - 1);
@@ -205,13 +209,13 @@ export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
   });
 
   // helper to sum field for date ranges
-  const sumField = (rows, start, end, field) =>
+  const sumField = (rows: any, start: any, end: any, field: any) =>
     rows
-      .filter((r) => {
+      .filter((r: any) => {
         const t = startOfDay(new Date(r.date));
         return t >= start && t < end;
       })
-      .reduce((s, row) => s + Number(row[field] ?? 0), 0);
+      .reduce((s: any, row: any) => s + Number(row[field] ?? 0), 0);
 
   const currentUsersNew = sumField(
     allRows,
@@ -229,7 +233,7 @@ export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
   );
   const prevRevenue = sumField(allRows, startPrev, startCurrent, "revenueNew");
 
-  const pct = (curr, prev) => {
+  const pct = (curr: any, prev: any) => {
     if (prev === 0) return curr === 0 ? 0 : 100;
     return ((curr - prev) / Math.abs(prev)) * 100;
   };
@@ -248,3 +252,12 @@ export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
     windowDays,
   };
 }
+
+export default {
+  sumRevenue,
+  computeLiveStats,
+  countNewBetween,
+  recordDailySnapshot,
+  getDailyTrends,
+  computeGrowthMetrics,
+};

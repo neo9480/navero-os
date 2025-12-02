@@ -8,7 +8,15 @@ import prisma from "../db/prismaClient.js";
  * @param {String} params.serviceId - Which service is being booked.
  * @param {"PENDING"|"CONFIRMED"|"CANCELLED"} params.status - Optional, defaults to PENDING.
  */
-async function createBooking({ userId, serviceId, status = "PENDING" }) {
+async function createBooking({
+  userId,
+  serviceId,
+  status = "PENDING",
+}: {
+  userId: string;
+  serviceId: string;
+  status?: "PENDING" | "CONFIRMED" | "CANCELLED";
+}) {
   if (!userId) throw new Error("Missing userId for createBooking()");
   if (!serviceId) throw new Error("Missing serviceId for createBooking()");
 
@@ -22,7 +30,7 @@ async function createBooking({ userId, serviceId, status = "PENDING" }) {
 /**
  * Get all bookings made by a specific user.
  */
-async function getUserBookings(userId) {
+async function getUserBookings(userId: string) {
   if (!userId) throw new Error("Missing userId");
 
   return prisma.booking.findMany({
@@ -41,7 +49,7 @@ async function getAllUserBookings() {
 /**
  * Get a single booking by ID.
  */
-async function getBookingById(bookingId) {
+async function getBookingById(bookingId: string) {
   return prisma.booking.findUnique({
     where: { id: bookingId },
     include: {
@@ -52,10 +60,13 @@ async function getBookingById(bookingId) {
 }
 
 /**
- * Update a booking’s status.
+ * Update a booking's status.
  * For example: confirming or cancelling a booking.
  */
-async function updateBookingStatus(bookingId, status) {
+async function updateBookingStatus(
+  bookingId: string,
+  status: "PENDING" | "CONFIRMED" | "CANCELLED",
+) {
   if (!bookingId) throw new Error("Missing bookingId");
   if (!status) throw new Error("Missing status");
 
@@ -69,7 +80,7 @@ async function updateBookingStatus(bookingId, status) {
  * Delete a booking entirely.
  * Mostly admin-side usage.
  */
-async function deleteBooking(bookingId) {
+async function deleteBooking(bookingId: string) {
   if (!bookingId) throw new Error("Missing bookingId");
 
   return prisma.booking.delete({

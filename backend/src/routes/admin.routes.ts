@@ -48,13 +48,13 @@ router.get(
   "/shipments/:id",
   authMiddleware,
   adminMiddleware,
-  adminController.getServiceById,
+  adminController.getShipmentById,
 ); // Get specific shipment details
 router.delete(
   "/shipments/:id",
   authMiddleware,
   adminMiddleware,
-  adminController.deleteService,
+  adminController.deleteShipment,
 ); // Delete shipment
 
 /*

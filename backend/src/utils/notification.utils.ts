@@ -10,7 +10,7 @@ import prisma from "../db/prismaClient.js";
  * @param {string} title
  * @param {string} message
  */
-async function pushNotification(userId, title, message) {
+async function pushNotification(userId: any, title: any, message: any) {
   return prisma.notification.create({
     data: { userId, title, message },
   });
@@ -20,7 +20,7 @@ async function pushNotification(userId, title, message) {
  * List notifications for a user
  * @param {string} userId
  */
-async function listNotifications(userId) {
+async function listNotifications(userId: any) {
   return prisma.notification.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },

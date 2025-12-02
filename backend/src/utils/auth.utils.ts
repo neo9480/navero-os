@@ -25,7 +25,7 @@ import crypto from "crypto";
  * @param {Date}   expiresAt - Expiry timestamp for token.
  * @returns {Promise<string>} raw token string to send as httpOnly cookie.
  */
-async function createRefreshToken(userId, expiresAt) {
+async function createRefreshToken(userId: string, expiresAt: Date) {
   const token = crypto.randomBytes(48).toString("hex");
 
   await prisma.refreshToken.create({
@@ -46,7 +46,7 @@ async function createRefreshToken(userId, expiresAt) {
  * @param {string} token
  * @returns {Promise<object|null>}
  */
-async function findRefreshToken(token) {
+async function findRefreshToken(token: string) {
   const record = await prisma.refreshToken.findUnique({
     where: { token },
   });
@@ -71,7 +71,7 @@ async function findRefreshToken(token) {
  * @param {string} token
  * @returns {Promise<void>}
  */
-async function deleteRefreshToken(token) {
+async function deleteRefreshToken(token: string) {
   await prisma.refreshToken
     .delete({
       where: { token },
@@ -85,7 +85,7 @@ async function deleteRefreshToken(token) {
  * @param {string} userId
  * @returns {Promise<void>}
  */
-async function deleteAllTokensForUser(userId) {
+async function deleteAllTokensForUser(userId: string) {
   await prisma.refreshToken.deleteMany({
     where: { userId },
   });

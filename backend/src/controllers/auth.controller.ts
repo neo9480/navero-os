@@ -1,16 +1,15 @@
 import prisma from "../db/prismaClient.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
 
-function generateAccessToken(user) {
+function generateAccessToken(user: any) {
   return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
   });
 }
 
-function setRefreshCookie(res, token, expiresAt) {
+function setRefreshCookie(res: any, token: any, expiresAt: any) {
   res.cookie("refresh_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -20,7 +19,7 @@ function setRefreshCookie(res, token, expiresAt) {
   });
 }
 
-async function register(req, res) {
+async function register(req: any, res: any) {
   try {
     const { email, password, role, companyName, phone, address } = req.body;
 
@@ -44,7 +43,7 @@ async function register(req, res) {
   }
 }
 
-async function login(req, res) {
+async function login(req: any, res: any) {
   try {
     const { email, password } = req.body;
 
@@ -80,12 +79,12 @@ async function login(req, res) {
   }
 }
 
-async function refresh(req, res) {
+async function refresh(req: any, res: any) {
   try {
     const token = req.cookies.refresh_token;
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const record = await authUtils.findRefreshToken(token);
+    const record: any = await authUtils.findRefreshToken(token);
     if (!record || record.revoked)
       return res.status(401).json({ error: "Invalid refresh token" });
 
@@ -112,7 +111,7 @@ async function refresh(req, res) {
   }
 }
 
-async function logout(req, res) {
+async function logout(req: any, res: any) {
   try {
     const token = req.cookies.refresh_token;
     if (token) {
@@ -125,7 +124,7 @@ async function logout(req, res) {
   }
 }
 
-async function logoutAll(req, res) {
+async function logoutAll(req: any, res: any) {
   try {
     // You already have req.user from the middleware (access token verified)
     const userId = req.user.id;
@@ -140,11 +139,12 @@ async function logoutAll(req, res) {
   }
 }
 
-async function getUserProfile(req, res) {
+async function getUserProfile(req: any, res: any) {
   try {
     const userId = req.user.id;
 
     const user = await userUtils.findUserById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     const { passwordHash: _unused, ...safeUser } = user;
 
@@ -157,13 +157,13 @@ async function getUserProfile(req, res) {
   }
 }
 
-async function updateUserProfile(req, res) {
+async function updateUserProfile(req: any, res: any) {
   try {
     const userId = req.user.id;
     const { companyName, phone, address } = req.body;
 
     // build dynamic update object
-    const updateData = {};
+    const updateData: Record<string, any> = {};
     if (companyName !== undefined) updateData.companyName = companyName;
     if (phone !== undefined) updateData.phone = phone;
     if (address !== undefined) updateData.address = address;
@@ -183,7 +183,7 @@ async function updateUserProfile(req, res) {
   }
 }
 
-async function deleteUserProfile(req, res) {
+async function deleteUserProfile(req: any, res: any) {
   try {
     const userId = req.user.id;
 

@@ -2,34 +2,46 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import userUtils from "../utils/user.utils.js";
 import authUtils from "../utils/auth.utils.js";
+import { Request, Response, NextFunction } from "express";
 
 dotenv.config();
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string; role: string; email: string };
+    }
+  }
+}
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
 
 if (!JWT_SECRET) throw new Error("JWT_SECRET missing");
 
-const parseDuration = (str) => {
+const parseDuration = (str: any): number => {
   const match = /^(\d+)([smhd])$/.exec(str);
+  if (!match) return 7 * 86400000; // default to 7 days
   const value = parseInt(match[1], 10);
   const unit = match[2];
 
-  return {
-    s: value * 1000,
-    m: value * 60000,
-    h: value * 3600000,
-    d: value * 86400000,
-  }[unit];
+  return (
+    {
+      s: value * 1000,
+      m: value * 60000,
+      h: value * 3600000,
+      d: value * 86400000,
+    }[unit] || 7 * 86400000
+  );
 };
 
-const generateAccessToken = (userId) => {
+const generateAccessToken = (userId: any) => {
   return jwt.sign({ id: userId }, JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
   });
 };
 
-const setRefreshCookie = (res, token, expiresAt) => {
+const setRefreshCookie = (res: any, token: any, expiresAt: any) => {
   res.cookie("refresh_token", token, {
     httpOnly: true,
     sameSite: "strict",
@@ -39,17 +51,17 @@ const setRefreshCookie = (res, token, expiresAt) => {
   });
 };
 
-async function authMiddleware(req, res, next) {
-  // const authHeader = req.headers.authorization;
-  // const accessToken = authHeader?.startsWith("Bearer ")
-  //   ? authHeader.split(" ")[1]
-  //   : null;
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  const accessToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
 
   const refreshToken = req.cookies?.refresh_token;
 
-  // if (!accessToken) {
-  //   return res.status(401).json({ message: "access token missing" });
-  // }
+  if (!accessToken) {
+    return res.status(401).json({ message: "access token missing" });
+  }
 
   try {
     const decoded = jwt.verify(accessToken, JWT_SECRET);
@@ -64,7 +76,7 @@ async function authMiddleware(req, res, next) {
       return res.status(401).json({ message: "login required" });
     }
 
-    const record = await authUtils.findRefreshToken(refreshToken);
+    const record: any = await authUtils.findRefreshToken(refreshToken);
     if (!record || record.revoked || record.expiresAt < new Date()) {
       return res.status(401).json({ message: "refresh token invalid" });
     }

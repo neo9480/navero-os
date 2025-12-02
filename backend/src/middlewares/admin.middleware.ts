@@ -1,4 +1,6 @@
-export default function adminMiddleware(req, res, next) {
+import { Request, Response, NextFunction } from "express";
+
+async function adminMiddleware(req: any, res: any, next: NextFunction) {
   try {
     const user = req.user;
     if (!user) {
@@ -15,3 +17,5 @@ export default function adminMiddleware(req, res, next) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+export default adminMiddleware;

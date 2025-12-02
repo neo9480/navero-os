@@ -1,7 +1,12 @@
 import prisma from "../db/prismaClient.js";
 
 // Create a service
-async function createService(providerId, name, description, price) {
+async function createService(
+  providerId: string,
+  name: string,
+  description: string,
+  price: number,
+) {
   return prisma.service.create({
     data: {
       providerId,
@@ -22,7 +27,7 @@ async function getAllServices() {
 }
 
 // Get one service
-async function getServiceById(id) {
+async function getServiceById(id: string) {
   return prisma.service.findUnique({
     where: { id },
     include: {
@@ -32,7 +37,7 @@ async function getServiceById(id) {
 }
 
 // Delete service
-async function deleteService(id) {
+async function deleteService(id: string) {
   return prisma.service.delete({
     where: { id },
   });
