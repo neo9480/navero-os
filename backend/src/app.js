@@ -1,10 +1,11 @@
 // Main server setup for Navero backend.
 // Loads middlewares, registers all route groups, and exposes the API.
 
-import express, { Request, Response } from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import dotenv from "dotenv";
 
 // Role-based routing modules
 import adminRoutes from "./routes/admin.routes.js";
@@ -16,10 +17,10 @@ import authRoutes from "./routes/auth.routes.js";
 // import importerRoutes from "./routes/importer.routes.js";
 // import serviceRoutes from "./routes/service.routes.js";
 
-const app: express.Application = express();
+const app = express();
 
 // Parse cookies for session / auth tokens
-app.use(cookieParser() as any);
+app.use(cookieParser());
 
 // Parse incoming JSON payloads
 app.use(express.json());
@@ -27,10 +28,10 @@ app.use(express.json());
 // Global error handler (kept last among middleware but before routes)
 app.use(errorMiddleware.errorHandler);
 
-app.use(morgan("dev") as any);
+app.use(morgan("dev"));
 
 // Health check / root route
-app.get("/", async (req: Request, res: Response) => {
+app.get("/", async (req, res) => {
   try {
     res.send("This is navero backend");
   } catch (err) {

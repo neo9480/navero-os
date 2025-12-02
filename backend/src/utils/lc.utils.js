@@ -1,12 +1,12 @@
 import prisma from "../db/prismaClient.js";
 
 async function createLC(
-  importerId: any,
-  exporterId: any,
-  bankId: any,
-  lcNumber: any,
-  amount: any,
-  currency: any,
+  importerId,
+  exporterId,
+  bankId,
+  lcNumber,
+  amount,
+  currency,
 ) {
   return prisma.lC.create({
     data: {
@@ -20,7 +20,7 @@ async function createLC(
   });
 }
 
-async function updateLCStatus(lcId: any, status: any) {
+async function updateLCStatus(lcId, status) {
   return prisma.lC.update({
     where: { id: lcId },
     data: { status },

@@ -2,14 +2,7 @@ import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 
 // Create a user
-async function createUser(
-  email: string,
-  password: string,
-  role: any,
-  companyName: string,
-  phone: string,
-  address: string,
-) {
+async function createUser(email, password, role, companyName, phone, address) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   return prisma.user.create({
@@ -34,33 +27,33 @@ async function findAllUsers() {
 }
 
 // Find by email
-async function findUserByEmail(email: string) {
+async function findUserByEmail(email) {
   return prisma.user.findUnique({
     where: { email },
   });
 }
 
 // Find by id
-async function findUserById(id: string) {
+async function findUserById(id) {
   return prisma.user.findUnique({
     where: { id },
   });
 }
 
 // Compare password
-async function verifyPassword(plain: string, hash: string) {
+async function verifyPassword(plain, hash) {
   return bcrypt.compare(plain, hash);
 }
 
 // Update user profile
-async function updateUser(id: string, data: any) {
+async function updateUser(id, data) {
   return prisma.user.update({
     where: { id },
     data,
   });
 }
 
-async function deleteUser(userId: string) {
+async function deleteUser(userId) {
   await prisma.user.delete({ where: { id: userId } });
 }
 

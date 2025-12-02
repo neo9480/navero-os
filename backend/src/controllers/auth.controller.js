@@ -1,26 +1,16 @@
 import prisma from "../db/prismaClient.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
-import dotenv from "dotenv"
 
-dotenv.config();
-
-function generateAccessToken(user: any) {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error("JWT_SECRET is not defined");
-  }
-
-  const jwtSecret: jwt.Secret = secret as jwt.Secret;
-  const options: jwt.SignOptions = {
-    expiresIn: (process.env.ACCESS_TOKEN_TTL || "15m") as jwt.SignOptions["expiresIn"],
-  };
-
-  return jwt.sign({ id: user.id, role: user.role }, jwtSecret, options);
+function generateAccessToken(user) {
+  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+  });
 }
 
-function setRefreshCookie(res: any, token: any, expiresAt: any) {
+function setRefreshCookie(res, token, expiresAt) {
   res.cookie("refresh_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -30,7 +20,7 @@ function setRefreshCookie(res: any, token: any, expiresAt: any) {
   });
 }
 
-async function register(req: any, res: any) {
+async function register(req, res) {
   try {
     const { email, password, role, companyName, phone, address } = req.body;
 
@@ -54,7 +44,7 @@ async function register(req: any, res: any) {
   }
 }
 
-async function login(req: any, res: any) {
+async function login(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -90,12 +80,12 @@ async function login(req: any, res: any) {
   }
 }
 
-async function refresh(req: any, res: any) {
+async function refresh(req, res) {
   try {
     const token = req.cookies.refresh_token;
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const record: any = await authUtils.findRefreshToken(token);
+    const record = await authUtils.findRefreshToken(token);
     if (!record || record.revoked)
       return res.status(401).json({ error: "Invalid refresh token" });
 
@@ -122,7 +112,7 @@ async function refresh(req: any, res: any) {
   }
 }
 
-async function logout(req: any, res: any) {
+async function logout(req, res) {
   try {
     const token = req.cookies.refresh_token;
     if (token) {
@@ -135,7 +125,7 @@ async function logout(req: any, res: any) {
   }
 }
 
-async function logoutAll(req: any, res: any) {
+async function logoutAll(req, res) {
   try {
     // You already have req.user from the middleware (access token verified)
     const userId = req.user.id;
@@ -150,12 +140,11 @@ async function logoutAll(req: any, res: any) {
   }
 }
 
-async function getUserProfile(req: any, res: any) {
+async function getUserProfile(req, res) {
   try {
     const userId = req.user.id;
 
     const user = await userUtils.findUserById(userId);
-    if (!user) return res.status(404).json({ error: "User not found" });
 
     const { passwordHash: _unused, ...safeUser } = user;
 
@@ -168,13 +157,13 @@ async function getUserProfile(req: any, res: any) {
   }
 }
 
-async function updateUserProfile(req: any, res: any) {
+async function updateUserProfile(req, res) {
   try {
     const userId = req.user.id;
     const { companyName, phone, address } = req.body;
 
     // build dynamic update object
-    const updateData: Record<string, any> = {};
+    const updateData = {};
     if (companyName !== undefined) updateData.companyName = companyName;
     if (phone !== undefined) updateData.phone = phone;
     if (address !== undefined) updateData.address = address;
@@ -194,7 +183,7 @@ async function updateUserProfile(req: any, res: any) {
   }
 }
 
-async function deleteUserProfile(req: any, res: any) {
+async function deleteUserProfile(req, res) {
   try {
     const userId = req.user.id;
 

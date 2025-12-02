@@ -1,12 +1,12 @@
 import prisma from "../db/prismaClient.js";
 
 async function createShipment(
-  importerId: string,
-  exporterId: string,
-  brokerId: string,
-  serviceId: string,
-  etd: Date,
-  eta: Date,
+  importerId,
+  exporterId,
+  brokerId,
+  serviceId,
+  etd,
+  eta,
 ) {
   return prisma.shipment.create({
     data: {
@@ -20,7 +20,7 @@ async function createShipment(
   });
 }
 
-async function getShipmentById(id: string) {
+async function getShipmentById(id) {
   return prisma.shipment.findUnique({
     where: { id },
     include: {
@@ -45,7 +45,7 @@ async function getShipments() {
   });
 }
 
-async function getImporterShipments(userId: string) {
+async function getImporterShipments(userId) {
   return prisma.shipment.findMany({
     where: { importerId: userId },
     include: {
@@ -59,7 +59,7 @@ async function getImporterShipments(userId: string) {
   });
 }
 
-async function getExporterShipments(userId: string) {
+async function getExporterShipments(userId) {
   return prisma.shipment.findMany({
     where: { exporterId: userId },
     include: {
@@ -73,7 +73,7 @@ async function getExporterShipments(userId: string) {
   });
 }
 
-async function getBrokerShipments(userId: string) {
+async function getBrokerShipments(userId) {
   return prisma.shipment.findMany({
     where: { brokerId: userId },
     include: {
@@ -87,7 +87,7 @@ async function getBrokerShipments(userId: string) {
   });
 }
 
-async function deleteShipment(id: string) {
+async function deleteShipment(id) {
   return prisma.shipment.delete({
     where: { id },
   });

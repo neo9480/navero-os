@@ -6,7 +6,7 @@ import serviceUtils from "../utils/service.utils.js";
 import bookingUtils from "../utils/booking.utils.js";
 import statsUtils from "../utils/stats.utils.js";
 
-async function getAllUsers(req: any, res: any) {
+async function getAllUsers(req, res) {
   try {
     const users = await userUtils.findAllUsers();
     const safeUser = users.map(({ passwordHash, ...rest }) => rest);
@@ -20,7 +20,7 @@ async function getAllUsers(req: any, res: any) {
   }
 }
 
-async function getUserById(req: any, res: any) {
+async function getUserById(req, res) {
   try {
     const userId = req.params.id;
 
@@ -43,7 +43,7 @@ async function getUserById(req: any, res: any) {
   }
 }
 
-async function deleteUser(req: any, res: any) {
+async function deleteUser(req, res) {
   try {
     const userId = req.params.id;
 
@@ -58,7 +58,7 @@ async function deleteUser(req: any, res: any) {
   }
 }
 
-async function getAllShipments(req: any, res: any) {
+async function getAllShipments(req, res) {
   try {
     const shipments = await shipmentUtils.getShipments();
 
@@ -71,7 +71,7 @@ async function getAllShipments(req: any, res: any) {
   }
 }
 
-async function getShipmentById(req: any, res: any) {
+async function getShipmentById(req, res) {
   try {
     const shipmentId = req.params.id;
     const shipment = await shipmentUtils.getShipmentById(shipmentId);
@@ -90,7 +90,7 @@ async function getShipmentById(req: any, res: any) {
   }
 }
 
-async function deleteShipment(req: any, res: any) {
+async function deleteShipment(req, res) {
   try {
     const shipmentId = req.params.id;
     await shipmentUtils.deleteShipment(shipmentId);
@@ -103,7 +103,7 @@ async function deleteShipment(req: any, res: any) {
   }
 }
 
-async function getAllTransactions(req: any, res: any) {
+async function getAllTransactions(req, res) {
   try {
     const transactions = await transactionUtils.getAllUserTransactions();
 
@@ -116,7 +116,7 @@ async function getAllTransactions(req: any, res: any) {
   }
 }
 
-async function getTransactionById(req: any, res: any) {
+async function getTransactionById(req, res) {
   try {
     const transactionId = req.params.id;
     const transaction = await transactionUtils.getTransactionById(
@@ -138,7 +138,7 @@ async function getTransactionById(req: any, res: any) {
   }
 }
 
-async function getAllServices(req: any, res: any) {
+async function getAllServices(req, res) {
   try {
     const services = await serviceUtils.getAllServices();
     res.status(200).json({
@@ -150,7 +150,7 @@ async function getAllServices(req: any, res: any) {
   }
 }
 
-async function getServiceById(req: any, res: any) {
+async function getServiceById(req, res) {
   try {
     const serviceId = req.params.id;
     const service = await serviceUtils.getServiceById(serviceId);
@@ -168,7 +168,7 @@ async function getServiceById(req: any, res: any) {
   }
 }
 
-async function deleteService(req: any, res: any) {
+async function deleteService(req, res) {
   try {
     const serviceId = req.params.id;
     await serviceUtils.deleteService(serviceId);
@@ -181,7 +181,7 @@ async function deleteService(req: any, res: any) {
   }
 }
 
-async function getAllBookings(req: any, res: any) {
+async function getAllBookings(req, res) {
   try {
     const bookings = await bookingUtils.getAllUserBookings();
     res.status(200).json({
@@ -193,7 +193,7 @@ async function getAllBookings(req: any, res: any) {
   }
 }
 
-async function getBookingById(req: any, res: any) {
+async function getBookingById(req, res) {
   try {
     const bookingId = req.params.id;
     const booking = await bookingUtils.getBookingById(bookingId);
@@ -211,7 +211,7 @@ async function getBookingById(req: any, res: any) {
   }
 }
 
-async function deleteBooking(req: any, res: any) {
+async function deleteBooking(req, res) {
   try {
     const bookingId = req.params.id;
 
@@ -224,7 +224,7 @@ async function deleteBooking(req: any, res: any) {
   }
 }
 
-async function getStats(res: any) {
+export async function getStats(req, res) {
   try {
     // live stats
     const live = await statsUtils.computeLiveStats();
