@@ -1,6 +1,9 @@
+import { useState } from "react";
 import logo from "../assets/light-navero-removebg.png";
 
 const Navbar = () => {
+  const { active, setActive } = useState();
+
   return (
     <div className="flex flex-row items-center justify-between p-4 border-b border-[#4c4c4c]  max-h-40 text-[#0d192d]">
       <div className="max-w-36 -mt-1">
