@@ -1,1 +1,58 @@
 @import "tailwindcss";
+
+@theme {
+  /* light navy blue */
+  --color-regal_navy-100: #040d17;
+  --color-regal_navy-200: #07192e;
+  --color-regal_navy-300: #0b2644;
+  --color-regal_navy-400: #0f325b;
+  --color-regal_navy-500: #134074;
+  --color-regal_navy-600: #1d63b3;
+  --color-regal_navy-700: #3c88df;
+  --color-regal_navy-800: #7db0ea;
+  --color-regal_navy-900: #bed7f4;
+
+  /* navy blue */
+  --color-oxford_navy-100: #040a13;
+  --color-oxford_navy-200: #081425;
+  --color-oxford_navy-300: #0b1e38;
+  --color-oxford_navy-400: #0f284b;
+  --color-oxford_navy-500: #13315c;
+  --color-oxford_navy-600: #21559f;
+  --color-oxford_navy-700: #397bd6;
+  --color-oxford_navy-800: #7ba7e4;
+  --color-oxford_navy-900: #bdd3f1;
+
+  /* dark navy blue */
+  --color-prussian_blue-100: #02080e;
+  --color-prussian_blue-200: #050f1c;
+  --color-prussian_blue-300: #07172a;
+  --color-prussian_blue-400: #091e38;
+  --color-prussian_blue-500: #0b2545;
+  --color-prussian_blue-600: #174e90;
+  --color-prussian_blue-700: #2375da;
+  --color-prussian_blue-800: #6ca3e7;
+  --color-prussian_blue-900: #b5d1f3;
+
+  /* light blue */
+  --color-powder_blue-100: #17222c;
+  --color-powder_blue-200: #2e4459;
+  --color-powder_blue-300: #456685;
+  --color-powder_blue-400: #6088ad;
+  --color-powder_blue-500: #8da9c4;
+  --color-powder_blue-600: #a3bad0;
+  --color-powder_blue-700: #baccdc;
+  --color-powder_blue-800: #d1dde7;
+  --color-powder_blue-900: #e8eef3;
+
+  /* off white */
+  --color-mint_cream-100: #283b24;
+  --color-mint_cream-200: #507749;
+  --color-mint_cream-300: #7dab75;
+  --color-mint_cream-400: #b5cfb1;
+  --color-mint_cream-500: #eef4ed;
+  --color-mint_cream-600: #f1f6f0;
+  --color-mint_cream-700: #f4f8f4;
+  --color-mint_cream-800: #f8faf7;
+  --color-mint_cream-900: #fbfdfb;
+}
