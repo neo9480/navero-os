@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Neue_Montreal";
+  src: url(/fonts/NeueMontreal-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Host_Grotesk";
+  src: url(/fonts/HostGrotesk-Regular.ttf);
+}
+
 @theme {
+  /* font neue montreal */
+  --font-neue_montreal: "Neue_Montreal", sans-serif;
+
+  /* font host grotesk */
+  --font-host_grotesk: "Host_Grotesk", sans-serif;
+
   /* light navy blue */
-  --color-regal_navy-100: #040d17;
+  /* --color-regal_navy-100: #040d17;
   --color-regal_navy-200: #07192e;
   --color-regal_navy-300: #0b2644;
   --color-regal_navy-400: #0f325b;
@@ -10,10 +26,10 @@
   --color-regal_navy-600: #1d63b3;
   --color-regal_navy-700: #3c88df;
   --color-regal_navy-800: #7db0ea;
-  --color-regal_navy-900: #bed7f4;
+  --color-regal_navy-900: #bed7f4; */
 
   /* navy blue */
-  --color-oxford_navy-100: #040a13;
+  /* --color-oxford_navy-100: #040a13;
   --color-oxford_navy-200: #081425;
   --color-oxford_navy-300: #0b1e38;
   --color-oxford_navy-400: #0f284b;
@@ -21,10 +37,10 @@
   --color-oxford_navy-600: #21559f;
   --color-oxford_navy-700: #397bd6;
   --color-oxford_navy-800: #7ba7e4;
-  --color-oxford_navy-900: #bdd3f1;
+  --color-oxford_navy-900: #bdd3f1; */
 
   /* dark navy blue */
-  --color-prussian_blue-100: #02080e;
+  /* --color-prussian_blue-100: #02080e;
   --color-prussian_blue-200: #050f1c;
   --color-prussian_blue-300: #07172a;
   --color-prussian_blue-400: #091e38;
@@ -32,10 +48,10 @@
   --color-prussian_blue-600: #174e90;
   --color-prussian_blue-700: #2375da;
   --color-prussian_blue-800: #6ca3e7;
-  --color-prussian_blue-900: #b5d1f3;
+  --color-prussian_blue-900: #b5d1f3; */
 
   /* light blue */
-  --color-powder_blue-100: #17222c;
+  /* --color-powder_blue-100: #17222c;
   --color-powder_blue-200: #2e4459;
   --color-powder_blue-300: #456685;
   --color-powder_blue-400: #6088ad;
@@ -43,10 +59,10 @@
   --color-powder_blue-600: #a3bad0;
   --color-powder_blue-700: #baccdc;
   --color-powder_blue-800: #d1dde7;
-  --color-powder_blue-900: #e8eef3;
+  --color-powder_blue-900: #e8eef3; */
 
   /* off white */
-  --color-mint_cream-100: #283b24;
+  /* --color-mint_cream-100: #283b24;
   --color-mint_cream-200: #507749;
   --color-mint_cream-300: #7dab75;
   --color-mint_cream-400: #b5cfb1;
@@ -54,5 +70,60 @@
   --color-mint_cream-600: #f1f6f0;
   --color-mint_cream-700: #f4f8f4;
   --color-mint_cream-800: #f8faf7;
-  --color-mint_cream-900: #fbfdfb;
+  --color-mint_cream-900: #fbfdfb; */
+
+    /* greyish blue */
+  --color-space_indigo-100: #08090d;
+  --color-space_indigo-200: #11121a;
+  --color-space_indigo-300: #191b27;
+  --color-space_indigo-400: #222334;
+  --color-space_indigo-500: #2b2d42;
+  --color-space_indigo-600: #4a4d72;
+  --color-space_indigo-700: #6d71a0;
+  --color-space_indigo-800: #9da0bf;
+  --color-space_indigo-900: #ced0df;
+
+    /* grey */
+  --color-lavender_grey-100: #1a1e25;
+  --color-lavender_grey-200: #343c4a;
+  --color-lavender_grey-300: #4f5b6f;
+  --color-lavender_grey-400: #697994;
+  --color-lavender_grey-500: #8d99ae;
+  --color-lavender_grey-600: #a4aebf;
+  --color-lavender_grey-700: #bbc2cf;
+  --color-lavender_grey-800: #d2d6df;
+  --color-lavender_grey-900: #e8ebef;
+
+  /* off white */
+  --color-platinum-100: #24353b;
+  --color-platinum-200: #496a77;
+  --color-platinum-300: #759bab;
+  --color-platinum-400: #b1c6cf;
+  --color-platinum-500: #edf2f4;
+  --color-platinum-600: #f0f4f6;
+  --color-platinum-700: #f4f7f8;
+  --color-platinum-800: #f7fafa;
+  --color-platinum-900: #fbfcfd;
+
+  /* red */
+  --color-punch_red-100: #330409;
+  --color-punch_red-200: #660813;
+  --color-punch_red-300: #9a0c1c;
+  --color-punch_red-400: #cd0f26;
+  --color-punch_red-500: #ef233c;
+  --color-punch_red-600: #f25063;
+  --color-punch_red-700: #f57c8a;
+  --color-punch_red-800: #f8a8b1;
+  --color-punch_red-900: #fcd3d8;
+
+  /* bright red */
+  --color-flag_red-100: #2b0108;
+  --color-flag_red-200: #560210;
+  --color-flag_red-300: #810318;
+  --color-flag_red-400: #ac0420;
+  --color-flag_red-500: #d90429;
+  --color-flag_red-600: #fa1b40;
+  --color-flag_red-700: #fc5470;
+  --color-flag_red-800: #fd8da0;
+  --color-flag_red-900: #fec6cf;
 }
