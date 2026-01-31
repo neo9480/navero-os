@@ -5,20 +5,41 @@ import LandingPage from "./pages/LandingPage";
 import { useEffect, useState } from "react";
 import Cursor from "./components/commonComponents/Cursor";
 import PageTransition from "./components/commonComponents/PageTransition";
+import Dashboard from "./pages/Dashboard";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import DocumentsPage from "./pages/DocumentsPage";
+import MarketplacePage from "./pages/MarketplacePage";
+import NotificationsPage from "./pages/NotificationsPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import ShipmentsPage from "./pages/ShipmentsPage";
 
 const App = () => {
-  const { pathname } = useLocation();
-
-  // ✅ Loader only on first load of "/"
-  const [showLoader, setShowLoader] = useState(pathname === "/");
-
-  // ✅ LocomotiveScroll: create once, destroy properly
   useEffect(() => {
     const scroll = new LocomotiveScroll();
     return () => scroll.destroy();
-  }, []);
+  }, [] );
+  
+  const location = useLocation()
+  const { pathname } = location;
 
-  // ✅ Cursor listener: attach once
+  // Loader only on first load of "/"
+  const [ showLoader, setShowLoader ] = useState( pathname === "/" );
+
+  const [displayLocation, setDisplayLocation] = useState(location);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDisplayLocation(location);
+    }, 800); // 2 seconds for PageTransition animation
+
+    return () => clearTimeout(timeout);
+  }, [location]);
+  
+
+  // LocomotiveScroll: create once, destroy properly
+  
+
+  // Cursor listener: attach once
   useEffect(() => {
     const cursor = document.querySelector(".cursor");
     const main = document.querySelector(".main");
@@ -44,8 +65,16 @@ const App = () => {
         <>
           <PageTransition />
           <Cursor />
-          <Routes>
+          <Routes location={displayLocation}>
             <Route path="/*" element={<LandingPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/shipments" element={<ShipmentsPage />} />
           </Routes>
         </>
       )}

@@ -16,7 +16,7 @@ async function sumRevenue(where) {
 /**
  * Compute live totals (current totals from DB)
  */
-export async function computeLiveStats() {
+async function computeLiveStats() {
   const [
     usersTotal,
     shipmentsTotal,
@@ -65,7 +65,7 @@ async function countNewBetween(modelName, start, end) {
 /**
  * Create daily snapshot for a specific date (dateAt should be a Date at midnight local time)
  */
-export async function recordDailySnapshot(dateAt = new Date()) {
+async function recordDailySnapshot(dateAt = new Date()) {
   // Normalize to startOfDay local time
   const dayStart = startOfDay(dateAt);
   const dayEnd = endOfDay(dateAt);
@@ -154,7 +154,7 @@ export async function recordDailySnapshot(dateAt = new Date()) {
  * Return daily trend arrays for the last N days (including today).
  * Each element: { date: ISOString, usersNew, shipmentsNew, bookingsNew, transactionsNew, revenueNew }
  */
-export async function getDailyTrends(days = 30) {
+async function getDailyTrends(days = 30) {
   const start = startOfDay(subDays(new Date(), days - 1));
   // Fetch rows from DailyStats where date >= start
   const rows = await prisma.dailyStats.findMany({
@@ -190,7 +190,7 @@ export async function getDailyTrends(days = 30) {
  * This implementation uses sums over windows:
  * - last N days vs previous N days for relative growth
  */
-export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
+async function computeGrowthMetrics({ windowDays = 30 } = {}) {
   const today = startOfDay(new Date());
   const endCurrent = today; // use current day as end (snapshots stored midnight)
   const startCurrent = subDays(endCurrent, windowDays - 1);
@@ -247,4 +247,13 @@ export async function computeGrowthMetrics({ windowDays = 30 } = {}) {
     },
     windowDays,
   };
+}
+
+export default {
+  sumRevenue,
+  computeLiveStats,
+  countNewBetween,
+  recordDailySnapshot,
+  getDailyTrends,
+  computeGrowthMetrics
 }

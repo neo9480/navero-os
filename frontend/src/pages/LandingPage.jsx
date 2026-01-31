@@ -5,12 +5,17 @@ import Features from '../components/landingComponents/Features';
 import Pricing from '../components/landingComponents/Pricing';
 import SignIn from '../components/landingComponents/SignIn';
 import SignUp from '../components/landingComponents/SignUp';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 function LandingPage() {
+
+const location = useLocation()
+
+  const hideNavbar =
+    location.pathname === "/sign-in" || location.pathname === "/sign-up";
   return (
     <div>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about-us" element={<AboutUs />} />

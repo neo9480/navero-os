@@ -5,6 +5,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import cors from "cors";
 import dotenv from "dotenv";
 
 // Role-based routing modules
@@ -18,6 +19,14 @@ import authRoutes from "./routes/auth.routes.js";
 // import serviceRoutes from "./routes/service.routes.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+    credentials: true,
+  }),
+);
+
 
 // Parse cookies for session / auth tokens
 app.use(cookieParser());

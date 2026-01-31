@@ -1,15 +1,16 @@
 import { motion as Motion } from "framer-motion"
 
-const Marquee = (props) => {
+const Marquee = ( props ) => {
   const marqueeText = [];
 
   function toArray(e, times) {
     marqueeText.push(...Array(times).fill(e));
   }
-  toArray("WELCOME TO NAVÉRO", 10);
+  toArray(`${props.text}`, 10);
 
   return (
-    <div className={`marquee h-[17vh] w-${ props.width } bg-flag_red-500 flex overflow-hidden rotate-[${ props.rotate }]`}>
+    <div
+      className={`marquee h-[17vh] bg-flag_red-500 flex overflow-hidden ${props.css} cursor-default`}>
       <div className="flex h-full w-full flex-col justify-between py-[2vh]">
         <div className="h-[0.2vh] w-full bg-platinum-500 pt-1"></div>
         <div className="flex">
