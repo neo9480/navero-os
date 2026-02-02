@@ -1,9 +1,9 @@
 import { Ship } from "lucide-react";
-import ColorBends from "../shadcnComponents/ColorBends";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import ABgDark from "../commonComponents/ABgDark";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -21,18 +21,18 @@ const SignIn = () => {
           password,
         },
         {
-          withCredentials: true, 
+          withCredentials: true,
         },
       );
       const { accessToken, user } = res.data;
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
-      toast.success("Login Successfull", { position: "top-center"});
+      toast.success("Login Successfull", { position: "top-center" });
 
-      setTimeout( () => {
+      setTimeout(() => {
         navigate("/dashboard");
-      }, 1000)
+      }, 1000);
     } catch (err) {
       console.error(err);
 
@@ -229,26 +229,10 @@ const SignIn = () => {
   if (!quote) return null;
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex justify-center items-center">
-      <Toaster theme="dark"/>
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-          <ColorBends
-            rotation={45}
-            speed={0.2}
-            colors={["#5227FF", "#FF9FFC", "#7cff67", "#001fbd", "#8e67d5"]}
-            transparent
-            autoRotate={1}
-            scale={0.5}
-            frequency={2.5}
-            warpStrength={1}
-            mouseInfluence={1.3}
-            parallax={1.4}
-            noise={0.5}
-          />
-        </div>
-      </div>
-      <div className="h-[90vh] w-[95vw] z-10 flex overflow-hidden rounded-4xl border-[1vh] border-platinum-600 backdrop-blur-xl">
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Toaster theme="dark" />
+      <ABgDark />
+      <div className="h-[90vh] w-[95vw] flex rounded-4xl border-[1vh] border-platinum-600 backdrop-blur-xl">
         <div className="h-full w-1/2 bg-transparent p-[1vw] flex flex-col justify-between text-platinum-500">
           <div className="flex gap-[1vw] items-center">
             <p>A Wise Man Once Said</p>
