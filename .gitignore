@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 combine.js
 
 .vscode
+
+test_creds.txt
