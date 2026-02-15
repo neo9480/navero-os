@@ -6,13 +6,14 @@ import Pricing from '../components/landingComponents/Pricing';
 import SignIn from '../components/landingComponents/SignIn';
 import SignUp from '../components/landingComponents/SignUp';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import Plans from '@/components/landingComponents/Plans';
 
 function LandingPage() {
 
 const location = useLocation()
 
   const hideNavbar =
-    location.pathname === "/sign-in" || location.pathname === "/sign-up";
+    location.pathname.startsWith("/sign-in") || location.pathname.startsWith("/sign-up");
   return (
     <div>
       {!hideNavbar && <Navbar />}
@@ -23,6 +24,7 @@ const location = useLocation()
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/sign-up/plans" element={<Plans />} />
       </Routes>
     </div>
   );

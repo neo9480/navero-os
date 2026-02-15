@@ -3,6 +3,7 @@ import {motion as Motion, AnimatePresence } from "motion/react";
 
 export default function Stepper({
   children,
+  currentStep: controlledStep,
   initialStep = 1,
   onStepChange = () => {},
   onFinalStepCompleted = () => {},
@@ -17,19 +18,26 @@ export default function Stepper({
   disableStepIndicators = false,
   renderStepIndicator,
   ...rest
-}) {
-  const [currentStep, setCurrentStep] = useState(initialStep);
+} ) {
+  const currentStep = controlledStep ?? internalStep;
   const [direction, setDirection] = useState(0);
   const stepsArray = Children.toArray(children);
   const totalSteps = stepsArray.length;
   const isCompleted = currentStep > totalSteps;
   const isLastStep = currentStep === totalSteps;
+  const [internalStep, setInternalStep] = useState(initialStep);
+
+
 
   const updateStep = (newStep) => {
-    setCurrentStep(newStep);
+    if (controlledStep === undefined) {
+      setInternalStep(newStep);
+    }
+
     if (newStep > totalSteps) onFinalStepCompleted();
     else onStepChange(newStep);
   };
+  
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -55,8 +63,7 @@ export default function Stepper({
       className="flex min-h-full flex-1 flex-col items-center justify-center p-4 sm:aspect-4/3 md:aspect-2/1"
       {...rest}>
       <div
-        className={`mx-auto w-full max-w-md ${stepCircleContainerClassName}`}
-        >
+        className={`mx-auto w-full max-w-md ${stepCircleContainerClassName}`}>
         <div
           className={`${stepContainerClassName} flex w-full items-center p-8`}>
           {stepsArray.map((_, index) => {
@@ -138,7 +145,7 @@ function StepContentWrapper({
 
   return (
     <Motion.div
-      style={{ position: "relative", overflow: "hidden" }}
+      style={{ position: "relative" }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
       transition={{ type: "spring", duration: 0.4 }}
       className={className}>
@@ -243,7 +250,7 @@ function StepConnector({ isComplete }) {
   };
 
   return (
-    <div className="relative mx-2 h-0.5 flex-1 overflow-hidden rounded bg-neutral-600">
+    <div className="relative mx-2 h-0.5 flex-1 rounded bg-neutral-600">
       <Motion.div
         className="absolute left-0 top-0 h-full"
         variants={lineVariants}
