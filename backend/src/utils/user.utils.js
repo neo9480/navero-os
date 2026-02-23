@@ -2,10 +2,18 @@ import prisma from "../db/prismaClient.js";
 import bcrypt from "bcryptjs";
 
 // Create a user
-async function createUser(email, password, role, companyName, phone, address) {
+async function createUser(
+  email,
+  password,
+  role,
+  companyName,
+  phone,
+  address,
+  db = prisma,
+) {
   const passwordHash = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  return db.user.create({
     data: {
       email,
       passwordHash,

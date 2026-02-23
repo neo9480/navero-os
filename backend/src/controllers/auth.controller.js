@@ -1,8 +1,30 @@
 import prisma from "../db/prismaClient.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
+
+const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
+
+const parseDuration = (str) => {
+  const match = /^(\d+)([smhd])$/.exec(str);
+  if (!match) return 7 * 86400000;
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+
+  return (
+    {
+      s: value * 1000,
+      m: value * 60000,
+      h: value * 3600000,
+      d: value * 86400000,
+    }[unit] ?? 7 * 86400000
+  );
+};
+
+function getRefreshExpiryDate() {
+  return new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION));
+}
 
 function generateAccessToken(user) {
   return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
@@ -16,6 +38,15 @@ function setRefreshCookie(res, token, expiresAt) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     expires: expiresAt,
+    path: "/",
+  });
+}
+
+function clearRefreshCookie(res) {
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
     path: "/",
   });
 }
@@ -98,10 +129,7 @@ async function login(req, res) {
 
     const accessToken = generateAccessToken(user);
 
-    const expiresAt = new Date();
-    expiresAt.setDate(
-      expiresAt.getDate() + Number(process.env.REFRESH_TOKEN_DAYS),
-    );
+    const expiresAt = getRefreshExpiryDate();
     const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
 
     setRefreshCookie(res, refreshToken, expiresAt);
@@ -115,6 +143,7 @@ async function login(req, res) {
     });
   } catch (err) {
     console.error("failed to login user:", err);
+    res.status(500).json({ error: "failed to login user" });
   }
 }
 
@@ -130,13 +159,9 @@ async function refresh(req, res) {
     const user = await prisma.user.findUnique({ where: { id: record.userId } });
     if (!user) return res.status(401).json({ error: "User not found" });
 
-    await authUtils.deleteRefreshToken(token);
-
-    const newExpiresAt = new Date();
-    newExpiresAt.setDate(
-      newExpiresAt.getDate() + Number(process.env.REFRESH_TOKEN_DAYS),
-    );
-    const newRefreshToken = await authUtils.createRefreshToken(
+    const newExpiresAt = getRefreshExpiryDate();
+    const newRefreshToken = await authUtils.rotateRefreshToken(
+      token,
       user.id,
       newExpiresAt,
     );
@@ -147,6 +172,7 @@ async function refresh(req, res) {
     res.json({ accessToken });
   } catch (err) {
     console.error("failed to refresh token:", err);
+    res.status(500).json({ error: "failed to refresh token" });
   }
 }
 
@@ -155,11 +181,12 @@ async function logout(req, res) {
     const token = req.cookies.refresh_token;
     if (token) {
       await authUtils.deleteRefreshToken(token);
-      res.clearCookie("refresh_token", { path: "/" });
     }
+    clearRefreshCookie(res);
     res.json({ message: "Logged out" });
   } catch (err) {
     console.error("failed to logout user:", err);
+    res.status(500).json({ error: "failed to logout user" });
   }
 }
 
@@ -170,11 +197,12 @@ async function logoutAll(req, res) {
 
     await authUtils.deleteAllTokensForUser(userId);
 
-    res.clearCookie("refresh_token", { path: "/" });
+    clearRefreshCookie(res);
 
     res.json({ message: "Logged out from all devices" });
   } catch (err) {
     console.error("failed to logout all users:", err);
+    res.status(500).json({ error: "failed to logout all users" });
   }
 }
 
@@ -183,6 +211,7 @@ async function getUserProfile(req, res) {
     const userId = req.user.id;
 
     const user = await userUtils.findUserById(userId);
+    if (!user) return res.status(404).json({ error: "user not found" });
 
     const { passwordHash: _unused, ...safeUser } = user;
 
@@ -192,6 +221,7 @@ async function getUserProfile(req, res) {
     });
   } catch (err) {
     console.error("failed to fetch user", err);
+    res.status(500).json({ error: "failed to fetch user" });
   }
 }
 
@@ -218,6 +248,7 @@ async function updateUserProfile(req, res) {
     });
   } catch (err) {
     console.error("failed to update user", err);
+    res.status(500).json({ error: "failed to update user" });
   }
 }
 
@@ -233,6 +264,7 @@ async function deleteUserProfile(req, res) {
     });
   } catch (err) {
     console.error("failed to delete user", err);
+    res.status(500).json({ error: "failed to delete user" });
   }
 }
 

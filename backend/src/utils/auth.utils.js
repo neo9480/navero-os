@@ -1,22 +1,9 @@
 import prisma from "../db/prismaClient.js";
 import crypto from "crypto";
 
-/**
- * Token Service: unified refresh-token helper built
- * to match the current Prisma schema:
- *
- * model RefreshToken {
- *   id        String   @id @default(cuid())
- *   userId    String
- *   token     String   @unique
- *   createdAt DateTime @default(now())
- *   expiresAt DateTime
- *   user      User @relation(fields: [userId], references: [id])
- * }
- *
- * No "revoked" field. No legacy behavior.
- * Tokens are created, validated, and removed on logout.
- */
+function generateToken() {
+  return crypto.randomBytes(48).toString("hex");
+}
 
 /**
  * Generate a new refresh token for a user and store it.
@@ -25,10 +12,10 @@ import crypto from "crypto";
  * @param {Date}   expiresAt - Expiry timestamp for token.
  * @returns {Promise<string>} raw token string to send as httpOnly cookie.
  */
-async function createRefreshToken(userId, expiresAt) {
-  const token = crypto.randomBytes(48).toString("hex");
+async function createRefreshToken(userId, expiresAt, db = prisma) {
+  const token = generateToken();
 
-  await prisma.refreshToken.create({
+  await db.refreshToken.create({
     data: {
       token,
       userId,
@@ -52,6 +39,7 @@ async function findRefreshToken(token) {
   });
 
   if (!record) return null;
+  if (record.revoked) return null;
 
   // Token found but expired
   if (record.expiresAt < new Date()) {
@@ -91,9 +79,30 @@ async function deleteAllTokensForUser(userId) {
   });
 }
 
+/**
+ * Rotate a refresh token atomically.
+ * - Revokes the previous token
+ * - Creates and returns the new token
+ */
+async function rotateRefreshToken(oldToken, userId, expiresAt) {
+  return prisma.$transaction(async (tx) => {
+    const result = await tx.refreshToken.updateMany({
+      where: { token: oldToken, userId, revoked: false },
+      data: { revoked: true },
+    });
+
+    if (result.count === 0) {
+      throw new Error("refresh token invalid");
+    }
+
+    return createRefreshToken(userId, expiresAt, tx);
+  });
+}
+
 export default {
   createRefreshToken,
   findRefreshToken,
   deleteRefreshToken,
   deleteAllTokensForUser,
+  rotateRefreshToken,
 };

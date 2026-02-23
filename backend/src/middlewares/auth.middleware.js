@@ -12,19 +12,23 @@ if (!JWT_SECRET) throw new Error("JWT_SECRET missing");
 
 const parseDuration = (str) => {
   const match = /^(\d+)([smhd])$/.exec(str);
+  if (!match) return 7 * 86400000;
+
   const value = parseInt(match[1], 10);
   const unit = match[2];
 
-  return {
+  return (
+    {
     s: value * 1000,
     m: value * 60000,
     h: value * 3600000,
     d: value * 86400000,
-  }[unit];
+    }[unit] ?? 7 * 86400000
+  );
 };
 
-const generateAccessToken = (userId) => {
-  return jwt.sign({ id: userId }, JWT_SECRET, {
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
   });
 };
@@ -39,33 +43,46 @@ const setRefreshCookie = (res, token, expiresAt) => {
   });
 };
 
-async function authMiddleware(req, res, next) {
-  // const authHeader = req.headers.authorization;
-  // const accessToken = authHeader?.startsWith("Bearer ")
-  //   ? authHeader.split(" ")[1]
-  //   : null;
+const getAccessToken = (req) => {
+  const authHeader = req.headers?.authorization;
+  if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.slice(7).trim();
+    if (token) return token;
+  }
 
+  const headerToken = req.headers?.["x-access-token"];
+  if (typeof headerToken === "string" && headerToken.trim()) {
+    return headerToken.trim();
+  }
+
+  return null;
+};
+
+async function authMiddleware(req, res, next) {
+  const accessToken = getAccessToken(req);
   const refreshToken = req.cookies?.refresh_token;
 
-  // if (!accessToken) {
-  //   return res.status(401).json({ message: "access token missing" });
-  // }
+  if (accessToken) {
+    try {
+      const decoded = jwt.verify(accessToken, JWT_SECRET);
+      const user = await userUtils.findUserById(decoded.id);
+
+      if (!user) return res.status(401).json({ message: "user not found" });
+
+      req.user = { id: user.id, role: user.role, email: user.email };
+      return next();
+    } catch {
+      // Access token invalid/expired: continue with refresh token flow.
+    }
+  }
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "login required" });
+  }
 
   try {
-    const decoded = jwt.verify(accessToken, JWT_SECRET);
-    const user = await userUtils.findUserById(decoded.id);
-
-    if (!user) return res.status(401).json({ message: "user not found" });
-
-    req.user = { id: user.id, role: user.role, email: user.email };
-    return next();
-  } catch {
-    if (!refreshToken) {
-      return res.status(401).json({ message: "login required" });
-    }
-
     const record = await authUtils.findRefreshToken(refreshToken);
-    if (!record || record.revoked || record.expiresAt < new Date()) {
+    if (!record || record.expiresAt < new Date()) {
       return res.status(401).json({ message: "refresh token invalid" });
     }
 
@@ -73,22 +90,27 @@ async function authMiddleware(req, res, next) {
 
     if (!user) return res.status(401).json({ message: "user not found" });
 
-    await authUtils.deleteRefreshToken(refreshToken);
-
     const expiresAt = new Date(
       Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION),
     );
-    const newRefreshToken = await authUtils.createRefreshToken(
+    const newRefreshToken = await authUtils.rotateRefreshToken(
+      refreshToken,
       user.id,
       expiresAt,
     );
-    const newAccessToken = generateAccessToken(user.id);
+    const newAccessToken = generateAccessToken(user);
 
     setRefreshCookie(res, newRefreshToken, expiresAt);
     res.setHeader("x-access-token", newAccessToken);
 
     req.user = { id: user.id, role: user.role, email: user.email };
-    next();
+    return next();
+  } catch (err) {
+    if (err.message === "refresh token invalid") {
+      return res.status(401).json({ message: "refresh token invalid" });
+    }
+    console.error("auth middleware failed:", err);
+    return res.status(500).json({ message: "authentication failed" });
   }
 }
 
