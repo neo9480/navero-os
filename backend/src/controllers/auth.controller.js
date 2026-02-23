@@ -22,25 +22,60 @@ function setRefreshCookie(res, token, expiresAt) {
 
 async function register(req, res) {
   try {
-    const { email, password, role, companyName, phone, address } = req.body;
+    const { email, password, role, companyName, phone, address, plan } =
+      req.body;
+
+    const allowedPlans = ["free_trial", "basic", "pro", "enterprise"];
+    const safePlan = allowedPlans.includes(plan) ? plan : "free_trial";
 
     const exists = await userUtils.findUserByEmail(email);
-    if (exists) return res.status(400).json({ error: "Email already in use" });
+    if (exists) {
+      return res.status(400).json({ error: "Email already in use" });
+    }
 
-    const user = await userUtils.createUser(
-      email,
-      password,
-      role,
-      companyName,
-      phone,
-      address,
-    );
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await userUtils.createUser(
+        email,
+        password,
+        role,
+        companyName,
+        phone,
+        address,
+        tx, // optional if your util supports prisma injection
+      );
 
-    const { passwordHash: _unused, ...safeUser } = user;
+      const trialDays = Number(process.env.TRIAL_DAYS) || 14;
+      const now = new Date();
+      const trialEndsAt = new Date(now);
+      trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
 
-    res.status(201).json({ message: "User registered", user: safeUser });
+      await tx.subscription.create({
+        data: {
+          userId: user.id,
+          plan: safePlan,
+          status: "TRIALING", // ✅ NEVER trust frontend payment
+          startedAt: now,
+          trialEndsAt,
+        },
+      });
+
+      return user;
+    });
+
+    const userWithSub = await prisma.user.findUnique({
+      where: { id: result.id },
+      include: { subscription: true },
+    });
+
+    const { passwordHash: _unused, ...safeUser } = userWithSub;
+
+    res.status(201).json({
+      message: "User registered",
+      user: safeUser,
+    });
   } catch (err) {
     console.error("failed to register user:", err);
+    res.status(500).json({ error: "Registration failed" });
   }
 }
 
@@ -48,7 +83,10 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { subscription: true },
+    });
     if (!user)
       return res.status(400).json({ error: "invalid email or password" });
 

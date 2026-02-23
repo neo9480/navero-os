@@ -1,5 +1,5 @@
 import React, { useState, Children, useRef, useLayoutEffect } from "react";
-import {motion as Motion, AnimatePresence } from "motion/react";
+import { motion as Motion, AnimatePresence } from "motion/react";
 
 export default function Stepper({
   children,
@@ -17,8 +17,9 @@ export default function Stepper({
   nextButtonText = "Continue",
   disableStepIndicators = false,
   renderStepIndicator,
+  onReset = () => {},
   ...rest
-} ) {
+}) {
   const currentStep = controlledStep ?? internalStep;
   const [direction, setDirection] = useState(0);
   const stepsArray = Children.toArray(children);
@@ -26,8 +27,6 @@ export default function Stepper({
   const isCompleted = currentStep > totalSteps;
   const isLastStep = currentStep === totalSteps;
   const [internalStep, setInternalStep] = useState(initialStep);
-
-
 
   const updateStep = (newStep) => {
     if (controlledStep === undefined) {
@@ -37,7 +36,6 @@ export default function Stepper({
     if (newStep > totalSteps) onFinalStepCompleted();
     else onStepChange(newStep);
   };
-  
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -56,6 +54,17 @@ export default function Stepper({
   const handleComplete = () => {
     setDirection(1);
     updateStep(totalSteps + 1);
+  };
+
+  const handleReset = () => {
+    setDirection(-1);
+    updateStep(initialStep);
+    try {
+      onReset();
+    } catch (err) {
+      // swallow errors from consumer reset handler
+      console.error("Stepper onReset handler threw:", err);
+    }
   };
 
   return (
@@ -109,16 +118,27 @@ export default function Stepper({
             <div
               className={`mt-10 flex ${currentStep !== 1 ? "justify-between" : "justify-end"}`}>
               {currentStep !== 1 && (
-                <button
-                  onClick={handleBack}
-                  className={`duration-350 rounded px-2 py-1 transition ${
-                    currentStep === 1 ?
-                      "pointer-events-none opacity-50 text-platinum-600"
-                    : "text-platinum-600 cursor-pointer"
-                  }`}
-                  {...backButtonProps}>
-                  {backButtonText}
-                </button>
+                <div className="flex gap-[1vw]">
+                  <button
+                    onClick={handleBack}
+                    className={`duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer ${
+                      currentStep === 1 ?
+                        "pointer-events-none opacity-50 text-platinum-600"
+                      : "text-platinum-600 cursor-pointer"
+                    }`}
+                    {...backButtonProps}>
+                    {backButtonText}
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    className={`duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer ${
+                      currentStep === 1 ?
+                        "pointer-events-none opacity-50 text-platinum-600"
+                      : "text-platinum-600 cursor-pointer"
+                    }`}>
+                    Reset
+                  </button>
+                </div>
               )}
               <button
                 onClick={isLastStep ? handleComplete : handleNext}
@@ -145,8 +165,8 @@ function StepContentWrapper({
 
   return (
     <Motion.div
-      style={{ position: "relative" }}
-      animate={{ height: isCompleted ? 0 : parentHeight }}
+      layout
+      style={{ position: "relative", height: isCompleted ? 0 : parentHeight, overflow: "hidden" }}
       transition={{ type: "spring", duration: 0.4 }}
       className={className}>
       <AnimatePresence initial={false} mode="sync" custom={direction}>

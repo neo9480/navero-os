@@ -93,6 +93,14 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
 //////////////////////////////
 // MODELS
 //////////////////////////////
@@ -128,6 +136,7 @@ model User {
   refreshTokens  RefreshToken[]
   transactions  Transaction[]
   bookings Booking[]
+  subscription Subscription?
 }
 
 
@@ -279,6 +288,7 @@ model RefreshToken {
   token     String   @unique
   createdAt DateTime @default(now())
   expiresAt DateTime
+  revoked   Boolean  @default(false)
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -326,4 +336,20 @@ model DailyStats {
   revenueTotal     Float    @default(0)     // cumulative revenue up-to-date
   revenueNew       Float    @default(0)     // revenue in that day
   createdAt        DateTime @default(now())
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  plan                 String
+  status               SubscriptionStatus @default(TRIALING)
+  startedAt            DateTime?          @default(now())
+  trialEndsAt          DateTime?
+  currentPeriodEndsAt  DateTime?
+  providerCustomerId   String?            // e.g., Stripe customer id
+  providerSubscriptionId String?          // e.g., Stripe subscription id
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
 }

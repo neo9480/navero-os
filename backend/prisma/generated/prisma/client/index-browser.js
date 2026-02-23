@@ -224,7 +224,8 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
   userId: 'userId',
   token: 'token',
   createdAt: 'createdAt',
-  expiresAt: 'expiresAt'
+  expiresAt: 'expiresAt',
+  revoked: 'revoked'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {
@@ -265,6 +266,20 @@ exports.Prisma.DailyStatsScalarFieldEnum = {
   revenueTotal: 'revenueTotal',
   revenueNew: 'revenueNew',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  plan: 'plan',
+  status: 'status',
+  startedAt: 'startedAt',
+  trialEndsAt: 'trialEndsAt',
+  currentPeriodEndsAt: 'currentPeriodEndsAt',
+  providerCustomerId: 'providerCustomerId',
+  providerSubscriptionId: 'providerSubscriptionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -363,6 +378,14 @@ exports.BookingStatus = exports.$Enums.BookingStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
+  TRIALING: 'TRIALING',
+  ACTIVE: 'ACTIVE',
+  PAST_DUE: 'PAST_DUE',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Service: 'Service',
@@ -376,7 +399,8 @@ exports.Prisma.ModelName = {
   RefreshToken: 'RefreshToken',
   Transaction: 'Transaction',
   Booking: 'Booking',
-  DailyStats: 'DailyStats'
+  DailyStats: 'DailyStats',
+  Subscription: 'Subscription'
 };
 
 /**

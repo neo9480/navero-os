@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ABgLight from "../commonComponents/ABgLight";
 
 const subscriptionPlans = {
@@ -229,7 +230,12 @@ const subscriptionPlans = {
   },
 };
 
-const Plans = ({ role, onPlanSelected }) => {
+const Plans = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const role = location.state?.role ?? location.state?.formData?.role;
+  const previousForm = location.state?.formData || {};
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   const plans = useMemo(() => {
@@ -237,63 +243,90 @@ const Plans = ({ role, onPlanSelected }) => {
     return Object.values(subscriptionPlans[role]);
   }, [role]);
 
-  if (!role)
-    return <p className="text-center">Select a role first.</p>;
+  const formatCapability = (key, value) => {
+    const label = key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase());
+
+    if (value === true) return `✔ ${label}`;
+    if (value === false) return `✖ ${label}`;
+    if (value === Infinity) return `Unlimited ${label}`;
+
+    return `${value} ${label}`;
+  };
+
+  const handleContinue = () => {
+    if (!selectedPlan) return;
+
+    // merge previous form values so SignUp doesn't lose user input
+    navigate("/sign-up", {
+      state: {
+        ...previousForm,
+        planId: selectedPlan,
+        paymentStatus: "PAID",
+        currentStep: 5,
+      },
+    });
+  };
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="h-screen flex flex-col items-center justify-center p-8 bg-platinum-600 ">
       <ABgLight />
 
-      <h1 className="text-3xl font-bold">Choose Your Plan</h1>
+      <div className="z-10 flex flex-col justify-center items-center gap-[1vw]">
+        <h1 className="text-4xl font-bold text-center">Choose Your Plan</h1>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plans.map((plan) => {
-          const selected = selectedPlan === plan.id;
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {plans.map((plan) => {
+            const selected = selectedPlan === plan.id;
 
-          return (
-            <div
-              key={plan.id}
-              onClick={() => setSelectedPlan(plan.id)}
-              className={`cursor-pointer rounded-2xl border p-6 transition ${
-                selected
-                  ? "border-blue-500 bg-blue-50 scale-105"
-                  : "bg-white"
-              }`}
-            >
-              <h3 className="text-xl font-semibold">{plan.name}</h3>
+            return (
+              <div
+                key={plan.id}
+                onClick={() => setSelectedPlan(plan.id)}
+                className={`cursor-pointer rounded-2xl border p-[2vh] transition-all duration-300 flex flex-col ${
+                  selected ?
+                    "border-blue-500 bg-blue-50 scale-105 shadow-xl"
+                  : "border-gray-200 hover:shadow-lg bg-white"
+                }`}>
+                <h3 className="text-xl font-semibold">{plan.name}</h3>
 
-              <p className="text-3xl font-bold">
-                {plan.priceMonthly === null
-                  ? "Custom"
+                <p className="text-3xl font-bold ">
+                  {plan.priceMonthly === null ?
+                    "Custom"
                   : `$${plan.priceMonthly}`}
-              </p>
+                  <span className="text-sm font-normal text-gray-500">
+                    {plan.billing === "MONTHLY" ? " /month" : ""}
+                  </span>
+                </p>
 
-              <button
-                className={`mt-4 w-full rounded-lg p-2 ${
-                  selected
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {selected ? "Selected" : "Choose Plan"}
-              </button>
-            </div>
-          );
-        })}
+                <ul className=" text-sm text-gray-700 flex-1">
+                  {Object.entries(plan.capabilities).map(([key, value]) => (
+                    <li key={key}>{formatCapability(key, value)}</li>
+                  ))}
+                </ul>
+
+                <button
+                  className={` w-full rounded-lg p-[1vh] font-medium transition ${
+                    selected ?
+                      "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700"
+                  }`}>
+                  {selected ? "Selected" : "Choose Plan"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {selectedPlan && (
+          <button
+            onClick={handleContinue}
+            className="bg-black text-white p-[1vh] rounded-full">
+            Continue to payment
+          </button>
+        )}
       </div>
-
-      {selectedPlan && (
-        <button
-          onClick={() =>
-            onPlanSelected({
-              planId: selectedPlan,
-            })
-          }
-          className="bg-black text-white px-6 py-2 rounded-full"
-        >
-          Continue to Payment
-        </button>
-      )}
     </div>
   );
 };
