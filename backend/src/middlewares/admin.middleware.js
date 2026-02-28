@@ -1,3 +1,5 @@
+const allowedRoles = ["ADMIN", "SUPER_ADMIN"];
+
 export default function adminMiddleware(req, res, next) {
   try {
     const user = req.user;
@@ -5,7 +7,7 @@ export default function adminMiddleware(req, res, next) {
       return res.status(401).json({ error: "Not authenticated" });
     }
     const userRole = req.user.role;
-    if (userRole !== "ADMIN") {
+    if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({ error: "Admin access required" });
     }
 

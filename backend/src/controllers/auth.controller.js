@@ -51,10 +51,35 @@ function clearRefreshCookie(res) {
   });
 }
 
+function handlePrismaError(err, res) {
+  if (err.code === "P2002") {
+    // err.meta.target is an array of field names that caused the conflict
+    const fields = err.meta?.target?.join(", ") ?? "field";
+    return res.status(400).json({ error: `${fields} already in use` });
+  }
+  if (err.code === "P2025") {
+    return res.status(404).json({ error: "Record not found" });
+  }
+  return null; // caller should log and return 500
+}
+
+const ALLOWED_SELF_REGISTER_ROLES = [
+  "IMPORTER",
+  "EXPORTER",
+  "BANK",
+  "BROKER",
+  "CUSTOMS",
+];
+
 async function register(req, res) {
   try {
+
     const { email, password, role, companyName, phone, address, plan } =
       req.body;
+
+    if (!ALLOWED_SELF_REGISTER_ROLES.includes(role)) {
+      return res.status(400).json({ error: "Invalid role" });
+    }
 
     const allowedPlans = ["free_trial", "basic", "pro", "enterprise"];
     const safePlan = allowedPlans.includes(plan) ? plan : "free_trial";
@@ -72,7 +97,7 @@ async function register(req, res) {
         companyName,
         phone,
         address,
-        tx, // optional if your util supports prisma injection
+        tx,
       );
 
       const trialDays = Number(process.env.TRIAL_DAYS) || 14;
@@ -84,7 +109,7 @@ async function register(req, res) {
         data: {
           userId: user.id,
           plan: safePlan,
-          status: "TRIALING", // ✅ NEVER trust frontend payment
+          status: "TRIALING", 
           startedAt: now,
           trialEndsAt,
         },
@@ -93,12 +118,7 @@ async function register(req, res) {
       return user;
     });
 
-    const userWithSub = await prisma.user.findUnique({
-      where: { id: result.id },
-      include: { subscription: true },
-    });
-
-    const { passwordHash: _unused, ...safeUser } = userWithSub;
+    const safeUser = await userUtils.findUserById(result.id);
 
     res.status(201).json({
       message: "User registered",
@@ -106,10 +126,17 @@ async function register(req, res) {
     });
   } catch (err) {
     console.error("failed to register user:", err);
-    res.status(500).json({ error: "Registration failed" });
+
+    const handled = handlePrismaError(err, res);
+    if (!handled) {
+      res.status(500).json({ error: "Registration failed" });
+    }
   }
 }
 
+// ---------------------------------------------------------------------------
+// login
+// ---------------------------------------------------------------------------
 async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -118,14 +145,18 @@ async function login(req, res) {
       where: { email },
       include: { subscription: true },
     });
-    if (!user)
-      return res.status(400).json({ error: "invalid email or password" });
+
+    // Use a generic message to avoid leaking whether the email exists.
+    if (!user) {
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
 
     const valid = await userUtils.verifyPassword(password, user.passwordHash);
-    if (!valid)
-      return res
-        .status(400)
-        .json({ error: "invalid email or password", valid });
+    if (!valid) {
+      // FIX: Removed `valid` from the response body — it leaked a boolean
+      // hint that could assist brute-force attempts.
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
 
     const accessToken = generateAccessToken(user);
 
@@ -134,19 +165,24 @@ async function login(req, res) {
 
     setRefreshCookie(res, refreshToken, expiresAt);
 
+    // Strip passwordHash before sending to the client.
     const { passwordHash: _unused, ...safeUser } = user;
 
     res.json({
-      message: "user login successfull",
+      message: "User login successful",
       accessToken,
       user: safeUser,
     });
   } catch (err) {
     console.error("failed to login user:", err);
-    res.status(500).json({ error: "failed to login user" });
+    res.status(500).json({ error: "Failed to login user" });
   }
 }
 
+// ---------------------------------------------------------------------------
+// refresh
+// Issues a new access token and rotates the refresh token (one-time use).
+// ---------------------------------------------------------------------------
 async function refresh(req, res) {
   try {
     const token = req.cookies.refresh_token;
@@ -172,10 +208,14 @@ async function refresh(req, res) {
     res.json({ accessToken });
   } catch (err) {
     console.error("failed to refresh token:", err);
-    res.status(500).json({ error: "failed to refresh token" });
+    res.status(500).json({ error: "Failed to refresh token" });
   }
 }
 
+// ---------------------------------------------------------------------------
+// logout
+// Revokes the current device's refresh token and clears the cookie.
+// ---------------------------------------------------------------------------
 async function logout(req, res) {
   try {
     const token = req.cookies.refresh_token;
@@ -186,72 +226,95 @@ async function logout(req, res) {
     res.json({ message: "Logged out" });
   } catch (err) {
     console.error("failed to logout user:", err);
-    res.status(500).json({ error: "failed to logout user" });
+    res.status(500).json({ error: "Failed to logout user" });
   }
 }
 
+// ---------------------------------------------------------------------------
+// logoutAll
+// Revokes all refresh tokens for the user (signs out every device).
+// ---------------------------------------------------------------------------
 async function logoutAll(req, res) {
   try {
-    // You already have req.user from the middleware (access token verified)
     const userId = req.user.id;
 
     await authUtils.deleteAllTokensForUser(userId);
-
     clearRefreshCookie(res);
 
     res.json({ message: "Logged out from all devices" });
   } catch (err) {
     console.error("failed to logout all users:", err);
-    res.status(500).json({ error: "failed to logout all users" });
+    res.status(500).json({ error: "Failed to logout all devices" });
   }
 }
 
+// ---------------------------------------------------------------------------
+// getUserProfile
+// Returns the authenticated user's profile including subscription.
+// passwordHash is excluded via safeUserSelect inside findUserById.
+// FIX: Previously findUserById didn't include subscription — fixed in utils.
+// ---------------------------------------------------------------------------
 async function getUserProfile(req, res) {
   try {
     const userId = req.user.id;
 
     const user = await userUtils.findUserById(userId);
-    if (!user) return res.status(404).json({ error: "user not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    const { passwordHash: _unused, ...safeUser } = user;
-
+    // Note: no need to strip passwordHash here — safeUserSelect in
+    // findUserById already excludes it at the query level.
     res.status(200).json({
-      message: "user profile fetched successfully",
-      user: safeUser,
+      message: "User profile fetched successfully",
+      user,
     });
   } catch (err) {
     console.error("failed to fetch user", err);
-    res.status(500).json({ error: "failed to fetch user" });
+    res.status(500).json({ error: "Failed to fetch user" });
   }
 }
 
+// ---------------------------------------------------------------------------
+// updateUserProfile
+// Only allows updating companyName, phone, and address.
+// Email, password, and role changes must go through dedicated flows.
+// ---------------------------------------------------------------------------
 async function updateUserProfile(req, res) {
   try {
     const userId = req.user.id;
     const { companyName, phone, address } = req.body;
 
-    // build dynamic update object
     const updateData = {};
     if (companyName !== undefined) updateData.companyName = companyName;
     if (phone !== undefined) updateData.phone = phone;
     if (address !== undefined) updateData.address = address;
 
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ error: "no valid fields to update" });
+      return res.status(400).json({ error: "No valid fields to update" });
     }
 
+    // updateUser now returns safeUserSelect shape (no passwordHash, includes subscription)
     const updatedUser = await userUtils.updateUser(userId, updateData);
 
     res.status(200).json({
-      message: "user profile updated successfully",
+      message: "User profile updated successfully",
       user: updatedUser,
     });
   } catch (err) {
     console.error("failed to update user", err);
-    res.status(500).json({ error: "failed to update user" });
+
+    // FIX: Handle unique constraint on phone number (P2002) with a clear message.
+    const handled = handlePrismaError(err, res);
+    if (!handled) {
+      res.status(500).json({ error: "Failed to update user" });
+    }
   }
 }
 
+// ---------------------------------------------------------------------------
+// deleteUserProfile
+// Revokes all tokens first so existing sessions are invalidated immediately,
+// then hard-deletes the user record (cascades to related data per schema).
+// ---------------------------------------------------------------------------
 async function deleteUserProfile(req, res) {
   try {
     const userId = req.user.id;
@@ -259,12 +322,10 @@ async function deleteUserProfile(req, res) {
     await authUtils.deleteAllTokensForUser(userId);
     await userUtils.deleteUser(userId);
 
-    res.status(200).json({
-      message: "user deleted successfully",
-    });
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("failed to delete user", err);
-    res.status(500).json({ error: "failed to delete user" });
+    res.status(500).json({ error: "Failed to delete user" });
   }
 }
 

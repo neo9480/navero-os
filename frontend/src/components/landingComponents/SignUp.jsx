@@ -19,13 +19,15 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const initialStep = location.state?.currentStep ?? 1;
   const initialPlan =
     location.state?.planId ?? location.state?.formData?.plan ?? null;
-  const initialPayment =
-    location.state?.paymentStatus ??
-    location.state?.formData?.paymentStatus ??
-    "UNPAID";
+
+  // FIX: Removed `paymentStatus` from initialisation entirely.
+  // The backend always sets status to TRIALING regardless of what the
+  // frontend sends, so storing and displaying paymentStatus was misleading.
+  // The summary step now shows the real server-controlled status instead.
 
   const [currentStep, setCurrentStep] = useState(initialStep);
 
@@ -45,12 +47,16 @@ const SignUp = () => {
       location.state?.confirmPassword ??
       "",
     plan: initialPlan,
-    paymentStatus: initialPayment,
+    // FIX: `paymentStatus` removed — it was sent to the backend but
+    // intentionally ignored. Keeping it created a false UI indication that
+    // the user's payment state was UNPAID/PAID when the DB always stores TRIALING.
   });
 
   const [errors, setErrors] = useState({});
 
-  /* ---------------- VALIDATION ---------------- */
+  /* ------------------------------------------------------------------ */
+  /* VALIDATION                                                           */
+  /* ------------------------------------------------------------------ */
 
   const validateEmail = (email) => {
     if (!email) return "Email is required.";
@@ -96,12 +102,13 @@ const SignUp = () => {
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // clear any previous error for this field as user types
+    // Clear any previous error for this field as the user types.
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validateStep = (step) => {
     const newErrors = {};
+
     if (step === 1) {
       const msg = validateField("role", formData.role);
       if (msg) newErrors.role = msg;
@@ -127,21 +134,26 @@ const SignUp = () => {
     }
 
     setErrors((prev) => ({ ...prev, ...newErrors }));
-
     return Object.keys(newErrors).length === 0;
   };
 
   const handleStepChange = (nextStep) => {
+    // Only validate when moving forward; going back is always allowed.
     if (nextStep > currentStep) {
       if (!validateStep(currentStep)) return;
     }
     setCurrentStep(nextStep);
   };
 
+  /* ------------------------------------------------------------------ */
+  /* SUBMIT                                                               */
+  /* ------------------------------------------------------------------ */
+
   const handleFinalSubmit = async (e) => {
     e?.preventDefault?.();
     try {
-      // Register user
+      // Register the new user. Note: `paymentStatus` is NOT sent because the
+      // backend ignores it and always enforces TRIALING server-side.
       await axios.post(
         "http://localhost:3000/api/auth/register",
         {
@@ -152,12 +164,12 @@ const SignUp = () => {
           phone: formData.phone,
           address: formData.address,
           plan: formData.plan,
-          paymentStatus: formData.paymentStatus,
+          // FIX: paymentStatus intentionally omitted — backend controls this.
         },
         { withCredentials: true },
       );
 
-      // Immediately log in the new user
+      // Immediately log in the new user to obtain tokens.
       const res = await axios.post(
         "http://localhost:3000/api/auth/login",
         {
@@ -170,6 +182,7 @@ const SignUp = () => {
       const { accessToken, user } = res.data;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
+
       toast.success("Account created and logged in", {
         position: "top-center",
       });
@@ -177,7 +190,7 @@ const SignUp = () => {
       setTimeout(() => navigate("/dashboard"), 800);
     } catch (err) {
       console.error("signup error:", err);
-      if (err.response && err.response.data && err.response.data.error) {
+      if (err.response?.data?.error) {
         toast.error(err.response.data.error, { position: "top-center" });
       } else {
         toast.error("Server error during signup", { position: "top-center" });
@@ -185,13 +198,18 @@ const SignUp = () => {
     }
   };
 
+  /* ------------------------------------------------------------------ */
+  /* RENDER                                                               */
+  /* ------------------------------------------------------------------ */
+
   return (
     <div className="h-screen w-screen flex justify-center items-center bg-platinum-600 font-neue_montreal text-platinum-500">
       <ABgLight />
       <Toaster theme="dark" />
 
-      <div className="flex justify-center items-center h-[90vh] w-[95vw] rounded-4xl border-[1vh] z-10 border-space_indigo-200 backdrop-blur-xl ">
+      <div className="flex justify-center items-center h-[90vh] w-[95vw] rounded-4xl border-[1vh] z-10 border-space_indigo-200 backdrop-blur-xl">
         <div className="h-[95vh] w-[80vw] flex flex-col justify-between items-center p-[1vw] bg-space_indigo-200 rounded-4xl">
+          {/* Logo */}
           <div className="flex justify-center items-center gap-[1vw] w-[12vw]">
             <Ship />
             <img
@@ -201,11 +219,13 @@ const SignUp = () => {
             />
           </div>
 
+          {/* Header */}
           <div className="flex flex-col justify-center items-center">
             <h1 className="text-4xl font-extrabold">WELCOME</h1>
             <p>Fill out the details to create an account</p>
           </div>
 
+          {/* Stepper */}
           <div className="h-[55vh]">
             <Stepper
               currentStep={currentStep}
@@ -221,12 +241,12 @@ const SignUp = () => {
                   password: "",
                   confirmPassword: "",
                   plan: null,
-                  paymentStatus: "UNPAID",
+                  // FIX: paymentStatus removed from reset state too.
                 });
                 setErrors({});
                 setCurrentStep(1);
               }}>
-              {/* ---------------- STEP 1 ROLE ---------------- */}
+              {/* -------- STEP 1 — ROLE -------- */}
               <Step>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-lavender_grey-500">
@@ -269,13 +289,14 @@ const SignUp = () => {
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
                   </DropdownMenu>
+
                   {errors.role && (
                     <p className="text-red-500 text-sm mt-1">{errors.role}</p>
                   )}
                 </div>
               </Step>
 
-              {/* ---------------- STEP 2 COMPANY ---------------- */}
+              {/* -------- STEP 2 — COMPANY DETAILS -------- */}
               <Step>
                 <form>
                   <p>Business Name</p>
@@ -331,7 +352,7 @@ const SignUp = () => {
                 </form>
               </Step>
 
-              {/* ---------------- STEP 3 AUTH ---------------- */}
+              {/* -------- STEP 3 — AUTH CREDENTIALS -------- */}
               <Step>
                 <form>
                   <p>Business Email</p>
@@ -390,19 +411,20 @@ const SignUp = () => {
                 </form>
               </Step>
 
-              {/* ---------------- STEP 4 PLANS ---------------- */}
+              {/* -------- STEP 4 — PLANS -------- */}
               <Step>
+                {/* FIX: Button label was "Choose Your Role" — corrected to "Choose Your Plan". */}
                 <button
                   onClick={() =>
                     navigate("/sign-up/plans", {
                       state: { formData },
                     })
                   }>
-                  Choose Your Role
+                  Choose Your Plan
                 </button>
               </Step>
 
-              {/* ---------------- STEP 5 SUMMARY ---------------- */}
+              {/* -------- STEP 5 — SUMMARY -------- */}
               <Step>
                 <div className="space-y-2">
                   <h2 className="text-xl font-bold">Summary</h2>
@@ -414,25 +436,34 @@ const SignUp = () => {
                     <strong>Company:</strong> {formData.companyName}
                   </p>
                   <p>
+                    <strong>Phone no.:</strong> {formData.phone}
+                  </p>
+                  <p>
+                    <strong>Address:</strong> {formData.address}
+                  </p>
+                  <p>
                     <strong>Email:</strong> {formData.email}
                   </p>
                   <p>
-                    <strong>Plan:</strong> {formData.plan}
+                    <strong>Plan:</strong> {formData.plan ?? "Free Trial"}
                   </p>
 
-                  <p
-                    className={`font-bold ${
-                      formData.paymentStatus === "PAID" ?
-                        "text-green-500"
-                      : "text-red-500"
-                    }`}>
-                    {formData.paymentStatus}
+                  {/*
+                    FIX: Previously showed `formData.paymentStatus` which was
+                    always "UNPAID" — a frontend-only value the backend never
+                    uses. The DB always stores "TRIALING" after registration.
+                    Now we display the actual server-enforced status so users
+                    have accurate expectations before submitting.
+                  */}
+                  <p className="font-bold text-yellow-400">
+                    Subscription Status: TRIALING
                   </p>
                 </div>
               </Step>
             </Stepper>
           </div>
 
+          {/* Footer */}
           <div>
             <p className="text-lavender_grey-600">
               Already have an account?{" "}

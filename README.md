@@ -11,10 +11,10 @@ A comprehensive operating system for the export-import (EXIM) industry, providin
 - **Analytics Dashboard**: Role-specific KPIs and reporting
 - **Black-to-White Conversion**: Informal payment legalization module
 ### Technology Stack
-- **Frontend (Web)**: Next.js 14+ with TypeScript, Material-UI
+- **Frontend (Web)**: React with TypeScript, tailwindcss (4.2), shadcn-ui, lucid-react
 - **Frontend (Mobile)**: React Native with Expo
-- **Backend**: Next.js API Routes with PostgreSQL
-- **Authentication**: NextAuth.js with role-based access control
+- **Backend**: Express API Routes with PostgreSQL using prisma-orm
+- **Authentication**: Custom authentication
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time**: Socket.io for live tracking
 - **Maps**: Leaflet with OpenStreetMap
@@ -22,7 +22,7 @@ A comprehensive operating system for the export-import (EXIM) industry, providin
 ## Project Structure
 ```
 navero-os/
-├── web/                 # Next.js web application
+├── web/                 # React web application
 ├── mobile/              # React Native app (Expo)
 ├── shared/              # Shared types and utilities
 └── docs/                # Documentation
@@ -59,17 +59,8 @@ npm install
 npx expo start
 ```
 ### Environment Variables
-Create `.env.local` in the web directory:
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/navero"
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-EMAIL_FROM="noreply@navero.com"
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT=587
-SMTP_USER="your-email@gmail.com"
-SMTP_PASS="your-app-password"
-```
+Create `.env` in the web directory:
+
 ## User Roles
 ### Exporter / Importer
 - Create and track shipments

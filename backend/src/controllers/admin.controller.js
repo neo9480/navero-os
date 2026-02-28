@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
 import shipmentUtils from "../utils/shipment.utils.js";
@@ -5,6 +6,239 @@ import transactionUtils from "../utils/transaction.utils.js";
 import serviceUtils from "../utils/service.utils.js";
 import bookingUtils from "../utils/booking.utils.js";
 import statsUtils from "../utils/stats.utils.js";
+
+const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
+
+const parseDuration = (str) => {
+  const match = /^(\d+)([smhd])$/.exec(str);
+  if (!match) return 7 * 86400000;
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+
+  return (
+    {
+      s: value * 1000,
+      m: value * 60000,
+      h: value * 3600000,
+      d: value * 86400000,
+    }[unit] ?? 7 * 86400000
+  );
+};
+
+function getRefreshExpiryDate() {
+  return new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION));
+}
+
+function generateAccessToken(user) {
+  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+  });
+}
+
+function setRefreshCookie(res, token, expiresAt) {
+  res.cookie("refresh_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    expires: expiresAt,
+    path: "/",
+  });
+}
+
+function clearRefreshCookie(res) {
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+}
+
+/*
+|--------------------------------------------------------------------------
+| REGISTER SUPER ADMIN
+|--------------------------------------------------------------------------
+*/
+async function registerSuperAdmin(req, res) {
+  try {
+    const { email, password, secret } = req.body;
+
+    if (secret !== process.env.SUPER_ADMIN_SECRET) {
+      return res.status(403).json({
+        message: "Invalid super admin secret",
+      });
+    }
+
+    const existing = await userUtils.findUserByEmail(email);
+    if (existing) {
+      return res.status(409).json({
+        message: "Admin already exists",
+      });
+    }
+
+    const user = await userUtils.createUser(
+      email,
+      password,
+      "SUPER_ADMIN"
+    );
+
+    const { passwordHash, ...safeUser } = user;
+
+    res.status(201).json({
+      message: "SUPER_ADMIN created successfully",
+      user: safeUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "failed to create super admin" });
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| REGISTER ADMIN (ONLY SUPER ADMIN)
+|--------------------------------------------------------------------------
+*/
+async function registerAdmin( req, res ) {
+  try {
+    if (req.user.role !== "SUPER_ADMIN") {
+      return res.status(403).json({
+        message: "Only SUPER_ADMIN can create ADMIN",
+      });
+    }
+
+    const { email, password, key } = req.body;
+
+    if (key !== process.env.ADMIN_KEY) {
+      return res.status(403).json({
+        message: "Invalid admin key",
+      });
+    }
+
+    const existing = await userUtils.findUserByEmail(email);
+    if (existing) {
+      return res.status(409).json({
+        message: "admin already exists",
+      });
+    }
+
+    const admin = await userUtils.createUser(
+      email,
+      password,
+      "ADMIN"
+    );
+
+    const { passwordHash, ...safeAdmin } = admin;
+
+    res.status(201).json({
+      message: "ADMIN created successfully",
+      user: safeAdmin,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "failed to create admin" });
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN LOGIN
+|--------------------------------------------------------------------------
+*/
+async function adminLogin(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    const user = await userUtils.findAdminByEmail(email);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    const validPassword = await userUtils.verifyPassword(
+      password,
+      user.passwordHash,
+    );
+
+    if (!validPassword) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    const accessToken = generateAccessToken(user);
+
+    const expiresAt = getRefreshExpiryDate();
+    const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
+
+    setRefreshCookie(res, refreshToken, expiresAt);
+
+    const { passwordHash, ...safeUser } = user;
+
+    res.status(200).json({
+      message: "Login successful",
+      accessToken,
+      user: safeUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "login failed" });
+  }
+}
+
+async function logout(req, res) {
+  try {
+    const token = req.cookies.refresh_token;
+    if (token) {
+      await authUtils.deleteRefreshToken(token);
+    }
+    clearRefreshCookie(res);
+    res.json({ message: "Logged out" });
+  } catch (err) {
+    console.error("failed to logout admin:", err);
+    res.status(500).json({ error: "Failed to logout admin" });
+  }
+}
+
+async function logoutAll(req, res) {
+  try {
+    const userId = req.user.id;
+
+    await authUtils.deleteAllTokensForUser(userId);
+    clearRefreshCookie(res);
+
+    res.json({ message: "Logged out from all devices" });
+  } catch (err) {
+    console.error("failed to logout from all devices:", err);
+    res.status(500).json({ error: "Failed to logout all devices" });
+  }
+}
+
+async function deleteAdmin(req, res) {
+  try {
+    const userId = req.user.id;
+
+    await authUtils.deleteAllTokensForUser(userId);
+    await userUtils.deleteUser(userId);
+
+    res.status(200).json({ message: "Admin deleted successfully" });
+  } catch (err) {
+    console.error("failed to delete admin", err);
+    res.status(500).json({ error: "Failed to delete admin" });
+  }
+}
 
 async function getAllUsers(req, res) {
   try {
@@ -119,9 +353,8 @@ async function getAllTransactions(req, res) {
 async function getTransactionById(req, res) {
   try {
     const transactionId = req.params.id;
-    const transaction = await transactionUtils.getTransactionById(
-      transactionId,
-    );
+    const transaction =
+      await transactionUtils.getTransactionById(transactionId);
 
     if (!transaction) {
       return res.status(404).json({
@@ -251,6 +484,12 @@ export async function getStats(req, res) {
 }
 
 export default {
+  registerAdmin,
+  registerSuperAdmin,
+  adminLogin,
+  logout,
+  logoutAll,
+  deleteAdmin,
   getAllUsers,
   getUserById,
   deleteUser,

@@ -7,6 +7,35 @@ const router = express.Router();
 
 /*
 |--------------------------------------------------------------------------
+| Admin Auth Management
+|--------------------------------------------------------------------------
+| Login and register admin and super-admin. Only super-admin can register 
+| an admin
+*/
+router.post("/register/super-admin", adminController.registerSuperAdmin);
+router.post(
+  "/register/admin",
+  authMiddleware,
+  adminMiddleware,
+  adminController.registerAdmin,
+);
+router.post("/login/admin", adminController.adminLogin);
+router.post("/logout", authMiddleware, adminMiddleware, adminController.logout);
+router.post(
+  "/logout-all",
+  authMiddleware,
+  adminMiddleware,
+  adminController.logoutAll,
+);
+router.delete(
+  "/admin",
+  authMiddleware,
+  adminMiddleware,
+  adminController.deleteAdmin,
+);
+
+/*
+|--------------------------------------------------------------------------
 | Admin User Management
 |--------------------------------------------------------------------------
 | Full trust zone. Admin can view all users, inspect a single user, or
