@@ -419,7 +419,8 @@ const SignUp = () => {
                     navigate("/sign-up/plans", {
                       state: { formData },
                     })
-                  }>
+                  }
+                  className="rounded-full p-[1.5vh] cursor-pointer bg-platinum-600 text-space_indigo-100 hover:bg-space_indigo-100 hover:text-platinum-600 transition">
                   Choose Your Plan
                 </button>
               </Step>
