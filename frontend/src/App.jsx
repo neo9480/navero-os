@@ -18,13 +18,13 @@ const App = () => {
   useEffect(() => {
     const scroll = new LocomotiveScroll();
     return () => scroll.destroy();
-  }, [] );
-  
-  const location = useLocation()
+  }, []);
+
+  const location = useLocation();
   const { pathname } = location;
 
   // Loader only on first load of "/"
-  const [ showLoader, setShowLoader ] = useState( pathname === "/" );
+  const [showLoader, setShowLoader] = useState(pathname === "/");
 
   const [displayLocation, setDisplayLocation] = useState(location);
   useEffect(() => {
@@ -34,10 +34,8 @@ const App = () => {
 
     return () => clearTimeout(timeout);
   }, [location]);
-  
 
   // LocomotiveScroll: create once, destroy properly
-  
 
   // Cursor listener: attach once
   useEffect(() => {
@@ -54,8 +52,6 @@ const App = () => {
     main.addEventListener("mousemove", moveCursor);
     return () => main.removeEventListener("mousemove", moveCursor);
   }, [showLoader]);
-  
-  
 
   return (
     <main className="main bg-space_indigo-200 h-screen w-full">
@@ -83,4 +79,3 @@ const App = () => {
 };
 
 export default App;
-

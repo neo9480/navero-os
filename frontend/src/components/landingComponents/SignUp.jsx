@@ -210,14 +210,16 @@ const SignUp = () => {
       <div className="flex justify-center items-center h-[90vh] w-[95vw] rounded-4xl border-[1vh] z-10 border-space_indigo-200 backdrop-blur-xl">
         <div className="h-[95vh] w-[80vw] flex flex-col justify-between items-center p-[1vw] bg-space_indigo-200 rounded-4xl">
           {/* Logo */}
-          <div className="flex justify-center items-center gap-[1vw] w-[12vw]">
-            <Ship />
-            <img
-              src="./imgs/dark-navero-removebg.png"
-              alt="Navero"
-              className="w-[7vw]"
-            />
-          </div>
+          <Link to={"/"}>
+            <div className="flex justify-center items-center gap-[1vw] w-[12vw]">
+              <Ship />
+              <img
+                src="./imgs/dark-navero-removebg.png"
+                alt="Navero"
+                className="w-[7vw]"
+              />
+            </div>
+          </Link>
 
           {/* Header */}
           <div className="flex flex-col justify-center items-center">

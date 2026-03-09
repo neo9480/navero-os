@@ -246,14 +246,16 @@ const SignIn = () => {
           </div>
         </div>
         <div className="h-full w-1/2 bg-platinum-600 rounded-l-4xl flex flex-col justify-between items-center p-[1vw] font-neue_montreal">
-          <div className="flex justify-center items-center gap-[1vw]">
-            <div className="">
-              <Ship height={"5vh"} width={"5vh"} />
+          <Link to={"/"}>
+            <div className="flex justify-center items-center gap-[1vw]">
+              <div className="">
+                <Ship height={"5vh"} width={"5vh"} />
+              </div>
+              <div className="w-[18vh] flex justify-between items-center">
+                <img src="../../../imgs/light-navero-removebg.png"></img>
+              </div>
             </div>
-            <div className="w-[18vh] flex justify-between items-center">
-              <img src="../../../imgs/light-navero-removebg.png"></img>
-            </div>
-          </div>
+          </Link>
           <div className=" flex flex-col justify-center items-center gap-[1vw]">
             <div className="flex flex-col justify-center items-center">
               <h1 className="text-5xl ">Welcome Back</h1>

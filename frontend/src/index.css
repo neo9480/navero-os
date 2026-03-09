@@ -194,3 +194,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  @keyframes marquee-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.33%);
+    }
+  }
+
+  .marquee-scroll {
+    animation: marquee-left 20s linear infinite;
+    will-change: transform;
+  }
+}
