@@ -11,7 +11,7 @@ function Home() {
             <h1 className="text-[17vh] leading-none font-extrabold font-host_grotesk ">
               TRADE <br />
               WITHOUT <br />
-              FRICTION
+              <span className="text-punch_red-500">FRICTION</span>
             </h1>
           </div>
           <div className="relative h-full w-full overflow-hidden">
