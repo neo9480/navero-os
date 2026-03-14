@@ -278,6 +278,9 @@ const SignUp = () => {
                           <DropdownMenuRadioItem value="EXPORTER">
                             Exporter
                           </DropdownMenuRadioItem>
+                          <DropdownMenuRadioItem value="LOGISTICS">
+                            Logistics
+                          </DropdownMenuRadioItem>
                           <DropdownMenuRadioItem value="BANK">
                             Bank
                           </DropdownMenuRadioItem>
