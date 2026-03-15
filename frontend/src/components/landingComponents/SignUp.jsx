@@ -3,7 +3,7 @@ import ABgLight from "../commonComponents/ABgLight";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
 import Stepper, { Step } from "../shadcnComponents/Stepper";
-import { ChevronDown, Ship } from "lucide-react";
+import { ChevronDown, Eye, EyeClosed, Ship } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import GradBlindBg from "../commonComponents/GradBlindBg";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -53,6 +54,8 @@ const SignUp = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   /* ------------------------------------------------------------------ */
   /* VALIDATION                                                           */
@@ -208,7 +211,8 @@ const SignUp = () => {
       <Toaster theme="dark" />
 
       <div className="flex justify-center items-center h-[90vh] w-[95vw] rounded-4xl border-[1vh] z-10 border-space_indigo-200 backdrop-blur-xl">
-        <div className="h-[95vh] w-[80vw] flex flex-col justify-between items-center p-[1vw] bg-space_indigo-200 rounded-4xl">
+        <div className="h-[95vh] w-[80vw] flex flex-col justify-between items-center p-[1vw] bg-space_indigo-200 rounded-4xl ">
+          
           {/* Logo */}
           <Link to={"/"}>
             <div className="flex justify-center items-center gap-[1vw] w-[12vw]">
@@ -376,16 +380,29 @@ const SignUp = () => {
                   )}
 
                   <p>Password</p>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => updateField("password", e.target.value)}
-                    onBlur={() => {
-                      const msg = validateField("password", formData.password);
-                      setErrors((p) => ({ ...p, password: msg }));
-                    }}
-                    className="w-full h-[5vh] p-[1vw] bg-lavender_grey-200 rounded-full"
-                  />
+                  <div className="relative w-full">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) => updateField("password", e.target.value)}
+                      onBlur={() => {
+                        const msg = validateField(
+                          "password",
+                          formData.password,
+                        );
+                        setErrors((p) => ({ ...p, password: msg }));
+                      }}
+                      className="w-full h-[5vh] p-[1vw] pr-[3vw] bg-lavender_grey-200 rounded-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-[1vw] top-1/2 -translate-y-1/2 text-lavender_grey-500 hover:text-platinum-600 transition">
+                      {showPassword ?
+                        <Eye className="size-4" />
+                      : <EyeClosed className="size-4" />}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.password}
@@ -393,21 +410,31 @@ const SignUp = () => {
                   )}
 
                   <p>Confirm Password</p>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      updateField("confirmPassword", e.target.value)
-                    }
-                    onBlur={() => {
-                      const msg = validateField(
-                        "confirmPassword",
-                        formData.confirmPassword,
-                      );
-                      setErrors((p) => ({ ...p, confirmPassword: msg }));
-                    }}
-                    className="w-full h-[5vh] p-[1vw] bg-lavender_grey-200 rounded-full"
-                  />
+                  <div className="relative w-full">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        updateField("confirmPassword", e.target.value)
+                      }
+                      onBlur={() => {
+                        const msg = validateField(
+                          "confirmPassword",
+                          formData.confirmPassword,
+                        );
+                        setErrors((p) => ({ ...p, confirmPassword: msg }));
+                      }}
+                      className="w-full h-[5vh] p-[1vw] pr-[3vw] bg-lavender_grey-200 rounded-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      className="absolute right-[1vw] top-1/2 -translate-y-1/2 text-lavender_grey-500 hover:text-platinum-600 transition">
+                      {showConfirmPassword ?
+                        <Eye className="size-4" />
+                      : <EyeClosed className="size-4" />}
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.confirmPassword}
@@ -415,7 +442,6 @@ const SignUp = () => {
                   )}
                 </form>
               </Step>
-
               {/* -------- STEP 4 — PLANS -------- */}
               <Step>
                 {/* FIX: Button label was "Choose Your Role" — corrected to "Choose Your Plan". */}

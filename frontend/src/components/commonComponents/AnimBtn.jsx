@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const EASE = [0.76, 0, 0.24, 1];
 const DURATION = 0.55;
 
-const AnimBtn = ({ctaText, to}) => {
+const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showArrow, onClick}) => {
   // ── Two independent Y positions ──────────────────────────────
   const darkY = useMotionValue("100%"); // dark layer  (enters bottom → exits top)
   const lightY = useMotionValue("100%"); // light layer (rises bottom on leave to restore bg)
@@ -35,44 +35,48 @@ const AnimBtn = ({ctaText, to}) => {
   }
 
   return (
-    <Link to={to}>
-      <Motion.div
-        onMouseEnter={onEnter}
-        onMouseLeave={onLeave}
-        className="relative inline-flex items-center gap-[2vw] px-[1.5vw] py-3 rounded-full bg-punch_red-500 h-[4vw] w-[14vw] text-white font-medium overflow-hidden">
-        {/* ── 1. Dark wipe — enters bottom, exits top ── */}
+    <button onClick={onClick}>
+      <Link to={to}>
         <Motion.div
-          aria-hidden
-          className="absolute bottom-0 -left-[20%] w-[140%] h-[140%] bg-punch_red-400 -mb-3 origin-center pointer-events-none"
-          style={{
-            borderRadius: "50%",
-            y: darkY,
-          }}
-        />
+          onMouseEnter={onEnter}
+          onMouseLeave={onLeave}
+          className={`relative inline-flex items-center gap-[2vw] px-[1.5vw] py-3 rounded-full ${bgColor}  ${textColor} font-medium overflow-hidden ${className}`}>
+          {/* ── 1. Dark wipe — enters bottom, exits top ── */}
+          <Motion.div
+            aria-hidden
+            className={`absolute bottom-0 -left-[20%] w-[140%] h-[140%] ${hoverColor} -mb-3 origin-center pointer-events-none`}
+            style={{
+              borderRadius: "50%",
+              y: darkY,
+            }}
+          />
 
-        {/* ── 2. Light wipe — rises bottom on leave to restore bg ── */}
-        <Motion.div
-          aria-hidden
-          className="absolute bottom-0 -left-[20%] w-[140%] h-[110%] bg-transparent pointer-events-none"
-          style={{
-            y: lightY,
-            zIndex: 1,
-          }}
-        />
+          {/* ── 2. Light wipe — rises bottom on leave to restore bg ── */}
+          <Motion.div
+            aria-hidden
+            className="absolute bottom-0 -left-[20%] w-[140%] h-[110%] bg-transparent pointer-events-none"
+            style={{
+              y: lightY,
+              zIndex: 1,
+            }}
+          />
 
-        {/* ── Text ── */}
-        <span className="relative z-10">{ctaText}</span>
+          {/* ── Text ── */}
+          <span className="relative z-10">{ctaText}</span>
 
-        {/* ── Circle with arrow ── */}
-        <Motion.div
-          style={{ scale: dotScale }}
-          className="relative z-10 bg-platinum-500 w-[2.5vw] h-[2.5vw] rounded-full flex items-center justify-center origin-center">
-          <Motion.div style={{ opacity: iconOpacity, scale: iconScale }}>
-            <ArrowUpRight size={20} className="text-space_indigo-100" />
-          </Motion.div>
+          {/* ── Circle with arrow ── */}
+          {showArrow && (
+            <Motion.div
+              style={{ scale: dotScale }}
+              className="relative z-10 bg-platinum-500 w-[2.5vw] h-[2.5vw] rounded-full flex items-center justify-center origin-center">
+              <Motion.div style={{ opacity: iconOpacity, scale: iconScale }}>
+                <ArrowUpRight size={20} className="text-space_indigo-100" />
+              </Motion.div>
+            </Motion.div>
+          )}
         </Motion.div>
-      </Motion.div>
-    </Link>
+      </Link>
+    </button>
   );
 }
 

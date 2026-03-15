@@ -1,4 +1,4 @@
-import { Ship } from "lucide-react";
+import { Ship, Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,7 +7,8 @@ import ABgDark from "../commonComponents/ABgDark";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [ password, setPassword ] = useState( "" );
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -276,14 +277,26 @@ const SignIn = () => {
                 </div>
                 <div className="w-[30vw]">
                   <p>Password</p>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full h-[5vh] p-[1vw] bg-lavender_grey-800 rounded-full"
-                  />
+                  <div className="relative w-full">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full h-[5vh] p-[1vw] pr-[3vw] bg-lavender_grey-800 rounded-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-[1vw] top-1/2 -translate-y-1/2  hover:text-space_indigo-200 cursor-pointer transition">
+                      {showPassword ?
+                        
+                          <Eye className="size-4" />
+                        
+                      : <EyeClosed className="size-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-[0.5vw]">

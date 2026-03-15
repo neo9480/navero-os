@@ -6,7 +6,7 @@ const GradBlindBg = () => {
       <GradientBlinds
         gradientColors={["#5024ff", "#ff0000"]}
         angle={0}
-        noise={0.3}
+        noise={0.2}
         blindCount={16}
         blindMinWidth={60}
         mouseDampening={0.15}

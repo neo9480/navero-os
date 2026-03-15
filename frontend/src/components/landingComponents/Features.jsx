@@ -269,7 +269,14 @@ export default function Features() {
                 your usage.
               </p>
             </div>
-            <AnimBtn ctaText={"SEE PRICING"} to={"/pricing"} />
+            <AnimBtn
+              ctaText={"GET STARTED"}
+              to={"/pricing"}
+              bgColor={"bg-punch_red-500"}
+              textColor={"text-platinum-600"}
+              hoverColor={"bg-punch_red-400"}
+              showArrow={true}
+            />
           </Motion.div>
         </div>
       </div>

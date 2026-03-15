@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Check, X, ChevronDown, ArrowRight } from "lucide-react";
 import PRICING from "../commonComponents/PlanArr";
 import GradBlindBg from "../commonComponents/GradBlindBg";
+import AnimBtn from "../commonComponents/AnimBtn";
 
 const ROLES = [
   { key: "exporters", label: "Exporters" },
@@ -135,25 +136,27 @@ export default function Pricing() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex justify-center mb-12">
           <div className="flex flex-wrap justify-center gap-2 bg-space_indigo-300/40 border border-space_indigo-500 rounded-full p-2">
-            {ROLES.map(({ key, label }) => (
-              <button
+            {ROLES.map( ( { key, label } ) => (
+              <AnimBtn
                 key={key}
                 onClick={() => setActiveRole(key)}
+                ctaText={label}
                 className={`relative px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeRole === key ? "text-platinum-600" : (
-                    "text-platinum-400 hover:text-platinum-600 hover:bg-space_indigo-300"
+                    "text-platinum-400 hover:text-platinum-600"
                   )
-                }`}>
-                {/* Animated active pill */}
-                {activeRole === key && (
+                  }`}
+                bgColor={activeRole === key ? "bg-punch_red-500" : ""}
+                hoverColor={activeRole === key ? "" : "bg-punch_red-400"}
+              >
+              {activeRole === key && (
                   <Motion.span
                     layoutId="role-pill"
                     className="absolute inset-0 rounded-full bg-linear-to-r from-punch_red-500 to-flag_red-500 shadow-lg shadow-punch_red-500/20"
                     transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
-                <span className="relative z-10">{label}</span>
-              </button>
+            </AnimBtn>
             ))}
           </div>
         </Motion.div>
@@ -232,20 +235,24 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <Link
-                to={plan.id === "enterprise" ? "/about-us" : "/dashboard"}
-                className={`w-full inline-flex justify-center items-center gap-2 px-4 py-3 rounded-full text-sm font-medium transition-colors ${
-                  plan.featured ?
-                    "bg-punch_red-500 text-white hover:bg-punch_red-600"
-                  : "bg-space_indigo-400/50 text-platinum-400 hover:bg-space_indigo-400 hover:text-platinum-500"
-                }`}>
-                {plan.id === "enterprise" ?
-                  "Contact Sales"
-                : plan.priceMonthly === 0 ?
-                  "Get Started Free"
-                : "Get Started"}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <AnimBtn
+                ctaText={
+                  plan.id === "enterprise" ? "CONTACT SALES"
+                  : plan.priceMonthly === 0 ?
+                    "Get Started Free"
+                  : "GET STARTED"
+                }
+                to={plan.id === "enterprise" ? "/about-us" : "/sign-up"}
+                className={`w-full justify-center items-center `}
+                bgColor={
+                  plan.featured ? "bg-punch_red-500" : "bg-space_indigo-400/50"
+                }
+                hoverColor={
+                  plan.featured ? "bg-punch_red-400" : "bg-space_indigo-200"
+                }
+                textColor={"text-platinum-600"}
+                showArrow={true}
+              />
             </Motion.div>
           ))}
         </Motion.div>
