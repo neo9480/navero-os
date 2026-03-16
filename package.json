@@ -1,0 +1,21 @@
+{
+  "name": "navero",
+  "version": "1.0.0",
+  "description": "A comprehensive operating system for the export-import (EXIM) industry, providing role-based dashboards, shipment tracking, marketplace services, payment simulation, and document generation.\r ## Features\r ### Core Modules\r - **Role-Based Authentication**: 5 distinct user roles (Exporter/Importer, Broker, Bank, Regulator, Admin)\r - **Shipment Management**: Complete lifecycle with real-time GPS tracking\r - **Interactive Maps**: Live shipment visualization with route simulation\r - **Marketplace**: Broker services with commission system\r - **Payment Simulation**: Subscription plans with escrow and transaction processing\r - **Document Generation**: Professional PDFs for invoices, bills of lading, customs documents\r - **Analytics Dashboard**: Role-specific KPIs and reporting\r - **Black-to-White Conversion**: Informal payment legalization module\r ### Technology Stack\r - **Frontend (Web)**: React with TypeScript, tailwindcss (4.2), shadcn-ui, lucid-react\r - **Frontend (Mobile)**: React Native with Expo\r - **Backend**: Express API Routes with PostgreSQL using prisma-orm\r - **Authentication**: Custom authentication\r - **Database**: PostgreSQL with Prisma ORM\r - **Real-time**: Socket.io for live tracking\r - **Maps**: Leaflet with OpenStreetMap\r - **Charts**: Recharts for analytics\r ## Project Structure\r ```\r navero-os/\r ├── web/                 # React web application\r ├── mobile/              # React Native app (Expo)\r ├── shared/              # Shared types and utilities\r └── docs/                # Documentation\r ```\r ## Getting Started\r ### Prerequisites\r - Node.js 18+ and npm\r - PostgreSQL 15+\r - React Native Expo CLI (for mobile)\r ### Installation\r 1. Clone the repository\r ```bash\r git clone <repository-url>\r cd navero-os\r ```\r 2. Install web dependencies\r ```bash\r cd web\r npm install\r ```\r 3. Setup database\r ```bash\r npx prisma migrate dev\r npx prisma db seed\r ```\r 4. Start development server\r ```bash\r npm run dev\r ```\r 5. Setup mobile (separate terminal)\r ```bash\r cd ../mobile\r npm install\r npx expo start\r ```\r ### Environment Variables\r Create `.env` in the web directory:",
+  "main": "combine.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neo9480/navero-os.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neo9480/navero-os/issues"
+  },
+  "homepage": "https://github.com/neo9480/navero-os#readme"
+}
