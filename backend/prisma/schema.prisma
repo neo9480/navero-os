@@ -1,9 +1,7 @@
-
 generator client {
   provider = "prisma-client-js"
-  output = "./generated/prisma/client"
+  output   = "./generated/prisma/client"
 }
-
 
 datasource db {
   provider = "postgresql"
@@ -16,6 +14,7 @@ enum UserRole {
   ADMIN
   IMPORTER
   EXPORTER
+  LOGISTICS_PROVIDER
   BANK
   BROKER
   CUSTOMS
@@ -27,7 +26,7 @@ enum DocumentType {
   BILL_OF_LADING
   AIRWAY_BILL
   CERTIFICATE_OF_ORIGIN
-  INSURANCE_CERT
+  INSURANCE_CERTIFICATE
   EXPORT_DECLARATION
   IMPORT_DECLARATION
   CUSTOMS_CLEARANCE
@@ -75,8 +74,8 @@ enum TransactionStatus {
 }
 
 enum TransactionDirection {
-  DEBIT   // money going OUT from user
-  CREDIT  // money coming IN to user
+  DEBIT // money going OUT from user
+  CREDIT // money coming IN to user
 }
 
 enum TransactionReference {
@@ -107,42 +106,43 @@ enum SubscriptionStatus {
 
 // Core users of the platform
 model User {
-  id           String    @id @default(cuid())
+  id           String   @id @default(cuid())
   role         UserRole
-  email        String    @unique
+  email        String   @unique
   passwordHash String
   companyName  String?
-  phone        String?   @unique
-  address      String?   
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  phone        String?  @unique
+  address      String?
+  verified      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Document relations (must match names exactly)
   uploadedDocuments Document[] @relation("UploadedDocuments")
   verifiedDocuments Document[] @relation("VerifiedDocuments")
 
   // Everything else stays unchanged...
-  services          Service[]
-  quoteRequests     QuoteRequest[]   @relation("ImporterQuoteRequests")
-  quoteResponses    QuoteResponse[]
-  lettersOfCreditAsImporter LC[]     @relation("ImporterLC")
-  lettersOfCreditAsExporter LC[]     @relation("ExporterLC")
-  lettersOfCreditAsBank     LC[]     @relation("BankLC")
-  shipmentsAsImporter Shipment[]     @relation("ImporterShipments")
-  shipmentsAsExporter Shipment[]     @relation("ExporterShipments")
-  shipmentsAsBroker   Shipment[]     @relation("BrokerShipments")
-  shipmentEvents  ShipmentEvent[]
-  notifications  Notification[]
-  refreshTokens  RefreshToken[]
-  transactions  Transaction[]
-  bookings Booking[]
-  subscription Subscription?
+  services                  Service[]
+  quoteRequests             QuoteRequest[]  @relation("ImporterQuoteRequests")
+  quoteResponses            QuoteResponse[]
+  lettersOfCreditAsImporter LC[]            @relation("ImporterLC")
+  lettersOfCreditAsExporter LC[]            @relation("ExporterLC")
+  lettersOfCreditAsBank     LC[]            @relation("BankLC")
+  shipmentsAsImporter       Shipment[]      @relation("ImporterShipments")
+  shipmentsAsExporter       Shipment[]      @relation("ExporterShipments")
+  shipmentsAsBroker         Shipment[]      @relation("BrokerShipments")
+  shipmentEvents            ShipmentEvent[]
+  notifications              Notification[]
+  session                   Session[]
+  transactions              Transaction[]
+  bookings                  Booking[]
+  otp                       OTP[]
+  subscription              Subscription?
 }
-
 
 // Services created by brokers or freight providers
 model Service {
-  id          String       @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   description String?
   price       Float
@@ -152,15 +152,14 @@ model Service {
 
   // ADD THIS
   shipments Shipment[]
-  bookings Booking[]
+  bookings  Booking[]
 
   createdAt DateTime @default(now())
 }
 
-
 // Importer creates a quote request
 model QuoteRequest {
-  id            String     @id @default(cuid())
+  id            String   @id @default(cuid())
   importerId    String
   productName   String
   quantity      Int
@@ -170,7 +169,7 @@ model QuoteRequest {
   destCountry   String?
   createdAt     DateTime @default(now())
 
-  importer User @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
+  importer  User            @relation("ImporterQuoteRequests", fields: [importerId], references: [id])
   responses QuoteResponse[]
 }
 
@@ -190,43 +189,42 @@ model QuoteResponse {
 
 // Letter of Credit (Importer → Bank → Exporter)
 model LC {
-  id          String   @id @default(cuid())
-  lcNumber    String   @unique
-  amount      Float
-  currency    String
-  status      LCStatus @default(APPLIED)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  lcNumber  String   @unique
+  amount    Float
+  currency  String
+  status    LCStatus @default(APPLIED)
+  createdAt DateTime @default(now())
 
-  importerId  String
-  exporterId  String
-  bankId      String
+  importerId String
+  exporterId String
+  bankId     String
 
   importer User @relation("ImporterLC", fields: [importerId], references: [id])
   exporter User @relation("ExporterLC", fields: [exporterId], references: [id])
-  bank     User @relation("BankLC",     fields: [bankId],     references: [id])
+  bank     User @relation("BankLC", fields: [bankId], references: [id])
 
   documents Document[] @relation("LC_Documents")
-
 }
 
 // Shipments (Exporter → Importer, handled by broker and services)
 model Shipment {
-  id            String         @id @default(cuid())
-  status        ShipmentStatus @default(CREATED)
-  vesselName    String?
-  airwayBill    String?
-  etd           DateTime?
-  eta           DateTime?
-  createdAt     DateTime @default(now())
+  id         String         @id @default(cuid())
+  status     ShipmentStatus @default(CREATED)
+  vesselName String?
+  airwayBill String?
+  etd        DateTime?
+  eta        DateTime?
+  createdAt  DateTime       @default(now())
 
-  importerId    String
-  exporterId    String
-  brokerId      String?
-  serviceId     String?
+  importerId String
+  exporterId String
+  brokerId   String?
+  serviceId  String?
 
-  importer User   @relation("ImporterShipments", fields: [importerId], references: [id])
-  exporter User   @relation("ExporterShipments", fields: [exporterId], references: [id])
-  broker   User?  @relation("BrokerShipments",   fields: [brokerId], references: [id])
+  importer User     @relation("ImporterShipments", fields: [importerId], references: [id])
+  exporter User     @relation("ExporterShipments", fields: [exporterId], references: [id])
+  broker   User?    @relation("BrokerShipments", fields: [brokerId], references: [id])
   service  Service? @relation(fields: [serviceId], references: [id])
 
   documents Document[]
@@ -235,12 +233,12 @@ model Shipment {
 
 // Events emitted by customs or system for tracking
 model ShipmentEvent {
-  id          String            @id @default(cuid())
-  shipmentId  String
-  userId      String?
-  type        ShipmentEventType
-  message     String?
-  createdAt   DateTime @default(now())
+  id         String            @id @default(cuid())
+  shipmentId String
+  userId     String?
+  type       ShipmentEventType
+  message    String?
+  createdAt  DateTime          @default(now())
 
   shipment Shipment @relation(fields: [shipmentId], references: [id])
   user     User?    @relation(fields: [userId], references: [id])
@@ -248,26 +246,25 @@ model ShipmentEvent {
 
 // Trade documents
 model Document {
-  id           String        @id @default(cuid())
-  type         DocumentType
-  fileUrl      String
-  verified     Boolean       @default(false)
-  createdAt    DateTime      @default(now())
+  id        String       @id @default(cuid())
+  type      DocumentType
+  fileUrl   String
+  verified  Boolean      @default(false)
+  createdAt DateTime     @default(now())
 
   // Relations
   uploadedById String
-  verifiedById String?
+  verifiedById  String?
   shipmentId   String?
   lcId         String?
 
   // Properly named relations
-  uploadedBy User @relation("UploadedDocuments", fields: [uploadedById], references: [id])
-  verifiedBy User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
+  uploadedBy User  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  verifiedBy  User? @relation("VerifiedDocuments", fields: [verifiedById], references: [id])
 
   shipment Shipment? @relation(fields: [shipmentId], references: [id])
-  lc   LC?      @relation("LC_Documents", fields: [lcId], references: [id])
+  lc       LC?       @relation("LC_Documents", fields: [lcId], references: [id])
 }
-
 
 // In-app notifications
 model Notification {
@@ -282,74 +279,86 @@ model Notification {
 }
 
 // Refresh tokens for login sessions
-model RefreshToken {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  revoked   Boolean  @default(false)
+model Session {
+  id                String   @id @default(cuid())
+  userId            String
+  refreshToken      String   @unique
+  userAgent         String
+  revoked           Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  expiresAt         DateTime
+  
 
   user User @relation(fields: [userId], references: [id])
 }
 
 model Transaction {
-  id            String                 @id @default(uuid())
+  id            String                @id @default(uuid())
   userId        String
   amount        Float
   type          TransactionType
   direction     TransactionDirection
-  status        TransactionStatus      @default(PENDING)
+  status        TransactionStatus     @default(PENDING)
   referenceId   String?
   referenceType TransactionReference?
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
-  user          User                   @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Booking {
-  id          String   @id @default(cuid())
-  userId      String
-  serviceId   String
-  status      BookingStatus @default(PENDING)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String        @id @default(cuid())
+  userId    String
+  serviceId String
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
   service Service @relation(fields: [serviceId], references: [id])
 }
 
 model DailyStats {
-  id               String   @id @default(cuid())
-  date             DateTime @unique         // snapshot date (midnight)
-  usersTotal       Int
-  usersNew         Int
-  shipmentsTotal   Int
-  shipmentsNew     Int
-  bookingsTotal    Int
-  bookingsNew      Int
-  servicesTotal    Int
-  servicesNew      Int
+  id                String   @id @default(cuid())
+  date              DateTime @unique // snapshot date (midnight)
+  usersTotal        Int
+  usersNew          Int
+  shipmentsTotal    Int
+  shipmentsNew      Int
+  bookingsTotal     Int
+  bookingsNew       Int
+  servicesTotal     Int
+  servicesNew       Int
   transactionsTotal Int
   transactionsNew   Int
-  revenueTotal     Float    @default(0)     // cumulative revenue up-to-date
-  revenueNew       Float    @default(0)     // revenue in that day
-  createdAt        DateTime @default(now())
+  revenueTotal      Float    @default(0) // cumulative revenue up-to-date
+  revenueNew        Float    @default(0) // revenue in that day
+  createdAt         DateTime @default(now())
 }
 
 model Subscription {
-  id                   String             @id @default(cuid())
-  userId               String             @unique
-  plan                 String
-  status               SubscriptionStatus @default(TRIALING)
-  startedAt            DateTime?          @default(now())
-  trialEndsAt          DateTime?
-  currentPeriodEndsAt  DateTime?
-  providerCustomerId   String?            // e.g., Stripe customer id
-  providerSubscriptionId String?          // e.g., Stripe subscription id
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  id                     String             @id @default(cuid())
+  userId                 String             @unique
+  plan                   String
+  status                 SubscriptionStatus @default(TRIALING)
+  startedAt              DateTime?          @default(now())
+  trialEndsAt            DateTime?
+  currentPeriodEndsAt    DateTime?
+  providerCustomerId     String? // e.g., Stripe customer id
+  providerSubscriptionId String? // e.g., Stripe subscription id
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model OTP {
+  id  String  @id @default(cuid()) 
+  userId  String  @unique
+  email String  @unique
+  otpHash String  
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }

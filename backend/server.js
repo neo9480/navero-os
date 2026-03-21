@@ -1,13 +1,9 @@
 // Start server
 import app from "./src/app.js";
-import dotenv from "dotenv";
+import config from "./src/config/config.js";
 import prisma from "./src/db/prismaClient.js";
-import path from "path";
 
-dotenv.config();
-const PORT = process.env.PORT;
-
-
+const PORT = config.PORT;
 
 async function startServer() {
   try {

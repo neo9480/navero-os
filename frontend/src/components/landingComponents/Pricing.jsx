@@ -7,12 +7,12 @@ import GradBlindBg from "../commonComponents/GradBlindBg";
 import AnimBtn from "../commonComponents/AnimBtn";
 
 const ROLES = [
-  { key: "exporters", label: "Exporters" },
-  { key: "importers", label: "Importers" },
-  { key: "brokers", label: "Brokers" },
-  { key: "logistics", label: "Logistics" },
-  { key: "banks", label: "Banks" },
-  { key: "customs", label: "Customs" },
+  { key: "EXPORTER", label: "Exporters" },
+  { key: "IMPORTER", label: "Importers" },
+  { key: "BROKER", label: "Brokers" },
+  { key: "LOGISTICS_PROVIDER", label: "Logistics" },
+  { key: "BANK", label: "Banks" },
+  { key: "CUSTOMS", label: "Customs" },
 ];
 
 const FAQ = [
@@ -54,7 +54,7 @@ const fadeUp = {
 export default function Pricing() {
   const [annual, setAnnual] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [activeRole, setActiveRole] = useState("exporters");
+  const [activeRole, setActiveRole] = useState("EXPORTER");
 
   const PLANS = PRICING[activeRole] ?? [];
 

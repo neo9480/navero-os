@@ -2,6 +2,8 @@ import prisma from "../db/prismaClient.js";
 import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
+import otpUtils from "../utils/otp.utils.js";
+import emailService from "../services/email.service.js";
 
 const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
 
@@ -69,11 +71,14 @@ const ALLOWED_SELF_REGISTER_ROLES = [
   "BANK",
   "BROKER",
   "CUSTOMS",
+  "LOGISTICS_PROVIDER",
 ];
 
+// ---------------------------------------------------------------------------
+// register
+// ---------------------------------------------------------------------------
 async function register(req, res) {
   try {
-
     const { email, password, role, companyName, phone, address, plan } =
       req.body;
 
@@ -109,14 +114,24 @@ async function register(req, res) {
         data: {
           userId: user.id,
           plan: safePlan,
-          status: "TRIALING", 
+          status: "TRIALING",
           startedAt: now,
           trialEndsAt,
         },
       });
 
       return user;
-    });
+    } );
+    
+    const otp = otpUtils.generateOTP()
+
+    const otpHash = await otpUtils.otpHash( otp )
+
+    const html =  otpUtils.getOtpHtml 
+    
+    await otpUtils.createOtp( result.id, email, otpHash )
+    
+    await emailService.sendEmail(email, "OTP Verification", `Your OTP code is ${otp}`, html)
 
     const safeUser = await userUtils.findUserById(result.id);
 
@@ -329,6 +344,33 @@ async function deleteUserProfile(req, res) {
   }
 }
 
+async function verifyEmail(req, res) {
+  const { otp, email } = req.body;
+
+  const otpHash = await otpUtils.otpHash(otp);
+
+  const otpRecord = await otpUtils.findOtp(otpHash, email);
+
+  if (!otpRecord) {
+    return res.status(400).json({
+      message: "Invalid OTP",
+    });
+  }
+
+  const user = await otpUtils.updateUser(otpRecord.userId);
+
+  await otpUtils.deleteOtp(otpRecord.userId);
+
+  return res.status(200).json({
+    message: "Email verified successfully",
+    user: {
+      companyName: user.companyName,
+      email: user.email,
+      verified: user.verified,
+    },
+  });
+}
+
 export default {
   generateAccessToken,
   setRefreshCookie,
@@ -340,4 +382,5 @@ export default {
   getUserProfile,
   updateUserProfile,
   deleteUserProfile,
+  verifyEmail
 };

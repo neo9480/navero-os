@@ -1,5 +1,5 @@
 const PRICING = {
-  exporters: [
+  EXPORTER: [
     {
       id: "basic",
       name: "Basic",
@@ -61,7 +61,7 @@ const PRICING = {
     },
   ],
 
-  importers: [
+  IMPORTER: [
     {
       id: "basic",
       name: "Basic",
@@ -122,7 +122,7 @@ const PRICING = {
     },
   ],
 
-  brokers: [
+  BROKER: [
     {
       id: "basic",
       name: "Basic",
@@ -183,7 +183,7 @@ const PRICING = {
     },
   ],
 
-  logistics: [
+  LOGISTICS_PROVIDER: [
     {
       id: "basic",
       name: "Basic",
@@ -243,7 +243,7 @@ const PRICING = {
       ],
     },
   ],
-  banks: [
+  BANK: [
     {
       id: "basic",
       name: "Basic",
@@ -312,7 +312,7 @@ const PRICING = {
     },
   ],
 
-  customs: [
+  CUSTOMS: [
     {
       id: "basic",
       name: "Basic",

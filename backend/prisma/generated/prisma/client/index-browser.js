@@ -128,6 +128,7 @@ exports.Prisma.UserScalarFieldEnum = {
   companyName: 'companyName',
   phone: 'phone',
   address: 'address',
+  verified: 'verified',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -219,13 +220,14 @@ exports.Prisma.NotificationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.RefreshTokenScalarFieldEnum = {
+exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  token: 'token',
+  refreshToken: 'refreshToken',
+  userAgent: 'userAgent',
+  revoked: 'revoked',
   createdAt: 'createdAt',
-  expiresAt: 'expiresAt',
-  revoked: 'revoked'
+  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {
@@ -282,6 +284,14 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OTPScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  email: 'email',
+  otpHash: 'otpHash',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -301,6 +311,7 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
   IMPORTER: 'IMPORTER',
   EXPORTER: 'EXPORTER',
+  LOGISTICS_PROVIDER: 'LOGISTICS_PROVIDER',
   BANK: 'BANK',
   BROKER: 'BROKER',
   CUSTOMS: 'CUSTOMS'
@@ -336,7 +347,7 @@ exports.DocumentType = exports.$Enums.DocumentType = {
   BILL_OF_LADING: 'BILL_OF_LADING',
   AIRWAY_BILL: 'AIRWAY_BILL',
   CERTIFICATE_OF_ORIGIN: 'CERTIFICATE_OF_ORIGIN',
-  INSURANCE_CERT: 'INSURANCE_CERT',
+  INSURANCE_CERTIFICATE: 'INSURANCE_CERTIFICATE',
   EXPORT_DECLARATION: 'EXPORT_DECLARATION',
   IMPORT_DECLARATION: 'IMPORT_DECLARATION',
   CUSTOMS_CLEARANCE: 'CUSTOMS_CLEARANCE',
@@ -396,11 +407,12 @@ exports.Prisma.ModelName = {
   ShipmentEvent: 'ShipmentEvent',
   Document: 'Document',
   Notification: 'Notification',
-  RefreshToken: 'RefreshToken',
+  Session: 'Session',
   Transaction: 'Transaction',
   Booking: 'Booking',
   DailyStats: 'DailyStats',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  OTP: 'OTP'
 };
 
 /**
