@@ -144,7 +144,7 @@ export default function Stepper({
                 onClick={isLastStep ? handleComplete : handleNext}
                 className="duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer"
                 {...nextButtonProps}>
-                {isLastStep ? "Complete" : nextButtonText}
+                {isLastStep ? "Verify Email" : nextButtonText}
               </button>
             </div>
           </div>

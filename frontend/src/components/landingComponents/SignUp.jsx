@@ -1,8 +1,7 @@
 import { useState } from "react";
-import ABgLight from "../commonComponents/ABgLight";
-import axios from "axios";
+import ABgLight from "@/components/commonComponents/ABgLight";
 import { toast, Toaster } from "sonner";
-import Stepper, { Step } from "../shadcnComponents/Stepper";
+import Stepper, { Step } from "@/components/shadcnComponents/Stepper";
 import { ChevronDown, Eye, EyeClosed, Ship } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,9 +11,10 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import useAuthStore from "@/store/authStore.js";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -54,7 +54,8 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [ showConfirmPassword, setShowConfirmPassword ] = useState( false );
+  const { signUp } = useAuthStore()
 
   /* ------------------------------------------------------------------ */
   /* VALIDATION                                                           */
@@ -151,45 +152,16 @@ const SignUp = () => {
   /* SUBMIT                                                               */
   /* ------------------------------------------------------------------ */
 
-  const handleFinalSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e?.preventDefault?.();
     try {
       // Register the new user. Note: `paymentStatus` is NOT sent because the
       // backend ignores it and always enforces TRIALING server-side.
-      await axios.post(
-        "http://localhost:3000/api/auth/register",
-        {
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-          companyName: formData.companyName,
-          phone: formData.phone,
-          address: formData.address,
-          plan: formData.plan,
-          // FIX: paymentStatus intentionally omitted — backend controls this.
-        },
-        { withCredentials: true },
-      );
-
-      // Immediately log in the new user to obtain tokens.
-      const res = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        { withCredentials: true },
-      );
-
-      const { accessToken, user } = res.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("user", JSON.stringify(user));
-
+      await signUp(formData.email, formData.password, formData.role, formData.companyName, formData.phone, formData.address, formData.plan);
       toast.success("Account created and logged in", {
         position: "top-center",
-      });
-
-      setTimeout(() => navigate("/dashboard"), 800);
+      } );
+      setTimeout(() => navigate("/verify-email"), 800);
     } catch (err) {
       console.error("signup error:", err);
       if (err.response?.data?.error) {
@@ -211,7 +183,6 @@ const SignUp = () => {
 
       <div className="flex justify-center items-center h-[90vh] w-[95vw] rounded-4xl border-[1vh] z-10 border-space_indigo-200 backdrop-blur-xl">
         <div className="h-[95vh] w-[80vw] flex flex-col justify-between items-center p-[1vw] bg-space_indigo-200 rounded-4xl ">
-          
           {/* Logo */}
           <Link to={"/"}>
             <div className="flex justify-center items-center gap-[1vw] w-[12vw]">
@@ -235,7 +206,7 @@ const SignUp = () => {
             <Stepper
               currentStep={currentStep}
               onStepChange={handleStepChange}
-              onFinalStepCompleted={handleFinalSubmit}
+              onFinalStepCompleted={handleSignUp}
               onReset={() => {
                 setFormData({
                   role: "",

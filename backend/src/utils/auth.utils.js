@@ -2,7 +2,6 @@ import config from "../config/config.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import prisma from "../db/prismaClient.js";
-import config from "../config/config.js";
 
 /**
  * Generate a new refreshToken
