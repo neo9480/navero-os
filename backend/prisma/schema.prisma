@@ -283,6 +283,7 @@ model Session {
   id                String   @id @default(cuid())
   userId            String
   refreshToken      String   @unique
+  ip                String
   userAgent         String
   revoked           Boolean  @default(false)
   createdAt         DateTime @default(now())

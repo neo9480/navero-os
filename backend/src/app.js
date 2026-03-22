@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import cors from "cors";
+import config from "./config/config.js";
 
 
 // Role-based routing modules
@@ -74,7 +75,7 @@ app.use("/api/auth", authRoutes);
 
 
 
-if (process.env.NODE_ENV === "Production") {
+if (config.NODE_ENV === "Production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
   app.get( "*", ( req, res ) => {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ABgLight from "../commonComponents/ABgLight";
-import PRICING from "../commonComponents/PlanArr";
+import PRICING from "../../constants/plans.js";
 import { Check, X } from "lucide-react";
 import AnimBtn from "../commonComponents/AnimBtn";
 
@@ -11,15 +11,14 @@ const Plans = () => {
 
   const role = location.state?.role ?? location.state?.formData?.role;
   const previousForm = location.state?.formData || {};
-  const [ selectedPlan, setSelectedPlan ] = useState( null );
-  const [billing, setBilling] = useState("MONTHLY");  
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [billing, setBilling] = useState("MONTHLY");
 
   const plans = useMemo(() => {
     if (!role) return [];
     const key = role.toUpperCase().replace(/ /g, "_");
     return PRICING[key] ?? [];
   }, [role]);
-
 
   const handleContinue = () => {
     if (!selectedPlan) return;
@@ -119,7 +118,16 @@ const Plans = () => {
         </div>
 
         {selectedPlan && (
-          <AnimBtn ctaText={"Continue to Payment"} onClick={handleContinue} bgColor={""} hoverColor={"bg-space_indigo-200"} className={"shadow backdrop-blur-sm hover:text-platinum-600 transition"} textColor={"text-space_indigo-100"}/>
+          <AnimBtn
+            ctaText={"Continue to Payment"}
+            onClick={handleContinue}
+            bgColor={""}
+            hoverColor={"bg-space_indigo-200"}
+            className={
+              "shadow backdrop-blur-sm hover:text-platinum-600 transition"
+            }
+            textColor={"text-space_indigo-100"}
+          />
         )}
       </div>
     </div>

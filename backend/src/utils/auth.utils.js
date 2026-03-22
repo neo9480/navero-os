@@ -1,51 +1,96 @@
-import prisma from "../db/prismaClient.js";
+import config from "../config/config.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import prisma from "../db/prismaClient.js";
+import config from "../config/config.js";
 
-function generateToken() {
-  return crypto.randomBytes(48).toString("hex");
+/**
+ * Generate a new refreshToken
+ *
+ * @param {string} userId - ID of the user generating the refreshToken.
+ * @returns {Promise<string>} The refreshToken.
+ **/
+async function generateRefreshToken(userId) {
+  return jwt.sign(
+    {
+      userId,
+    },
+    config.JWT_SECRET,
+    {
+      expiresIn: config.REFRESH_TOKEN_TTL,
+    },
+  );
 }
 
 /**
- * Generate a new refresh token for a user and store it.
+ * Generate a new hash of refreshToken
+ *
+ * @param {string} refreshToken - The refreshToken.
+ * @returns {Promise<string>} The refreshTokenHash.
+ **/
+async function generateRefreshTokenHash(refreshToken) {
+  return crypto.createHash("sha256").update(refreshToken).digest("hex");
+}
+
+/**
+ * Generate a new session
  *
  * @param {string} userId - ID of the user receiving the new token.
- * @param {Date}   expiresAt - Expiry timestamp for token.
- * @returns {Promise<string>} raw token string to send as httpOnly cookie.
- */
-async function createRefreshToken(userId, expiresAt, db = prisma) {
-  const token = generateToken();
-
-  await db.refreshToken.create({
+ * @param {string} refreshTokenHash - Hash of refreshToken.
+ * @param {string} ip - IP address of the client.
+ * @param {string} userAgent - User agent string of the client.
+ * @returns {Promise<object>} The created session record.
+ **/
+async function createSession(
+  userId,
+  refreshTokenHash,
+  ip,
+  userAgent,
+  refreshTokenExpiry,
+) {
+  return await prisma.session.create({
     data: {
-      token,
-      userId,
-      expiresAt,
+      userId: userId,
+      refreshToken: refreshTokenHash,
+      ip: ip,
+      userAgent: userAgent,
+      expiresAt: refreshTokenExpiry,
     },
   });
-
-  return token;
 }
 
 /**
- * Find a refresh token record via token string.
+ * Generate a new accessToken
+ *
+ * @param {string} userId - ID of the user generating the refreshToken.
+ * @param {string} sessionId - ID of the session
+ * @returns {Promise<string>} The accessToken.
+ **/
+async function generateAccessToken(args) {
+  return jwt.sign(args, config.JWT_SECRET, {
+    expiresIn: config.ACCESS_TOKEN_TTL,
+  });
+}
+
+/**
+ * Find a session record via refreshToken string.
  * Returns null if not found or expired.
  *
- * @param {string} token
+ * @param {string} refreshToken
  * @returns {Promise<object|null>}
  */
-async function findRefreshToken(token) {
-  const record = await prisma.refreshToken.findUnique({
-    where: { token },
+async function findSession(refreshToken) {
+  const record = await prisma.session.findFirst({
+    where: { refreshToken, revoked: false },
   });
 
   if (!record) return null;
-  if (record.revoked) return null;
 
   // Token found but expired
   if (record.expiresAt < new Date()) {
     // Cleanup expired token
-    await prisma.refreshToken.delete({
-      where: { token },
+    await prisma.session.delete({
+      where: { refreshToken },
     });
     return null;
   }
@@ -54,55 +99,85 @@ async function findRefreshToken(token) {
 }
 
 /**
- * Remove a specific refresh token from DB (standard logout)
+ * Update fields in session model
  *
- * @param {string} token
- * @returns {Promise<void>}
+ * @param {where} - Filter params.
+ * @param {data} - Data that needs to be updated.
  */
-async function deleteRefreshToken(token) {
-  await prisma.refreshToken
-    .delete({
-      where: { token },
-    })
-    .catch(() => {});
-}
-
-/**
- * Remove all refresh tokens for a user (logout everywhere)
- *
- * @param {string} userId
- * @returns {Promise<void>}
- */
-async function deleteAllTokensForUser(userId) {
-  await prisma.refreshToken.deleteMany({
-    where: { userId },
+async function updateSession(where, data) {
+  return await prisma.session.updateMany({
+    where: where,
+    data: data,
   });
 }
 
-/**
- * Rotate a refresh token atomically.
- * - Revokes the previous token
- * - Creates and returns the new token
- */
-async function rotateRefreshToken(oldToken, userId, expiresAt) {
-  return prisma.$transaction(async (tx) => {
-    const result = await tx.refreshToken.updateMany({
-      where: { token: oldToken, userId, revoked: false },
-      data: { revoked: true },
-    });
+const parseDuration = (str) => {
+  const match = /^(\d+)([smhd])$/.exec(str);
+  if (!match) return 7 * 86400000;
 
-    if (result.count === 0) {
-      throw new Error("refresh token invalid");
-    }
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
 
-    return createRefreshToken(userId, expiresAt, tx);
+  return (
+    {
+      s: value * 1000,
+      m: value * 60000,
+      h: value * 3600000,
+      d: value * 86400000,
+    }[unit] ?? 7 * 86400000
+  );
+};
+
+async function getRefreshExpiryDate() {
+  return new Date(Date.now() + parseDuration(config.REFRESH_TOKEN_TTL));
+}
+
+async function setRefreshCookie(res, refreshToken) {
+  return res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: config.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+}
+
+async function clearRefreshCookie(res) {
+  return res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: config.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+}
+
+async function verifyToken(Token) {
+  return jwt.verify(Token, config.JWT_SECRET);
+}
+
+async function getAccessToken(req) {
+  const authHeader = req.headers?.authorization;
+  if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.slice(7).trim();
+    if (token) return token;
+  }
+
+  const headerToken = req.headers?.["x-access-token"];
+  if (typeof headerToken === "string" && headerToken.trim()) {
+    return headerToken.trim();
+  }
+
+  return null;
 }
 
 export default {
-  createRefreshToken,
-  findRefreshToken,
-  deleteRefreshToken,
-  deleteAllTokensForUser,
-  rotateRefreshToken,
+  generateRefreshToken,
+  generateRefreshTokenHash,
+  createSession,
+  generateAccessToken,
+  findSession,
+  updateSession,
+  getRefreshExpiryDate,
+  setRefreshCookie,
+  clearRefreshCookie,
+  verifyToken,
+  getAccessToken,
 };

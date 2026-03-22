@@ -1,57 +1,9 @@
 import prisma from "../db/prismaClient.js";
-import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
 import otpUtils from "../utils/otp.utils.js";
 import emailService from "../services/email.service.js";
-
-const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
-
-const parseDuration = (str) => {
-  const match = /^(\d+)([smhd])$/.exec(str);
-  if (!match) return 7 * 86400000;
-
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
-
-  return (
-    {
-      s: value * 1000,
-      m: value * 60000,
-      h: value * 3600000,
-      d: value * 86400000,
-    }[unit] ?? 7 * 86400000
-  );
-};
-
-function getRefreshExpiryDate() {
-  return new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION));
-}
-
-function generateAccessToken(user) {
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
-  });
-}
-
-function setRefreshCookie(res, token, expiresAt) {
-  res.cookie("refresh_token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    expires: expiresAt,
-    path: "/",
-  });
-}
-
-function clearRefreshCookie(res) {
-  res.clearCookie("refresh_token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-  });
-}
+import config from "../config/config.js";
 
 function handlePrismaError(err, res) {
   if (err.code === "P2002") {
@@ -105,7 +57,7 @@ async function register(req, res) {
         tx,
       );
 
-      const trialDays = Number(process.env.TRIAL_DAYS) || 14;
+      const trialDays = Number(config.TRIAL_DAYS);
       const now = new Date();
       const trialEndsAt = new Date(now);
       trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
@@ -121,22 +73,27 @@ async function register(req, res) {
       });
 
       return user;
-    } );
-    
-    const otp = otpUtils.generateOTP()
+    });
 
-    const otpHash = await otpUtils.otpHash( otp )
+    const otp = otpUtils.generateOTP();
 
-    const html =  otpUtils.getOtpHtml 
-    
-    await otpUtils.createOtp( result.id, email, otpHash )
-    
-    await emailService.sendEmail(email, "OTP Verification", `Your OTP code is ${otp}`, html)
+    const otpHash = await otpUtils.otpHash(otp);
+
+    const html = otpUtils.getOtpHtml;
+
+    await otpUtils.createOtp(result.id, email, otpHash);
+
+    await emailService.sendEmail(
+      email,
+      "OTP Verification",
+      `Your OTP code is ${otp}`,
+      html,
+    );
 
     const safeUser = await userUtils.findUserById(result.id);
 
     res.status(201).json({
-      message: "User registered",
+      message: "User registered, email verification required",
       user: safeUser,
     });
   } catch (err) {
@@ -156,10 +113,7 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: { subscription: true },
-    });
+    const user = await userUtils.findUserByEmail(email)
 
     // Use a generic message to avoid leaking whether the email exists.
     if (!user) {
@@ -173,17 +127,21 @@ async function login(req, res) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const accessToken = generateAccessToken(user);
+    const refreshToken = await authUtils.generateRefreshToken( user.id )
+    
+    const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
 
-    const expiresAt = getRefreshExpiryDate();
-    const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
-
-    setRefreshCookie(res, refreshToken, expiresAt);
-
+    const refreshTokenExpiry = await authUtils.getRefreshExpiryDate()
+    
+    const session = await authUtils.createSession(user.id, refreshTokenHash, req.ip, req.headers["user-agent"], refreshTokenExpiry)
+    
+    const accessToken = await authUtils.generateAccessToken({userId: user.id, sessionId: session.id, role: user.role})
     // Strip passwordHash before sending to the client.
     const { passwordHash: _unused, ...safeUser } = user;
 
-    res.json({
+    await authUtils.setRefreshCookie(res, refreshToken)
+
+    res.status(200).json({
       message: "User login successful",
       accessToken,
       user: safeUser,
@@ -200,27 +158,36 @@ async function login(req, res) {
 // ---------------------------------------------------------------------------
 async function refresh(req, res) {
   try {
-    const token = req.cookies.refresh_token;
-    if (!token) return res.status(401).json({ error: "No refresh token" });
+    const refreshToken = req.cookies.refresh_token;
+    if ( !refreshToken ) {
+      return res.status( 401 ).json( { error: "Refresh token not found" } );
+    }
+    const decoded = await authUtils.verifyToken( refreshToken )
+    
+    const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
+    
+    const session = await authUtils.findSession(refreshTokenHash);
+    if ( !session || session.revoked ) {
+      return res.status( 401 ).json( { error: "Invalid refresh token" } );
+    }
 
-    const record = await authUtils.findRefreshToken(token);
-    if (!record || record.revoked)
-      return res.status(401).json({ error: "Invalid refresh token" });
+		const accessToken = await authUtils.generateAccessToken( {userId: decoded.id} )
+		
+		const newRefreshToken = await authUtils.generateRefreshToken( decoded.id )
+		
+    const newRefreshTokenHash = await authUtils.generateRefreshTokenHash( newRefreshToken )
+    
+    const newRefreshTokenExpiry = await authUtils.getRefreshExpiryDate()
+		
+		await authUtils.updateSession( {id: session.id}, { refreshToken: newRefreshTokenHash, expiresAt: newRefreshTokenExpiry } )
+		
+		await authUtils.setRefreshCookie( res, newRefreshToken )
+		
+		res.status( 200 ).json( {
+			message: "Access token refreshed successfully",
+			accessToken
+		})
 
-    const user = await prisma.user.findUnique({ where: { id: record.userId } });
-    if (!user) return res.status(401).json({ error: "User not found" });
-
-    const newExpiresAt = getRefreshExpiryDate();
-    const newRefreshToken = await authUtils.rotateRefreshToken(
-      token,
-      user.id,
-      newExpiresAt,
-    );
-
-    setRefreshCookie(res, newRefreshToken, newExpiresAt);
-
-    const accessToken = generateAccessToken(user);
-    res.json({ accessToken });
   } catch (err) {
     console.error("failed to refresh token:", err);
     res.status(500).json({ error: "Failed to refresh token" });
@@ -233,12 +200,25 @@ async function refresh(req, res) {
 // ---------------------------------------------------------------------------
 async function logout(req, res) {
   try {
-    const token = req.cookies.refresh_token;
-    if (token) {
-      await authUtils.deleteRefreshToken(token);
-    }
-    clearRefreshCookie(res);
-    res.json({ message: "Logged out" });
+    const refreshToken = req.cookies.refresh_token;
+    if (!refreshToken) {
+			return res.status.json( 400 ).json( {
+				message: "Refresh token not found"
+			})
+		}
+		const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
+		
+		const session = await authUtils.findSession( refreshTokenHash )
+		if ( !session ) {
+			return res.status( 400 ).json( {
+				message: "Invalid refresh token"
+			})
+		}
+		await authUtils.updateSession( { id: session.id }, { revoked: true } )
+		res.clearCookie( "refresh_token" )
+		res.status( 200 ).json( {
+			message: "Logged out successfully"
+		})
   } catch (err) {
     console.error("failed to logout user:", err);
     res.status(500).json({ error: "Failed to logout user" });
@@ -250,13 +230,19 @@ async function logout(req, res) {
 // Revokes all refresh tokens for the user (signs out every device).
 // ---------------------------------------------------------------------------
 async function logoutAll(req, res) {
-  try {
-    const userId = req.user.id;
-
-    await authUtils.deleteAllTokensForUser(userId);
-    clearRefreshCookie(res);
-
-    res.json({ message: "Logged out from all devices" });
+	try {
+		const refreshToken = req.cookies.refresh_token
+		if ( !refreshToken ) {
+			return res.status( 400 ).json( {
+				message: "Refresh token not found"
+			})
+		}
+		const decoded = await authUtils.verifyToken( refreshToken )
+		await authUtils.updateSession( { userId: decoded.id, revoked:false }, { revoked: true } )
+		res.clearCookie( "refresh_token" )
+		res.status( 200 ).json( {
+			message: "Logged out of all devices"
+		})
   } catch (err) {
     console.error("failed to logout all users:", err);
     res.status(500).json({ error: "Failed to logout all devices" });
@@ -372,8 +358,6 @@ async function verifyEmail(req, res) {
 }
 
 export default {
-  generateAccessToken,
-  setRefreshCookie,
   register,
   login,
   refresh,
@@ -382,5 +366,5 @@ export default {
   getUserProfile,
   updateUserProfile,
   deleteUserProfile,
-  verifyEmail
+  verifyEmail,
 };

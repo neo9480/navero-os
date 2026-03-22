@@ -13502,6 +13502,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     refreshToken: string | null
+    ip: string | null
     userAgent: string | null
     revoked: boolean | null
     createdAt: Date | null
@@ -13512,6 +13513,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     refreshToken: string | null
+    ip: string | null
     userAgent: string | null
     revoked: boolean | null
     createdAt: Date | null
@@ -13522,6 +13524,7 @@ export namespace Prisma {
     id: number
     userId: number
     refreshToken: number
+    ip: number
     userAgent: number
     revoked: number
     createdAt: number
@@ -13534,6 +13537,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     refreshToken?: true
+    ip?: true
     userAgent?: true
     revoked?: true
     createdAt?: true
@@ -13544,6 +13548,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     refreshToken?: true
+    ip?: true
     userAgent?: true
     revoked?: true
     createdAt?: true
@@ -13554,6 +13559,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     refreshToken?: true
+    ip?: true
     userAgent?: true
     revoked?: true
     createdAt?: true
@@ -13637,6 +13643,7 @@ export namespace Prisma {
     id: string
     userId: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked: boolean
     createdAt: Date
@@ -13664,6 +13671,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     refreshToken?: boolean
+    ip?: boolean
     userAgent?: boolean
     revoked?: boolean
     createdAt?: boolean
@@ -13675,6 +13683,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     refreshToken?: boolean
+    ip?: boolean
     userAgent?: boolean
     revoked?: boolean
     createdAt?: boolean
@@ -13686,6 +13695,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     refreshToken?: boolean
+    ip?: boolean
     userAgent?: boolean
     revoked?: boolean
     createdAt?: boolean
@@ -13697,13 +13707,14 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     refreshToken?: boolean
+    ip?: boolean
     userAgent?: boolean
     revoked?: boolean
     createdAt?: boolean
     expiresAt?: boolean
   }
 
-  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "refreshToken" | "userAgent" | "revoked" | "createdAt" | "expiresAt", ExtArgs["result"]["session"]>
+  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "refreshToken" | "ip" | "userAgent" | "revoked" | "createdAt" | "expiresAt", ExtArgs["result"]["session"]>
   export type SessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -13723,6 +13734,7 @@ export namespace Prisma {
       id: string
       userId: string
       refreshToken: string
+      ip: string
       userAgent: string
       revoked: boolean
       createdAt: Date
@@ -14154,6 +14166,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Session", 'String'>
     readonly userId: FieldRef<"Session", 'String'>
     readonly refreshToken: FieldRef<"Session", 'String'>
+    readonly ip: FieldRef<"Session", 'String'>
     readonly userAgent: FieldRef<"Session", 'String'>
     readonly revoked: FieldRef<"Session", 'Boolean'>
     readonly createdAt: FieldRef<"Session", 'DateTime'>
@@ -20350,6 +20363,7 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     refreshToken: 'refreshToken',
+    ip: 'ip',
     userAgent: 'userAgent',
     revoked: 'revoked',
     createdAt: 'createdAt',
@@ -21434,6 +21448,7 @@ export namespace Prisma {
     id?: StringFilter<"Session"> | string
     userId?: StringFilter<"Session"> | string
     refreshToken?: StringFilter<"Session"> | string
+    ip?: StringFilter<"Session"> | string
     userAgent?: StringFilter<"Session"> | string
     revoked?: BoolFilter<"Session"> | boolean
     createdAt?: DateTimeFilter<"Session"> | Date | string
@@ -21445,6 +21460,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     refreshToken?: SortOrder
+    ip?: SortOrder
     userAgent?: SortOrder
     revoked?: SortOrder
     createdAt?: SortOrder
@@ -21459,6 +21475,7 @@ export namespace Prisma {
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
     userId?: StringFilter<"Session"> | string
+    ip?: StringFilter<"Session"> | string
     userAgent?: StringFilter<"Session"> | string
     revoked?: BoolFilter<"Session"> | boolean
     createdAt?: DateTimeFilter<"Session"> | Date | string
@@ -21470,6 +21487,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     refreshToken?: SortOrder
+    ip?: SortOrder
     userAgent?: SortOrder
     revoked?: SortOrder
     createdAt?: SortOrder
@@ -21486,6 +21504,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Session"> | string
     userId?: StringWithAggregatesFilter<"Session"> | string
     refreshToken?: StringWithAggregatesFilter<"Session"> | string
+    ip?: StringWithAggregatesFilter<"Session"> | string
     userAgent?: StringWithAggregatesFilter<"Session"> | string
     revoked?: BoolWithAggregatesFilter<"Session"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
@@ -22662,6 +22681,7 @@ export namespace Prisma {
   export type SessionCreateInput = {
     id?: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -22673,6 +22693,7 @@ export namespace Prisma {
     id?: string
     userId: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -22682,6 +22703,7 @@ export namespace Prisma {
   export type SessionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22693,6 +22715,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22703,6 +22726,7 @@ export namespace Prisma {
     id?: string
     userId: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -22712,6 +22736,7 @@ export namespace Prisma {
   export type SessionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22722,6 +22747,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23955,6 +23981,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     refreshToken?: SortOrder
+    ip?: SortOrder
     userAgent?: SortOrder
     revoked?: SortOrder
     createdAt?: SortOrder
@@ -23965,6 +23992,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     refreshToken?: SortOrder
+    ip?: SortOrder
     userAgent?: SortOrder
     revoked?: SortOrder
     createdAt?: SortOrder
@@ -23975,6 +24003,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     refreshToken?: SortOrder
+    ip?: SortOrder
     userAgent?: SortOrder
     revoked?: SortOrder
     createdAt?: SortOrder
@@ -26583,6 +26612,7 @@ export namespace Prisma {
   export type SessionCreateWithoutUserInput = {
     id?: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -26592,6 +26622,7 @@ export namespace Prisma {
   export type SessionUncheckedCreateWithoutUserInput = {
     id?: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -27065,6 +27096,7 @@ export namespace Prisma {
     id?: StringFilter<"Session"> | string
     userId?: StringFilter<"Session"> | string
     refreshToken?: StringFilter<"Session"> | string
+    ip?: StringFilter<"Session"> | string
     userAgent?: StringFilter<"Session"> | string
     revoked?: BoolFilter<"Session"> | boolean
     createdAt?: DateTimeFilter<"Session"> | Date | string
@@ -30456,6 +30488,7 @@ export namespace Prisma {
   export type SessionCreateManyUserInput = {
     id?: string
     refreshToken: string
+    ip: string
     userAgent: string
     revoked?: boolean
     createdAt?: Date | string
@@ -30930,6 +30963,7 @@ export namespace Prisma {
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30939,6 +30973,7 @@ export namespace Prisma {
   export type SessionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30948,6 +30983,7 @@ export namespace Prisma {
   export type SessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
+    ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     revoked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

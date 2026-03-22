@@ -6,8 +6,9 @@ import transactionUtils from "../utils/transaction.utils.js";
 import serviceUtils from "../utils/service.utils.js";
 import bookingUtils from "../utils/booking.utils.js";
 import statsUtils from "../utils/stats.utils.js";
+import config from "../config/config.js";
 
-const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
+const REFRESH_TOKEN_EXPIRATION = config.REFRESH_TOKEN_EXPIRATION || "7d";
 
 const parseDuration = (str) => {
   const match = /^(\d+)([smhd])$/.exec(str);
@@ -31,15 +32,15 @@ function getRefreshExpiryDate() {
 }
 
 function generateAccessToken(user) {
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_TTL || "15m",
+  return jwt.sign({ id: user.id, role: user.role }, config.JWT_SECRET, {
+    expiresIn: config.ACCESS_TOKEN_TTL || "15m",
   });
 }
 
 function setRefreshCookie(res, token, expiresAt) {
   res.cookie("refresh_token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: config.NODE_ENV === "production",
     sameSite: "strict",
     expires: expiresAt,
     path: "/",
@@ -49,7 +50,7 @@ function setRefreshCookie(res, token, expiresAt) {
 function clearRefreshCookie(res) {
   res.clearCookie("refresh_token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: config.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
   });
@@ -64,7 +65,7 @@ async function registerSuperAdmin(req, res) {
   try {
     const { email, password, secret } = req.body;
 
-    if (secret !== process.env.SUPER_ADMIN_SECRET) {
+    if (secret !== config.SUPER_ADMIN_SECRET) {
       return res.status(403).json({
         message: "Invalid super admin secret",
       });
@@ -110,7 +111,7 @@ async function registerAdmin( req, res ) {
 
     const { email, password, key } = req.body;
 
-    if (key !== process.env.ADMIN_KEY) {
+    if (key !== config.ADMIN_KEY) {
       return res.status(403).json({
         message: "Invalid admin key",
       });
@@ -174,7 +175,7 @@ async function adminLogin(req, res) {
         id: user.id,
         role: user.role,
       },
-      process.env.JWT_SECRET,
+      config.JWT_SECRET,
       { expiresIn: "7d" },
     );
 

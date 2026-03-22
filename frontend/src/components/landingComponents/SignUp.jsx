@@ -15,7 +15,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import GradBlindBg from "../commonComponents/GradBlindBg";
 
 const SignUp = () => {
   const navigate = useNavigate();
