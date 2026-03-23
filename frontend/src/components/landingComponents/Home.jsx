@@ -1,4 +1,4 @@
-import Marquee from "../commonComponents/Marquee";
+import Marquee from "@/components/commonComponents/Marquee";
 
 function Home() {
 

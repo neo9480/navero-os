@@ -1,12 +1,13 @@
-import Navbar from '../components/landingComponents/Navbar';
-import Home from '../components/landingComponents/Home';
-import AboutUs from '../components/landingComponents/AboutUs';
-import Features from '../components/landingComponents/Features';
-import Pricing from '../components/landingComponents/Pricing';
-import SignIn from '../components/landingComponents/SignIn';
-import SignUp from '../components/landingComponents/SignUp';
+import Navbar from '@/components/landingComponents/Navbar';
+import Home from '@/components/landingComponents/Home';
+import AboutUs from '@/components/landingComponents/AboutUs';
+import Features from '@/components/landingComponents/Features';
+import Pricing from '@/components/landingComponents/Pricing';
+import SignIn from '@/components/landingComponents/SignIn';
+import SignUp from '@/components/landingComponents/SignUp';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Plans from '@/components/landingComponents/Plans';
+import VerifyEmail from '@/components/landingComponents/VerifyEmail';
 
 function LandingPage() {
 
@@ -25,6 +26,7 @@ const location = useLocation()
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-up/plans" element={<Plans />} />
+        <Route path="/sign-up/verify-email" element={<VerifyEmail />}/>
       </Routes>
     </div>
   );

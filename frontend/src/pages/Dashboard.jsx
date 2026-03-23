@@ -1,4 +1,4 @@
-import DashboardLayout from '../components/dashboardComponents/DashboardLayout';
+import DashboardLayout from '@/components/dashboardComponents/DashboardLayout';
 import {
   Ship, FileText, ShieldAlert, DollarSign,
   Plus, FileCheck, ShieldCheck, ArrowUpRight, ArrowDownRight,

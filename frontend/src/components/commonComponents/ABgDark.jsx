@@ -1,4 +1,4 @@
-import ColorBends from '../shadcnComponents/ColorBends';
+import ColorBends from "@/components/shadcnComponents/ColorBends";
 
 const ABgDark = () => {
   return (

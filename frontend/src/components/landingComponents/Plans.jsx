@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ABgLight from "../commonComponents/ABgLight";
-import PRICING from "../../constants/plans.js";
+import ABgLight from "@/components/commonComponents/ABgLight";
+import PRICING from "@/constants/plans.js";
 import { Check, X } from "lucide-react";
-import AnimBtn from "../commonComponents/AnimBtn";
+import AnimBtn from "@/components/commonComponents/AnimBtn";
 
 const Plans = () => {
   const location = useLocation();

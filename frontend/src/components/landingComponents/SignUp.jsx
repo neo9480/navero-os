@@ -161,7 +161,7 @@ const SignUp = () => {
       toast.success("Account created and logged in", {
         position: "top-center",
       } );
-      setTimeout(() => navigate("/verify-email"), 800);
+      setTimeout( () => navigate( "/verify-email", { state: { email: formData.email}}), 800);
     } catch (err) {
       console.error("signup error:", err);
       if (err.response?.data?.error) {

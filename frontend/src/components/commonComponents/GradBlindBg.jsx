@@ -1,4 +1,4 @@
-import GradientBlinds from "../shadcnComponents/GradientBlinds";
+import GradientBlinds from "@/components/shadcnComponents/GradientBlinds";
 
 const GradBlindBg = () => {
   return (

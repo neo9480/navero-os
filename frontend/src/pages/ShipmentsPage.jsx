@@ -1,4 +1,4 @@
-import DashboardLayout from '../components/dashboardComponents/DashboardLayout';
+import DashboardLayout from '@/components/dashboardComponents/DashboardLayout';
 import { Search, Filter, Ship } from 'lucide-react';
 import { useState } from 'react';
 

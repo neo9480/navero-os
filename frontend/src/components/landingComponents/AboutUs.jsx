@@ -10,8 +10,8 @@ import {
   PiggyBankIcon,
   ArrowUpRight,
 } from "lucide-react";
-import GradBlindBg from "../commonComponents/GradBlindBg";
-import AnimBtn from "../commonComponents/AnimBtn";
+import GradBlindBg from "@/components/commonComponents/GradBlindBg";
+import AnimBtn from "@/components/commonComponents/AnimBtn";
 
 /* ── Animated Counter ── */
 function AnimatedCounter({ target, suffix = "" }) {

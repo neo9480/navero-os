@@ -1,11 +1,27 @@
-import { animate, motion as Motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  animate,
+  motion as Motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const EASE = [0.76, 0, 0.24, 1];
 const DURATION = 0.55;
 
-const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showArrow, onClick}) => {
+const AnimBtn = ({
+  ctaText,
+  font,
+  fontWeight,
+  to,
+  bgColor,
+  hoverColor,
+  textColor,
+  className,
+  showArrow,
+  onClick,
+}) => {
   // ── Two independent Y positions ──────────────────────────────
   const darkY = useMotionValue("100%"); // dark layer  (enters bottom → exits top)
   const lightY = useMotionValue("100%"); // light layer (rises bottom on leave to restore bg)
@@ -40,7 +56,7 @@ const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showAr
         <Motion.div
           onMouseEnter={onEnter}
           onMouseLeave={onLeave}
-          className={`relative inline-flex items-center gap-[2vw] px-[1.5vw] py-3 rounded-full ${bgColor}  ${textColor} font-medium overflow-hidden ${className}`}>
+          className={`relative inline-flex items-center gap-[2vw] px-[1.5vw] py-3 rounded-full ${bgColor}  ${textColor} ${font} font-medium overflow-hidden ${className}`}>
           {/* ── 1. Dark wipe — enters bottom, exits top ── */}
           <Motion.div
             aria-hidden
@@ -54,7 +70,7 @@ const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showAr
           {/* ── 2. Light wipe — rises bottom on leave to restore bg ── */}
           <Motion.div
             aria-hidden
-            className="absolute bottom-0 -left-[20%] w-[140%] h-[110%] bg-transparent pointer-events-none"
+            className="absolute bottom-0 -left-[20%] w-[140%] h-[140%] bg-transparent pointer-events-none"
             style={{
               y: lightY,
               zIndex: 1,
@@ -62,7 +78,7 @@ const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showAr
           />
 
           {/* ── Text ── */}
-          <span className="relative z-10">{ctaText}</span>
+          <span className={`relative z-10 ${fontWeight}`}>{ctaText}</span>
 
           {/* ── Circle with arrow ── */}
           {showArrow && (
@@ -78,6 +94,6 @@ const AnimBtn = ({ctaText, to, bgColor, hoverColor, textColor, className, showAr
       </Link>
     </button>
   );
-}
+};
 
 export default AnimBtn;

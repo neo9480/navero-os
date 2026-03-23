@@ -1,5 +1,4 @@
 import { motion as Motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import {
   Workflow,
   FileText,
@@ -14,8 +13,8 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
-import AnimBtn from "../commonComponents/AnimBtn";
-import GradBlindBg from "../commonComponents/GradBlindBg";
+import AnimBtn from "@/components/commonComponents/AnimBtn";
+import GradBlindBg from "@/components/commonComponents/GradBlindBg";
 
 const FEATURES = [
   {
