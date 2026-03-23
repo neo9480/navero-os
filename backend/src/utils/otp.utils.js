@@ -47,7 +47,13 @@ function getOtpHtml(otp) {
 }
 
 async function createOtp(userId, email, otpHash) {
-
+  return await prisma.oTP.create( {
+    data: {
+      userId,
+      email,
+      otpHash
+  }
+})
 }
 
 async function otpHash(otp) {

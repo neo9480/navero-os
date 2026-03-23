@@ -3,18 +3,18 @@ import ABgLight from "@/components/commonComponents/ABgLight";
 import { toast, Toaster } from "sonner";
 import Stepper, { Step } from "@/components/shadcnComponents/Stepper";
 import { ChevronDown, Eye, EyeClosed, Ship } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "@/store/authStore.js";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { InputPhone } from "@/components/shadcn-studio/input/InputPhone";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -32,20 +32,20 @@ const SignUp = () => {
   const [currentStep, setCurrentStep] = useState(initialStep);
 
   const [formData, setFormData] = useState({
-    role: location.state?.formData?.role ?? location.state?.role ?? "",
+    role: location.state?.formData?.role ?? location.state?.role ?? undefined,
     companyName:
       location.state?.formData?.companyName ??
       location.state?.companyName ??
-      "",
-    phone: location.state?.formData?.phone ?? location.state?.phone ?? "",
-    address: location.state?.formData?.address ?? location.state?.address ?? "",
-    email: location.state?.formData?.email ?? location.state?.email ?? "",
+      undefined,
+    phone: location.state?.formData?.phone ?? location.state?.phone ?? undefined,
+    address: location.state?.formData?.address ?? location.state?.address ?? undefined,
+    email: location.state?.formData?.email ?? location.state?.email ?? undefined,
     password:
-      location.state?.formData?.password ?? location.state?.password ?? "",
+      location.state?.formData?.password ?? location.state?.password ?? undefined,
     confirmPassword:
       location.state?.formData?.confirmPassword ??
       location.state?.confirmPassword ??
-      "",
+      undefined,
     plan: initialPlan,
     // FIX: `paymentStatus` removed — it was sent to the backend but
     // intentionally ignored. Keeping it created a false UI indication that
@@ -54,8 +54,8 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [ showConfirmPassword, setShowConfirmPassword ] = useState( false );
-  const { signUp } = useAuthStore()
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { signUp } = useAuthStore();
 
   /* ------------------------------------------------------------------ */
   /* VALIDATION                                                           */
@@ -157,11 +157,22 @@ const SignUp = () => {
     try {
       // Register the new user. Note: `paymentStatus` is NOT sent because the
       // backend ignores it and always enforces TRIALING server-side.
-      await signUp(formData.email, formData.password, formData.role, formData.companyName, formData.phone, formData.address, formData.plan);
+      await signUp(
+        formData.email,
+        formData.password,
+        formData.role,
+        formData.companyName,
+        formData.phone,
+        formData.address,
+        formData.plan,
+      );
       toast.success("Account created and logged in", {
         position: "top-center",
-      } );
-      setTimeout( () => navigate( "/verify-email", { state: { email: formData.email}}), 800);
+      });
+      setTimeout(
+        () => navigate("/verify-email", { state: { email: formData.email } }),
+        800,
+      );
     } catch (err) {
       console.error("signup error:", err);
       if (err.response?.data?.error) {
@@ -229,45 +240,26 @@ const SignUp = () => {
                     Select your role
                   </label>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="flex bg-space_indigo-100 rounded-full items-center justify-center gap-2">
-                        {formData.role || "Choose a role"}
-                        <ChevronDown className="size-4 opacity-60" />
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent className="bg-space_indigo-100 text-platinum-600">
-                      <DropdownMenuGroup>
-                        <DropdownMenuLabel>Role</DropdownMenuLabel>
-
-                        <DropdownMenuRadioGroup
-                          value={formData.role}
-                          onValueChange={(val) => updateField("role", val)}>
-                          <DropdownMenuRadioItem value="IMPORTER">
-                            Importer
-                          </DropdownMenuRadioItem>
-                          <DropdownMenuRadioItem value="EXPORTER">
-                            Exporter
-                          </DropdownMenuRadioItem>
-                          <DropdownMenuRadioItem value="LOGISTICS_PROVIDER">
-                            Logistics
-                          </DropdownMenuRadioItem>
-                          <DropdownMenuRadioItem value="BANK">
-                            Bank
-                          </DropdownMenuRadioItem>
-                          <DropdownMenuRadioItem value="BROKER">
-                            Broker
-                          </DropdownMenuRadioItem>
-                          <DropdownMenuRadioItem value="CUSTOMS">
-                            Customs
-                          </DropdownMenuRadioItem>
-                        </DropdownMenuRadioGroup>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(val) => updateField("role", val)}>
+                    <SelectTrigger className="w-full max-w-48">
+                      <SelectValue placeholder="Select Your Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Roles</SelectLabel>
+                        <SelectItem value="IMPORTER">Importer</SelectItem>
+                        <SelectItem value="EXPORTER">Exporter</SelectItem>
+                        <SelectItem value="LOGISTICS_PROVIDER">
+                          Logistics
+                        </SelectItem>
+                        <SelectItem value="BANK">Bank</SelectItem>
+                        <SelectItem value="BROKER">Broker</SelectItem>
+                        <SelectItem value="CUSTOMS">Customs</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
 
                   {errors.role && (
                     <p className="text-red-500 text-sm mt-1">{errors.role}</p>
@@ -299,16 +291,16 @@ const SignUp = () => {
                   )}
 
                   <p>Business Phone</p>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => updateField("phone", e.target.value)}
-                    onBlur={() => {
-                      const msg = validateField("phone", formData.phone);
-                      setErrors((p) => ({ ...p, phone: msg }));
-                    }}
-                    className="w-full h-[5vh] p-[1vw] bg-lavender_grey-200 rounded-full"
-                  />
+                  
+                    <InputPhone
+                      value={formData.phone}
+                      onChange={(e) => updateField("phone", e.target.value)}
+                      onBlur={() => {
+                        const msg = validateField("phone", formData.phone);
+                        setErrors((p) => ({ ...p, phone: msg }));
+                      }}
+                    />
+                  
                   {errors.phone && (
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                   )}

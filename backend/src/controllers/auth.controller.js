@@ -92,7 +92,7 @@ async function register(req, res) {
 
     const safeUser = await userUtils.findUserById(result.id);
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User registered, email verification required",
       user: safeUser,
     });
@@ -141,7 +141,7 @@ async function login(req, res) {
 
     await authUtils.setRefreshCookie(res, refreshToken)
 
-    res.status(200).json({
+    returnres.status(200).json({
       message: "User login successful",
       accessToken,
       user: safeUser,
@@ -183,7 +183,7 @@ async function refresh(req, res) {
 		
 		await authUtils.setRefreshCookie( res, newRefreshToken )
 		
-		res.status( 200 ).json( {
+		return res.status( 200 ).json( {
 			message: "Access token refreshed successfully",
 			accessToken
 		})
@@ -216,7 +216,7 @@ async function logout(req, res) {
 		}
 		await authUtils.updateSession( { id: session.id }, { revoked: true } )
 		res.clearCookie( "refresh_token" )
-		res.status( 200 ).json( {
+		return res.status( 200 ).json( {
 			message: "Logged out successfully"
 		})
   } catch (err) {
@@ -240,7 +240,7 @@ async function logoutAll(req, res) {
 		const decoded = await authUtils.verifyToken( refreshToken )
 		await authUtils.updateSession( { userId: decoded.id, revoked:false }, { revoked: true } )
 		res.clearCookie( "refresh_token" )
-		res.status( 200 ).json( {
+		return res.status( 200 ).json( {
 			message: "Logged out of all devices"
 		})
   } catch (err) {
@@ -264,7 +264,7 @@ async function getUserProfile(req, res) {
 
     // Note: no need to strip passwordHash here — safeUserSelect in
     // findUserById already excludes it at the query level.
-    res.status(200).json({
+    return res.status(200).json({
       message: "User profile fetched successfully",
       user,
     });
@@ -296,7 +296,7 @@ async function updateUserProfile(req, res) {
     // updateUser now returns safeUserSelect shape (no passwordHash, includes subscription)
     const updatedUser = await userUtils.updateUser(userId, updateData);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User profile updated successfully",
       user: updatedUser,
     });
@@ -323,7 +323,7 @@ async function deleteUserProfile(req, res) {
     await authUtils.deleteAllTokensForUser(userId);
     await userUtils.deleteUser(userId);
 
-    res.status(200).json({ message: "User deleted successfully" });
+    return res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("failed to delete user", err);
     res.status(500).json({ error: "Failed to delete user" });
@@ -357,6 +357,50 @@ async function verifyEmail(req, res) {
   });
 }
 
+async function sendCode(req, res) {
+    try {
+      const { email } = req.body;
+
+      // User must already exist (registered but unverified)
+      const user = await userUtils.findUserByEmail(email);
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ error: "No account found with this email" });
+      }
+
+      if (user.verified) {
+        return res.status(400).json({ error: "Email is already verified" });
+      }
+
+      // Delete any existing OTP for this user before creating a new one
+      await otpUtils.deleteOtp(user.id);
+
+      const otp = otpUtils.generateOTP();
+      const otpHash = await otpUtils.otpHash(otp);
+      const html = otpUtils.getOtpHtml;
+
+      await otpUtils.createOtp(user.id, email, otpHash);
+
+      await emailService.sendEmail(
+        email,
+        "OTP Verification",
+        `Your OTP code is ${otp}`,
+        html,
+      );
+
+      return res.status(200).json({
+        message: "OTP sent successfully",
+        userId: user.id, // send this back to the frontend
+        email,
+      });
+    } catch (err) {
+      console.error("failed to send code:", err);
+      res.status(500).json({ error: "Failed to send code" });
+    }
+}
+
 export default {
   register,
   login,
@@ -367,4 +411,5 @@ export default {
   updateUserProfile,
   deleteUserProfile,
   verifyEmail,
+  sendCode
 };

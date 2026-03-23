@@ -2627,6 +2627,7 @@ export namespace Prisma {
     companyName: string | null
     phone: string | null
     address: string | null
+    country: string | null
     verified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2640,6 +2641,7 @@ export namespace Prisma {
     companyName: string | null
     phone: string | null
     address: string | null
+    country: string | null
     verified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2653,6 +2655,7 @@ export namespace Prisma {
     companyName: number
     phone: number
     address: number
+    country: number
     verified: number
     createdAt: number
     updatedAt: number
@@ -2668,6 +2671,7 @@ export namespace Prisma {
     companyName?: true
     phone?: true
     address?: true
+    country?: true
     verified?: true
     createdAt?: true
     updatedAt?: true
@@ -2681,6 +2685,7 @@ export namespace Prisma {
     companyName?: true
     phone?: true
     address?: true
+    country?: true
     verified?: true
     createdAt?: true
     updatedAt?: true
@@ -2694,6 +2699,7 @@ export namespace Prisma {
     companyName?: true
     phone?: true
     address?: true
+    country?: true
     verified?: true
     createdAt?: true
     updatedAt?: true
@@ -2780,6 +2786,7 @@ export namespace Prisma {
     companyName: string | null
     phone: string | null
     address: string | null
+    country: string | null
     verified: boolean
     createdAt: Date
     updatedAt: Date
@@ -2810,6 +2817,7 @@ export namespace Prisma {
     companyName?: boolean
     phone?: boolean
     address?: boolean
+    country?: boolean
     verified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2842,6 +2850,7 @@ export namespace Prisma {
     companyName?: boolean
     phone?: boolean
     address?: boolean
+    country?: boolean
     verified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2855,6 +2864,7 @@ export namespace Prisma {
     companyName?: boolean
     phone?: boolean
     address?: boolean
+    country?: boolean
     verified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2868,12 +2878,13 @@ export namespace Prisma {
     companyName?: boolean
     phone?: boolean
     address?: boolean
+    country?: boolean
     verified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "email" | "passwordHash" | "companyName" | "phone" | "address" | "verified" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "email" | "passwordHash" | "companyName" | "phone" | "address" | "country" | "verified" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     verifiedDocuments?: boolean | User$verifiedDocumentsArgs<ExtArgs>
@@ -2928,6 +2939,7 @@ export namespace Prisma {
       companyName: string | null
       phone: string | null
       address: string | null
+      country: string | null
       verified: boolean
       createdAt: Date
       updatedAt: Date
@@ -3379,6 +3391,7 @@ export namespace Prisma {
     readonly companyName: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
     readonly address: FieldRef<"User", 'String'>
+    readonly country: FieldRef<"User", 'String'>
     readonly verified: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -20240,6 +20253,7 @@ export namespace Prisma {
     companyName: 'companyName',
     phone: 'phone',
     address: 'address',
+    country: 'country',
     verified: 'verified',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -20710,6 +20724,7 @@ export namespace Prisma {
     companyName?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
+    country?: StringNullableFilter<"User"> | string | null
     verified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -20741,6 +20756,7 @@ export namespace Prisma {
     companyName?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20775,6 +20791,7 @@ export namespace Prisma {
     passwordHash?: StringFilter<"User"> | string
     companyName?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
+    country?: StringNullableFilter<"User"> | string | null
     verified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -20806,6 +20823,7 @@ export namespace Prisma {
     companyName?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20825,6 +20843,7 @@ export namespace Prisma {
     companyName?: StringNullableWithAggregatesFilter<"User"> | string | null
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     address?: StringNullableWithAggregatesFilter<"User"> | string | null
+    country?: StringNullableWithAggregatesFilter<"User"> | string | null
     verified?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -21868,15 +21887,15 @@ export namespace Prisma {
 
   export type OTPWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    userId?: string
-    email?: string
     AND?: OTPWhereInput | OTPWhereInput[]
     OR?: OTPWhereInput[]
     NOT?: OTPWhereInput | OTPWhereInput[]
+    userId?: StringFilter<"OTP"> | string
+    email?: StringFilter<"OTP"> | string
     otpHash?: StringFilter<"OTP"> | string
     createdAt?: DateTimeFilter<"OTP"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "userId" | "email">
+  }, "id">
 
   export type OTPOrderByWithAggregationInput = {
     id?: SortOrder
@@ -21908,6 +21927,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21939,6 +21959,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21970,6 +21991,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22001,6 +22023,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22032,6 +22055,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22045,6 +22069,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22058,6 +22083,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23374,6 +23400,7 @@ export namespace Prisma {
     companyName?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    country?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23387,6 +23414,7 @@ export namespace Prisma {
     companyName?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    country?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23400,6 +23428,7 @@ export namespace Prisma {
     companyName?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    country?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27235,6 +27264,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27265,6 +27295,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27377,6 +27408,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27407,6 +27439,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27469,6 +27502,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27499,6 +27533,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27573,6 +27608,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27603,6 +27639,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27678,6 +27715,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27708,6 +27746,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27789,6 +27828,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27819,6 +27859,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27849,6 +27890,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27879,6 +27921,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27914,6 +27957,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27944,6 +27988,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27979,6 +28024,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28009,6 +28055,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28087,6 +28134,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28117,6 +28165,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28158,6 +28207,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28188,6 +28238,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28229,6 +28280,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28259,6 +28311,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28305,6 +28358,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28335,6 +28389,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28370,6 +28425,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28400,6 +28456,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28435,6 +28492,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28465,6 +28523,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28594,6 +28653,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28624,6 +28684,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28665,6 +28726,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28695,6 +28757,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28736,6 +28799,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28766,6 +28830,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28894,6 +28959,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28924,6 +28990,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29011,6 +29078,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29041,6 +29109,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29071,6 +29140,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29101,6 +29171,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29136,6 +29207,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29166,6 +29238,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29276,6 +29349,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29306,6 +29380,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29347,6 +29422,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29377,6 +29453,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29483,6 +29560,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29513,6 +29591,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29559,6 +29638,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29589,6 +29669,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29619,6 +29700,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29649,6 +29731,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29695,6 +29778,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29725,6 +29809,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29755,6 +29840,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29785,6 +29871,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29831,6 +29918,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29861,6 +29949,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29891,6 +29980,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29921,6 +30011,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29992,6 +30083,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30022,6 +30114,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30083,6 +30176,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30113,6 +30207,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30159,6 +30254,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30189,6 +30285,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30219,6 +30316,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30249,6 +30347,7 @@ export namespace Prisma {
     companyName?: string | null
     phone?: string | null
     address?: string | null
+    country?: string | null
     verified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30295,6 +30394,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30325,6 +30425,7 @@ export namespace Prisma {
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

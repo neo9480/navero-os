@@ -113,6 +113,7 @@ model User {
   companyName  String?
   phone        String?  @unique
   address      String?
+  country      String?
   verified      Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -356,8 +357,8 @@ model Subscription {
 
 model OTP {
   id  String  @id @default(cuid()) 
-  userId  String  @unique
-  email String  @unique
+  userId  String  
+  email String  
   otpHash String  
   createdAt DateTime  @default(now())
 
