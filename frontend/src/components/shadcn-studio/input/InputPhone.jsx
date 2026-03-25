@@ -49,7 +49,7 @@ const InputComponent = React.forwardRef(({ className, ...props }, ref) => (
 ));
 InputComponent.displayName = "InputComponent";
 
-const CountrySelect = ({
+const CountrySelect = ( {
   disabled,
   value: selectedCountry,
   options: countryList,
@@ -71,7 +71,7 @@ const CountrySelect = ({
         <Button
           type="button"
           variant="outline"
-          className="flex gap-1 bg-space_indigo-100/30 rounded-e-none rounded-s-full border-r-0 px-3 focus:z-10"
+          className="flex gap-1 bg-transparent border-lavender_grey-400/30 shadow rounded-e-none rounded-s-full border-r-0 px-3 focus:z-10 hover:bg-transparent hover:cursor-pointer"
           disabled={disabled}>
           <FlagComponent
             country={selectedCountry}
@@ -85,7 +85,7 @@ const CountrySelect = ({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-75 p-0">
         <Command>
           <CommandInput
             value={searchValue}
@@ -105,7 +105,7 @@ const CountrySelect = ({
             placeholder="Search country..."
           />
           <CommandList>
-            <ScrollArea ref={scrollAreaRef} onWheel={(e) => e.propagation()} className="h-72">
+            <ScrollArea ref={scrollAreaRef} onWheel={(e) => e.stopPropagation()} className="h-72">
               <CommandEmpty>No country found.</CommandEmpty>
               <CommandGroup>
                 {countryList.map(({ value, label }) =>
@@ -145,7 +145,7 @@ const CountrySelectOption = ({
     <CommandItem className="gap-2" onSelect={handleSelect}>
       <FlagComponent country={country} countryName={countryName} />
       <span className="flex-1 text-sm">{countryName}</span>
-      <span className="text-sm text-foreground/50">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
+      <span className="text-sm text-lavender_grey-300">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
       <CheckIcon
         className={`ml-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}
       />
@@ -157,7 +157,7 @@ const FlagComponent = ({ country, countryName }) => {
   const Flag = flags[country];
 
   return (
-    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20 [&_svg:not([class*='size-'])]:size-full">
+    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20 **:[svg:not([class*='size-'])]:size-full ">
       {Flag && <Flag title={countryName} />}
     </span>
   );

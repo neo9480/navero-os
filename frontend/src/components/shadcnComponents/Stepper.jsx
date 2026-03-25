@@ -1,5 +1,6 @@
 import React, { useState, Children, useRef, useLayoutEffect } from "react";
 import { motion as Motion, AnimatePresence } from "motion/react";
+import AnimBtn from "../commonComponents/AnimBtn";
 
 export default function Stepper({
   children,
@@ -119,33 +120,36 @@ export default function Stepper({
               className={`mt-10 flex ${currentStep !== 1 ? "justify-between" : "justify-end"}`}>
               {currentStep !== 1 && (
                 <div className="flex gap-[1vw]">
-                  <button
+                  <AnimBtn
                     onClick={handleBack}
-                    className={`duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer ${
+                    className={`duration-350 flex items-center justify-center rounded-full py-1.5 px-3.5 font-medium tracking-tight shadow border border-lavender_grey-700 text-space_indigo-100 transition cursor-pointer hover:text-platinum-500 transform ${
                       currentStep === 1 ?
                         "pointer-events-none opacity-50 text-platinum-600"
                       : "text-platinum-600 cursor-pointer"
                     }`}
-                    {...backButtonProps}>
-                    {backButtonText}
-                  </button>
-                  <button
+                    ctaText={backButtonText}
+                    hoverColor={"bg-space_indigo-100"}
+                    {...backButtonProps}
+                  />
+                  <AnimBtn
                     onClick={handleReset}
-                    className={`duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer ${
+                    className={`duration-350 flex items-center justify-center rounded-full  py-1.5 px-3.5 font-medium shadow border border-lavender_grey-700 hover:text-platinum-500 transform tracking-tight text-space_indigo-100 transition cursor-pointer ${
                       currentStep === 1 ?
                         "pointer-events-none opacity-50 text-platinum-600"
                       : "text-platinum-600 cursor-pointer"
-                    }`}>
-                    Reset
-                  </button>
+                    }`}
+                    ctaText={"Reset"}
+                    hoverColor={"bg-space_indigo-100"}
+                  />
                 </div>
               )}
-              <button
+              <AnimBtn
                 onClick={isLastStep ? handleComplete : handleNext}
-                className="duration-350 flex items-center justify-center rounded-full bg-platinum-500 py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition cursor-pointer"
-                {...nextButtonProps}>
-                {isLastStep ? "Verify Email" : nextButtonText}
-              </button>
+                className="duration-350 flex items-center justify-center rounded-full py-1.5 px-3.5 font-medium tracking-tight text-space_indigo-100 transition shadow border border-lavender_grey-700 hover:text-platinum-500 cursor-pointer"
+                {...nextButtonProps}
+                ctaText={isLastStep ? "Verify Email" : nextButtonText}
+                hoverColor={"bg-space_indigo-100"}
+              />
             </div>
           </div>
         )}
@@ -247,14 +251,14 @@ function StepIndicator({
       initial={false}>
       <Motion.div
         variants={{
-          inactive: { scale: 1, backgroundColor: "#222", color: "#a3a3a3" },
-          active: { scale: 1, backgroundColor: "#edf2f4", color: "#edf2f4" },
-          complete: { scale: 1, backgroundColor: "#edf2f4", color: "#edf2f4" },
+          inactive: { scale: 1, backgroundColor: "#222", color: "#edf2f4" },
+          active: { scale: 1, backgroundColor: "#697994", color: "#edf2f4" },
+          complete: { scale: 1, backgroundColor: "#0062ff", color: "#edf2f4" },
         }}
         transition={{ duration: 0.3 }}
         className="flex h-8 w-8 items-center justify-center rounded-full font-semibold">
         {status === "complete" ?
-          <CheckIcon className="h-4 w-4 text-space_indigo-200" />
+          <CheckIcon className="h-4 w-4 text-platinum-600" />
         : status === "active" ?
           <div className="h-3 w-3 rounded-full bg-[#060010]" />
         : <span className="text-sm">{step}</span>}
@@ -266,7 +270,7 @@ function StepIndicator({
 function StepConnector({ isComplete }) {
   const lineVariants = {
     incomplete: { width: 0, backgroundColor: "transparent" },
-    complete: { width: "100%", backgroundColor: "#edf2f4" },
+    complete: { width: "100%", backgroundColor: "#0062ff" },
   };
 
   return (

@@ -6,22 +6,23 @@ import ABgDark from "@/components/commonComponents/ABgDark";
 import { useLocation } from "react-router-dom";
 import InputStartIcon from "../shadcn-studio/input/InputStartIcon";
 import { Mail } from "lucide-react";
+import useAuthStore from "@/store/authStore";
+import { toast, Toaster } from "sonner";
 
 const VerifyEmail = () => {
-  const [ timeLeft, setTimeLeft ] = useState( 30 );
-  const [ otpSent, setOtpSent ] = useState( false )
-  const [manualEmail, setManualEmail] = useState("")
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [manualOtpSent, setManualOtpSent] = useState(false);
+  const [manualEmail, setManualEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+  const { VerifyEmail, sendCode } = useAuthStore();
 
-  const location = useLocation()
-  const email = location.state?.email ?? null
+  const location = useLocation();
+  const email = location.state?.email ?? null;
 
-  const isEmailProvided = email !== null
+  const isEmailProvided = email !== null;
 
-  useEffect( () => {
-    if ( isEmailProvided ) {
-      setOtpSent(true)
-    }
-  }, [isEmailProvided])
+  const otpSent = isEmailProvided || manualOtpSent;
 
   useEffect(() => {
     if (timeLeft > 0 && otpSent) {
@@ -40,24 +41,60 @@ const VerifyEmail = () => {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleResend = () => {
-    setTimeLeft(60);
+  const handleResend = async () => {
+    try {
+      await sendCode(email ?? manualEmail);
+      setTimeLeft(60);
+      toast.success("A new OTP was sent to your email", {
+        position: "top-center",
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.error ?? "Failed to resend OTP.", {
+        position: "top-center",
+      });
+    }
   };
 
-  const handleSendCode = () => {
-    if ( !manualEmail.trim() ) return
-    setOtpSent( true )
-    setTimeLeft( 30 )
+  const handleSendCode = async () => {
+    if (!manualEmail.trim()) return;
+    setLoading(true);
+    try {
+      await sendCode(manualEmail);
+      setManualOtpSent(true);
+      setTimeLeft(30);
+    } catch (err) {
+      toast.error(err.response?.data?.error ?? "Failed to send OTP.", {
+        position: "top-center",
+      });
+    } finally {
+      setLoading(false);
+    }
     // Call send-code API
-  }
+  };
 
-  const handleVerify = () => {
-    
-  }
+  const handleVerify = async () => {
+    setLoading(true);
+    try {
+      await VerifyEmail( email ?? manualEmail, otp );
+      toast.success("Verification complete.", {position: "top-center"})
+    } catch (err) {
+      console.error("verification error:", err);
+      if (err.response?.data?.error) {
+        toast.error(err.response.data.error, { position: "top-center" });
+      } else {
+        toast.error("Server error during verification", {
+          position: "top-center",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="text-platinum-600 h-screen w-full flex justify-center items-center font-host_grotesk ">
       <ABgDark />
+      <Toaster />
       <div className="backdrop-blur-2xl rounded-2xl py-[2vw]  w-[25vw] flex flex-col justify-center items-center gap-[1vw] z-10  shadow-inner border border-lavender_grey-100">
         <p className=" font-bold text-2xl">Verify Your Email</p>
         {isEmailProvided ?
@@ -77,7 +114,7 @@ const VerifyEmail = () => {
 
         {!isEmailProvided && !otpSent && (
           <AnimBtn
-            ctaText={"Send OTP"}
+            ctaText={loading ? "Sending OTP..." : "Send OTP"}
             hoverColor={"bg-space_indigo-100/50"}
             onClick={handleSendCode}
             className={" w-[20vw] justify-center items-center border  "}
@@ -88,7 +125,7 @@ const VerifyEmail = () => {
 
         {otpSent && (
           <>
-            <InputOTPOutlined />
+            <InputOTPOutlined value={otp} onChange={(value) => setOtp(value)} disabled={loading}/>
             <p className="text-lavender_grey-500 text-xs cursor-default">
               {timeLeft > 0 ?
                 `Sent OTP on email, resend available in ${formatTime(timeLeft)}`
@@ -103,7 +140,7 @@ const VerifyEmail = () => {
               }
             </p>
             <AnimBtn
-              ctaText={"Verify"}
+              ctaText={loading ? "Verifying..." : "Verify"}
               hoverColor={"bg-space_indigo-100/50"}
               onClick={handleVerify}
               className={" w-[20vw] justify-center items-center border  "}

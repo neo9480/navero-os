@@ -14,6 +14,8 @@ const useAuthStore = create((set) => ({
   user: null,
   accessToken: null,
   message: null,
+  email: null,
+  userId: null,
   error: null,
 
   signUp: async (email, password, role, companyName, phone, address, plan) => {
@@ -48,6 +50,31 @@ const useAuthStore = create((set) => ({
       const user = res.data.user;
       const accessToken = res.data.accessToken;
       set({ message: res.data.message, user: user, accessToken: accessToken });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "error signing in" });
+      throw error;
+    }
+  },
+
+  sendCode: async ( email ) => {
+    try {
+      const res = await axios.get( `${ BASE_AUTH_URL }/send-code`, { email } )
+      const userId = res.data.userId
+      set({message: res.data.message, userId: userId, email: res.data.email})
+    } catch (error) {
+      set({ error: error.response?.data?.message || "error signing in" });
+      throw error;
+    }
+  },
+
+  verifyEmail: async ( email, otp ) => {
+    try {
+      const res = await axios.post( `${ BASE_AUTH_URL }/verify-email`,
+        { email, otp },
+      {withCredentials: true}
+      )
+      const user = res.data.user
+      set({message: res.data.message, user: user})
     } catch (error) {
       set({ error: error.response?.data?.message || "error signing in" });
       throw error;
