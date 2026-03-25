@@ -273,7 +273,6 @@ const SignUp = () => {
               setErrors({});
               setCurrentStep(1);
             }}>
-            {console.log(formData)}
 
             {/* -------- STEP 1 — ROLE -------- */}
             <Step>
@@ -309,7 +308,6 @@ const SignUp = () => {
                 )}
               </div>
             </Step>
-            {console.log(formData)}
 
             {/* -------- STEP 2 — COMPANY DETAILS -------- */}
             <Step>
@@ -411,7 +409,6 @@ const SignUp = () => {
                   ))}
               </form>
             </Step>
-            {console.log(formData)}
 
             {/* -------- STEP 3 — AUTH CREDENTIALS -------- */}
             <Step>
@@ -490,7 +487,6 @@ const SignUp = () => {
                 )}
               </form>
             </Step>
-            {console.log(formData)}
 
             {/* -------- STEP 4 — PLANS -------- */}
             <Step>
@@ -506,7 +502,6 @@ const SignUp = () => {
                 className="rounded-full p-[1.5vh] cursor-pointer text-space_indigo-100 hover:bg-space_indigo-100 hover:text-platinum-500 shadow border border-lavender_grey-700 transform"
               />
             </Step>
-            {console.log(formData)}
 
             {/* -------- STEP 5 — SUMMARY -------- */}
             <Step>
@@ -546,8 +541,6 @@ const SignUp = () => {
             </Step>
           </Stepper>
         </div>
-        {console.log(formData)}
-        {console.log(address)}
 
         {/* Footer */}
         <div>
