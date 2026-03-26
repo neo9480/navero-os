@@ -48,7 +48,7 @@ const SignUp = () => {
       undefined,
     city: location.state?.formData?.city ?? location.state?.city ?? undefined,
     State:
-      location.state?.formData?.State ?? location.State?.State ?? undefined,
+      location.state?.formData?.State ?? location.state?.State ?? undefined,
     country:
       location.state?.formData?.country ?? location.state?.country ?? undefined,
     email:
@@ -67,7 +67,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { signUp, sendCode } = useAuthStore();
+  const { signUp } = useAuthStore();
 
   /* ------------------------------------------------------------------ */
   /* VALIDATION                                                           */
@@ -184,7 +184,7 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e?.preventDefault?.();
-    const missingFields = ["addressLine", "city", "state", "country"].filter(
+    const missingFields = ["addressLine", "city", "State", "country"].filter(
       (f) => !formData[f],
     );
 
@@ -204,14 +204,14 @@ const SignUp = () => {
         formData.companyName,
         formData.phone,
         address,
+        formData.country,
         formData.plan,
       );
-      await sendCode(formData.email);
       toast.success("OTP is sent to your email", {
         position: "top-center",
       });
       setTimeout(
-        () => navigate("/verify-email", { state: { email: formData.email } }),
+        () => navigate("/sign-up/verify-email", { state: { email: formData.email, password: formData.confirmPassword },  }),
         800,
       );
     } catch (err) {
@@ -554,6 +554,7 @@ const SignUp = () => {
           </p>
         </div>
       </div>
+      {console.log(formData.State)}
     </div>
   );
 };

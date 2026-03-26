@@ -78,8 +78,8 @@ async function deleteOtp(userId) {
 
 async function updateUser( userId ) {
   return prisma.user.update({
-    where: { userId },
-    data: { Verified: true },
+    where: { id: userId },
+    data: { verified: true },
   });
 }
 

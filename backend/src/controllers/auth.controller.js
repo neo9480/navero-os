@@ -31,7 +31,7 @@ const ALLOWED_SELF_REGISTER_ROLES = [
 // ---------------------------------------------------------------------------
 async function register(req, res) {
   try {
-    const { email, password, role, companyName, phone, address, plan } =
+    const { email, password, role, companyName, phone, address, country,  plan } =
       req.body;
 
     if (!ALLOWED_SELF_REGISTER_ROLES.includes(role)) {
@@ -54,10 +54,11 @@ async function register(req, res) {
         companyName,
         phone,
         address,
+        country,
         tx,
       );
 
-      const trialDays = Number(config.TRIAL_DAYS);
+      const trialDays = Number(config.SUBSCRIPTION_TRIAL_DAYS);
       const now = new Date();
       const trialEndsAt = new Date(now);
       trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
@@ -79,7 +80,7 @@ async function register(req, res) {
 
     const otpHash = await otpUtils.otpHash(otp);
 
-    const html = otpUtils.getOtpHtml;
+    const html = otpUtils.getOtpHtml(otp);
 
     await otpUtils.createOtp(result.id, email, otpHash);
 
@@ -141,7 +142,7 @@ async function login(req, res) {
 
     await authUtils.setRefreshCookie(res, refreshToken)
 
-    returnres.status(200).json({
+    return res.status(200).json({
       message: "User login successful",
       accessToken,
       user: safeUser,
@@ -330,31 +331,37 @@ async function deleteUserProfile(req, res) {
   }
 }
 
-async function verifyEmail(req, res) {
-  const { otp, email } = req.body;
+async function verifyEmail( req, res ) {
+  try {
+    const { email, otp } = req.body;
 
-  const otpHash = await otpUtils.otpHash(otp);
+    const otpHash = await otpUtils.otpHash(otp);
 
-  const otpRecord = await otpUtils.findOtp(otpHash, email);
+    const otpRecord = await otpUtils.findOtp(otpHash, email);
 
-  if (!otpRecord) {
-    return res.status(400).json({
-      message: "Invalid OTP",
+    if (!otpRecord) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    const user = await otpUtils.updateUser(otpRecord.userId);
+
+    await otpUtils.deleteOtp(otpRecord.userId);
+
+    return res.status(200).json({
+      message: "Email verified successfully",
+      user: {
+        companyName: user.companyName,
+        email: user.email,
+        verified: user.verified,
+      },
     });
+  } catch (err) {
+    console.error("failed to verify email:", err);
+    res.status(500).json({ error: "Failed to verify email" });
   }
-
-  const user = await otpUtils.updateUser(otpRecord.userId);
-
-  await otpUtils.deleteOtp(otpRecord.userId);
-
-  return res.status(200).json({
-    message: "Email verified successfully",
-    user: {
-      companyName: user.companyName,
-      email: user.email,
-      verified: user.verified,
-    },
-  });
+  
 }
 
 async function sendCode(req, res) {
@@ -379,7 +386,7 @@ async function sendCode(req, res) {
 
       const otp = otpUtils.generateOTP();
       const otpHash = await otpUtils.otpHash(otp);
-      const html = otpUtils.getOtpHtml;
+      const html = otpUtils.getOtpHtml(otp);
 
       await otpUtils.createOtp(user.id, email, otpHash);
 

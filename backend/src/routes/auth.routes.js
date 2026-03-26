@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post("/register", authController.register);
 router.post("/login", authController.login);
-router.get( "/verify-email", authController.verifyEmail );
-router.get("/send-code", authController.sendCode)
+router.post( "/verify-email", authController.verifyEmail );
+router.post("/send-code", authController.sendCode)
 router.post("/refresh", authController.refresh);
 router.post("/logout", authMiddleware, authController.logout);
 router.post("/logout-all", authMiddleware, authController.logoutAll);

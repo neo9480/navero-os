@@ -20,6 +20,7 @@ async function createUser(
   companyName,
   phone,
   address,
+  country
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
 
@@ -30,6 +31,7 @@ async function createUser(
       companyName,
       phone,
       address,
+      country,
       role,
     },
   });
@@ -79,7 +81,6 @@ async function updateUser(id, data) {
     select: safeUserSelect,
   });
 }
-
 
 async function deleteUser(userId) {
   await prisma.user.delete({ where: { id: userId } });

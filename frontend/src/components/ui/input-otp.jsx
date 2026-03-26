@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils"
 function InputOTP({
   className,
   containerClassName,
+  value,
+  onChange,
+  disabled,
   ...props
 }) {
   return (
@@ -14,9 +17,16 @@ function InputOTP({
       data-slot="input-otp"
       inputMode="numeric"
       pattern="[0-9]"
-      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
+      containerClassName={cn(
+        "flex items-center gap-2 has-disabled:opacity-50",
+        containerClassName,
+      )}
       className={cn("disabled:cursor-not-allowed", className)}
-      {...props} />
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      {...props}
+    />
   );
 }
 

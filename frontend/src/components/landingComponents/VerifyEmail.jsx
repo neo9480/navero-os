@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AnimBtn from "@/components/commonComponents/AnimBtn";
 import InputReadOnly from "@/components/shadcn-studio/input/InputReadOnly";
 import ABgDark from "@/components/commonComponents/ABgDark";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InputStartIcon from "../shadcn-studio/input/InputStartIcon";
 import { Mail } from "lucide-react";
 import useAuthStore from "@/store/authStore";
@@ -14,11 +14,13 @@ const VerifyEmail = () => {
   const [manualOtpSent, setManualOtpSent] = useState(false);
   const [manualEmail, setManualEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [otp, setOtp] = useState("");
-  const { VerifyEmail, sendCode } = useAuthStore();
+  const [OTP, setOTP] = useState(null);
+  const { verifyEmail, sendCode, login } = useAuthStore();
+  const navigate = useNavigate();
 
   const location = useLocation();
   const email = location.state?.email ?? null;
+  const password = location.state?.password ?? null;
 
   const isEmailProvided = email !== null;
 
@@ -75,8 +77,13 @@ const VerifyEmail = () => {
   const handleVerify = async () => {
     setLoading(true);
     try {
-      await VerifyEmail( email ?? manualEmail, otp );
-      toast.success("Verification complete.", {position: "top-center"})
+      await verifyEmail(email ?? manualEmail, OTP);
+      toast.success(
+        "Verification complete. You will be shortly redirected to your dashbaord.",
+        { position: "top-center" },
+      );
+      await login(email, password);
+      navigate("/dashboard");
     } catch (err) {
       console.error("verification error:", err);
       if (err.response?.data?.error) {
@@ -125,7 +132,13 @@ const VerifyEmail = () => {
 
         {otpSent && (
           <>
-            <InputOTPOutlined value={otp} onChange={(value) => setOtp(value)} disabled={loading}/>
+            <InputOTPOutlined
+              value={OTP}
+              onChange={(value) => {
+                setOTP(value);
+              }}
+              disabled={loading}
+            />
             <p className="text-lavender_grey-500 text-xs cursor-default">
               {timeLeft > 0 ?
                 `Sent OTP on email, resend available in ${formatTime(timeLeft)}`
@@ -150,6 +163,7 @@ const VerifyEmail = () => {
           </>
         )}
       </div>
+      {console.log(OTP, email, manualEmail)}
     </div>
   );
 };

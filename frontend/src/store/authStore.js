@@ -18,7 +18,7 @@ const useAuthStore = create((set) => ({
   userId: null,
   error: null,
 
-  signUp: async (email, password, role, companyName, phone, address, plan) => {
+  signUp: async (email, password, role, companyName, phone, address, country, plan) => {
     try {
       const res = await axios.post(
         `${BASE_AUTH_URL}/register`,
@@ -29,6 +29,7 @@ const useAuthStore = create((set) => ({
           companyName,
           phone,
           address,
+          country,
           plan,
         },
         { withCredentials: true },
@@ -58,7 +59,7 @@ const useAuthStore = create((set) => ({
 
   sendCode: async ( email ) => {
     try {
-      const res = await axios.get( `${ BASE_AUTH_URL }/send-code`, { email } )
+      const res = await axios.post( `${ BASE_AUTH_URL }/send-code`, { email } )
       const userId = res.data.userId
       set({message: res.data.message, userId: userId, email: res.data.email})
     } catch (error) {

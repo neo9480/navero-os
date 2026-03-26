@@ -130,6 +130,7 @@ const Plans = () => {
           />
         )}
       </div>
+      {console.log(previousForm)}
     </div>
   );
 };
