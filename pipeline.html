@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>International Trade Pipeline — USA to India</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1f2535;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6230;
+    --usa-blue: #1a3a6e;
+    --usa-accent: #4a90d9;
+    --india-saffron: #8b3a00;
+    --india-accent: #e8750a;
+    --dubai-teal: #0a5c52;
+    --dubai-accent: #1aaa96;
+    --doc-color: #2a4a2a;
+    --doc-accent: #5aaa5a;
+    --red: #c0392b;
+    --text: #dde3ef;
+    --text-dim: #7a849a;
+    --text-muted: #3d4558;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  header h1 span { color: var(--gold); }
+  .sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .product-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    background: linear-gradient(135deg, #1a2540, #0d1a30);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--gold-light);
+  }
+  .product-badge strong { color: #fff; font-size: 14px; }
+
+  /* ACTORS GRID */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .actors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .actor {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .actor::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .actor.usa::before { background: linear-gradient(90deg, var(--usa-blue), var(--usa-accent)); }
+  .actor.india::before { background: linear-gradient(90deg, var(--india-saffron), var(--india-accent)); }
+  .actor.dubai::before { background: linear-gradient(90deg, var(--dubai-teal), var(--dubai-accent)); }
+  .actor.neutral::before { background: linear-gradient(90deg, #3a3a3a, #666); }
+  .actor-icon { font-size: 22px; margin-bottom: 8px; }
+  .actor-name { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 13px; color: #fff; margin-bottom: 2px; }
+  .actor-role { font-size: 11px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+
+  /* PIPELINE */
+  .pipeline { margin-bottom: 56px; }
+  .phase {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0;
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .phase:hover { border-color: var(--gold-dim); }
+  .phase.open { border-color: var(--gold); }
+  .phase-label {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .phase.usa-phase .phase-label { background: linear-gradient(135deg, rgba(26,58,110,0.4), rgba(26,58,110,0.15)); }
+  .phase.india-phase .phase-label { background: linear-gradient(135deg, rgba(139,58,0,0.4), rgba(139,58,0,0.15)); }
+  .phase.dubai-phase .phase-label { background: linear-gradient(135deg, rgba(10,92,82,0.4), rgba(10,92,82,0.15)); }
+  .phase.both-phase .phase-label { background: linear-gradient(135deg, rgba(50,50,80,0.4), rgba(50,50,80,0.15)); }
+  .phase-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .phase-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .phase-actors {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .phase-summary {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .phase-brief { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .phase-detail {
+    display: none;
+    margin-top: 0;
+  }
+  .phase.open .phase-detail { display: block; }
+  .phase.open .phase-summary { display: none; }
+
+  .detail-body {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 680px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 1fr; }
+    .phase-label { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+
+  .detail-section h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .detail-section p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+  /* DOCS */
+  .doc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(90,170,90,0.08);
+    border: 1px solid rgba(90,170,90,0.25);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--doc-accent);
+    margin: 2px;
+    white-space: nowrap;
+  }
+  .doc-chip::before { content: '📄'; font-size: 9px; }
+
+  .money-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    margin: 2px;
+  }
+
+  .docs-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+  /* FLOW ARROW */
+  .flow-arrow {
+    text-align: center;
+    padding: 4px 0;
+    color: var(--text-muted);
+    font-size: 18px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+  /* FINANCIAL TABLE */
+  .fin-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .fin-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .fin-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+  .fin-table tr:last-child td { border-bottom: none; }
+  .fin-table td:last-child { text-align: right; }
+  .fin-table .total td { color: var(--gold); border-top: 1px solid var(--gold-dim); font-weight: 600; }
+  .fin-table .cost { color: #e07070; }
+  .fin-table .rev { color: #70d070; }
+  .fin-table .neutral { color: var(--text-dim); }
+
+  .big-fin {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 700px) { .big-fin { grid-template-columns: 1fr; } }
+  .fin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .fin-card h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .fin-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .fin-sub { font-size: 11px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+
+  /* DOCS FULL LIST */
+  .docs-section { margin-bottom: 56px; }
+  .docs-full-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .doc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    border-left: 3px solid;
+  }
+  .doc-card.usa { border-left-color: var(--usa-accent); }
+  .doc-card.india { border-left-color: var(--india-accent); }
+  .doc-card.dubai { border-left-color: var(--dubai-accent); }
+  .doc-card.both { border-left-color: var(--gold); }
+  .doc-card-title { font-weight: 600; font-size: 13px; color: #fff; margin-bottom: 4px; }
+  .doc-card-origin { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); margin-bottom: 8px; }
+  .doc-card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 40px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* CLICK HINT */
+  .click-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-align: right;
+    margin-bottom: 12px;
+  }
+  .click-hint span { color: var(--gold); }
+
+  /* TIMELINE */
+  .timeline-bar {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 2px;
+    margin-bottom: 40px;
+    height: 32px;
+  }
+  .tl-seg {
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+  }
+  .tl-seg::after { content: attr(data-label); }
+
+  /* PHASE TAG */
+  .phase-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  .pt-usa { background: rgba(74,144,217,0.2); color: var(--usa-accent); }
+  .pt-india { background: rgba(232,117,10,0.2); color: var(--india-accent); }
+  .pt-dubai { background: rgba(26,170,150,0.2); color: var(--dubai-accent); }
+
+  .expand-icon { float: right; color: var(--gold); font-size: 12px; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+
+  /* Separator */
+  hr.div { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <span class="eyebrow">International Trade · End-to-End Pipeline</span>
+    <h1>From <span>USA</span> to India<br>The Complete Export Workflow</h1>
+    <p class="sub">Every actor · every document · every dollar</p>
+    <div class="product-badge">
+      <span>📦</span>
+      <span><strong>Product:</strong> Apple MacBook Pro 14-inch (M3 Pro) — 500 Units</span>
+      <span>|</span>
+      <span>Unit Price: <strong>$1,999 USD</strong> &nbsp;|&nbsp; Total Shipment: <strong>$999,500 USD</strong></span>
+    </div>
+  </header>
+
+  <!-- ACTORS -->
+  <div class="section-label">Participants in this Transaction</div>
+  <div class="actors-grid">
+    <div class="actor usa">
+      <div class="actor-icon">🏭</div>
+      <div class="actor-name">US Exporter</div>
+      <div class="actor-role">TechTrade Inc. — San Francisco, CA</div>
+    </div>
+    <div class="actor usa">
+      <div class="actor-icon">🏦</div>
+      <div class="actor-name">US Bank</div>
+      <div class="actor-role">JPMorgan Chase — Trade Finance Desk</div>
+    </div>
+    <div class="actor usa">
+      <div class="actor-icon">🛃</div>
+      <div class="actor-name">US Customs (CBP)</div>
+      <div class="actor-role">U.S. Customs & Border Protection</div>
+    </div>
+    <div class="actor usa">
+      <div class="actor-icon">🚚</div>
+      <div class="actor-name">US Logistics</div>
+      <div class="actor-role">FedEx Freight — Oakland Port</div>
+    </div>
+    <div class="actor dubai">
+      <div class="actor-icon">🤝</div>
+      <div class="actor-name">Broker (Dubai)</div>
+      <div class="actor-role">Gulf Trade Brokers DMCC</div>
+    </div>
+    <div class="actor india">
+      <div class="actor-icon">🏢</div>
+      <div class="actor-name">Indian Importer</div>
+      <div class="actor-role">Nexus Imports Pvt. Ltd. — Mumbai</div>
+    </div>
+    <div class="actor india">
+      <div class="actor-icon">🏦</div>
+      <div class="actor-name">Indian Bank</div>
+      <div class="actor-role">HDFC Bank — Trade Finance, Mumbai</div>
+    </div>
+    <div class="actor india">
+      <div class="actor-icon">🛃</div>
+      <div class="actor-name">India Customs (CBIC)</div>
+      <div class="actor-role">Central Board of Indirect Taxes</div>
+    </div>
+    <div class="actor india">
+      <div class="actor-icon">🚢</div>
+      <div class="actor-name">India Logistics</div>
+      <div class="actor-role">DTDC Express + CFS, Nhava Sheva</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:var(--usa-accent)"></div>USA Side</div>
+    <div class="legend-item"><div class="leg-dot" style="background:var(--india-accent)"></div>India Side</div>
+    <div class="legend-item"><div class="leg-dot" style="background:var(--dubai-accent)"></div>Dubai Broker</div>
+    <div class="legend-item"><div class="leg-dot" style="background:var(--doc-accent)"></div>Document Created</div>
+    <div class="legend-item"><div class="leg-dot" style="background:var(--gold)"></div>Payment / Finance</div>
+    <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted)">▼ Click any phase to expand details</span>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="section-label">Pipeline — 14 Phases</div>
+  <div class="pipeline" id="pipeline">
+
+    <!-- Phase 1 -->
+    <div class="phase usa-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 01</div>
+        <div class="phase-title">Deal Negotiation & Contract</div>
+        <div class="phase-actors">Exporter · Broker · Importer</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Broker in Dubai connects TechTrade (USA) with Nexus Imports (India). Terms, pricing, Incoterms, and delivery conditions are negotiated and documented.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>Gulf Trade Brokers DMCC (Dubai) connects TechTrade Inc. (USA) with Nexus Imports Pvt. Ltd. (India). Parties negotiate unit price ($1,999/unit), quantity (500 units), Incoterms (CIF — Mumbai), payment terms (Letter of Credit at sight), delivery timeline (45–60 days), and warranty terms. A formal Sales Contract is signed by all parties.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Proforma Invoice</span>
+                <span class="doc-chip">Sales Contract / Purchase Order</span>
+                <span class="doc-chip">Broker Mandate Agreement</span>
+                <span class="doc-chip">Incoterms Sheet (CIF)</span>
+              </div>
+              <h4 style="margin-top:14px">Costs / Fees</h4>
+              <div class="docs-row">
+                <span class="money-chip">Broker Commission: 1.5% = $14,993 (paid at settlement)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 2 -->
+    <div class="phase india-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 02</div>
+        <div class="phase-title">Letter of Credit (LC) Issuance</div>
+        <div class="phase-actors">Importer · HDFC Bank · JPMorgan</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Indian importer applies to HDFC Bank for a Letter of Credit guaranteeing payment to US exporter upon presentation of shipping documents.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>Nexus Imports applies to HDFC Bank Mumbai for an Irrevocable Documentary Letter of Credit (LC) for $999,500 USD in favor of TechTrade Inc. HDFC issues the LC and transmits it via SWIFT to JPMorgan Chase (USA) — the Advising/Confirming Bank. JPMorgan advises and confirms the LC to TechTrade Inc. This is the payment guarantee for the exporter. HDFC also charges a margin/collateral from Nexus Imports (typically 15–25% of LC value upfront, rest as working capital loan).</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">LC Application Form</span>
+                <span class="doc-chip">Irrevocable Documentary LC (SWIFT MT700)</span>
+                <span class="doc-chip">LC Advice Letter (JPMorgan)</span>
+                <span class="doc-chip">Loan Sanction Letter (HDFC)</span>
+              </div>
+              <h4 style="margin-top:14px">Costs / Fees</h4>
+              <div class="docs-row">
+                <span class="money-chip">HDFC LC Issuance Fee: ~0.25%/qtr = $2,499</span>
+                <span class="money-chip">JPMorgan Confirmation Fee: ~0.15% = $1,499</span>
+                <span class="money-chip">SWIFT Transmission: ~$150</span>
+                <span class="money-chip">Importer Loan: $750,000 @ 9.5% p.a. (Working Capital)</span>
+                <span class="money-chip">Loan Interest (60 days): ~$11,781</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 3 -->
+    <div class="phase usa-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 03</div>
+        <div class="phase-title">Export Finance & Pre-Shipment Loan</div>
+        <div class="phase-actors">Exporter · JPMorgan Chase</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">TechTrade Inc. uses the confirmed LC to obtain pre-shipment finance from JPMorgan to fund procurement of 500 MacBook Pro units from Apple.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>With the confirmed LC in hand, TechTrade Inc. approaches JPMorgan's Trade Finance desk for a Pre-Shipment Credit (Export Packing Credit). They borrow ~$800,000 against the LC at 6.5% p.a. to procure the MacBook Pro units from Apple (authorized distributor price: ~$1,750/unit = $875,000). Remaining equity used for operational costs. Loan repaid when LC is honored after shipment.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Loan Agreement (Pre-Shipment Credit)</span>
+                <span class="doc-chip">LC Assignment to JPMorgan</span>
+                <span class="doc-chip">Apple Purchase Order / Invoice</span>
+              </div>
+              <h4 style="margin-top:14px">Costs / Fees</h4>
+              <div class="docs-row">
+                <span class="money-chip">Loan Amount: $800,000 @ 6.5% p.a.</span>
+                <span class="money-chip">Interest (45 days): ~$8,055</span>
+                <span class="money-chip">Loan Processing Fee: $500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 4 -->
+    <div class="phase usa-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 04</div>
+        <div class="phase-title">Export Documentation & Compliance</div>
+        <div class="phase-actors">Exporter · US Customs (CBP)</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">TechTrade prepares all export documents and files Electronic Export Information (EEI) with US CBP. BIS/EAR compliance checked for electronics.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>TechTrade Inc. prepares and files all required US export documents. MacBook Pros fall under ECCN 5A992 (EAR99 category — no license required for India as it's not a restricted destination). EEI is filed via AES (Automated Export System) on ACE portal. Commercial Invoice and Packing List are prepared. BIS checks confirm no export license required. Certificate of Origin is obtained from local Chamber of Commerce.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Commercial Invoice</span>
+                <span class="doc-chip">Packing List</span>
+                <span class="doc-chip">Electronic Export Information (EEI / AES)</span>
+                <span class="doc-chip">Certificate of Origin (US Chamber)</span>
+                <span class="doc-chip">Shipper's Letter of Instruction (SLI)</span>
+                <span class="doc-chip">Export Declaration (EX-1)</span>
+                <span class="doc-chip">ECCN Classification Sheet</span>
+              </div>
+              <h4 style="margin-top:14px">Costs</h4>
+              <div class="docs-row">
+                <span class="money-chip">AES Filing Fee: ~$75</span>
+                <span class="money-chip">Certificate of Origin: $125</span>
+                <span class="money-chip">Freight Forwarder (Documentation): $350</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 5 -->
+    <div class="phase usa-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 05</div>
+        <div class="phase-title">Cargo Insurance & Freight Booking</div>
+        <div class="phase-actors">Exporter · FedEx Freight · Insurer</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Cargo insurance is taken (CIF — exporter's responsibility). Container is booked on MSC container vessel from Oakland Port to Nhava Sheva (Mumbai).</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>Since Incoterms are CIF (Cost, Insurance, Freight), TechTrade Inc. is responsible for arranging and paying for freight and insurance to Mumbai port. A 20-ft container is booked on MSC (Mediterranean Shipping Company) from Oakland, CA to Nhava Sheva, Mumbai. Marine cargo insurance is obtained from Allianz for the full CIF value ($999,500). Goods are packed in anti-static, custom palletized containers. Transit time: ~22–25 days.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Freight Booking Confirmation</span>
+                <span class="doc-chip">Marine Cargo Insurance Policy</span>
+                <span class="doc-chip">Insurance Certificate</span>
+                <span class="doc-chip">Packing / Stuffing Report</span>
+                <span class="doc-chip">Container Load Plan (CLP)</span>
+              </div>
+              <h4 style="margin-top:14px">Costs</h4>
+              <div class="docs-row">
+                <span class="money-chip">Ocean Freight (20ft): $4,800</span>
+                <span class="money-chip">Marine Insurance (0.35% of CIF): $3,498</span>
+                <span class="money-chip">Container Stuffing / Handling: $650</span>
+                <span class="money-chip">Freight Forwarder Fee: $850</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 6 -->
+    <div class="phase usa-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 06</div>
+        <div class="phase-title">US Customs Export Clearance</div>
+        <div class="phase-actors">US CBP · FedEx Freight · Exporter</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Container is inspected or released by CBP at Oakland port. AES filing verified. Cargo loaded onto MSC vessel.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>The container arrives at Oakland port terminal. CBP verifies the EEI/AES filing and checks cargo against the manifest. Electronics shipments may be randomly selected for X-ray or physical inspection. CBP cross-checks that no export license is required (EAR99 confirmed). Once cleared, a Let Export Order (LEO) is issued. Vessel departs. The ITN (Internal Transaction Number) from AES confirms legal export.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created / Verified</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Let Export Order (LEO)</span>
+                <span class="doc-chip">AES Internal Transaction Number (ITN)</span>
+                <span class="doc-chip">Cargo Manifest</span>
+                <span class="doc-chip">Bill of Lading (Draft) — issued by MSC</span>
+              </div>
+              <h4 style="margin-top:14px">Costs</h4>
+              <div class="docs-row">
+                <span class="money-chip">Terminal Handling (Origin): $425</span>
+                <span class="money-chip">Port Security Fee: $110</span>
+                <span class="money-chip">CBP Exam (if selected): $0 (government)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 7 -->
+    <div class="phase both-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 07</div>
+        <div class="phase-title">Ocean Transit & Bill of Lading</div>
+        <div class="phase-actors">MSC Shipping · Both Banks</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Container sails for 22–25 days. Final Bill of Lading issued. TechTrade presents shipping docs to JPMorgan to draw on the LC.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>MSC vessel departs Oakland and sails to Nhava Sheva, Mumbai (~22 days, route via Pacific). MSC issues the Original Bill of Lading (3 originals) to TechTrade Inc. TechTrade then assembles the full Document Package and presents it to JPMorgan Chase for negotiation under the LC. JPMorgan examines documents against LC terms (UCP 600 rules). On finding no discrepancies, JPMorgan pays TechTrade $999,500 and forwards the original docs to HDFC Bank in India for reimbursement.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents in the LC Package</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Original Bill of Lading (3 originals)</span>
+                <span class="doc-chip">Commercial Invoice</span>
+                <span class="doc-chip">Packing List</span>
+                <span class="doc-chip">Insurance Certificate (Original)</span>
+                <span class="doc-chip">Certificate of Origin</span>
+                <span class="doc-chip">Draft / Bill of Exchange</span>
+                <span class="doc-chip">LC Utilization Certificate</span>
+              </div>
+              <h4 style="margin-top:14px">Payment to Exporter</h4>
+              <div class="docs-row">
+                <span class="money-chip">LC Payment: $999,500 USD to TechTrade</span>
+                <span class="money-chip">JPMorgan Negotiation Fee: $750</span>
+                <span class="money-chip">SWIFT Doc Transfer Fee: $200</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 8 -->
+    <div class="phase india-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 08</div>
+        <div class="phase-title">HDFC Bank — LC Document Examination</div>
+        <div class="phase-actors">HDFC Bank · Importer</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">HDFC Bank receives LC documents from JPMorgan. Examines for discrepancies, reimburses JPMorgan, and calls Nexus Imports to retire the LC.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>HDFC Bank receives the original shipping documents from JPMorgan Chase via courier. HDFC examines documents under UCP 600 and finds them compliant. HDFC reimburses JPMorgan $999,500 via SWIFT (MT202). HDFC then notifies Nexus Imports that documents are ready. Nexus Imports pays HDFC the LC amount (drawn from their working capital loan). HDFC releases the Original Bill of Lading to Nexus Imports, which is needed to take delivery at the port.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Document Receipt Acknowledgement</span>
+                <span class="doc-chip">SWIFT MT202 Reimbursement Message</span>
+                <span class="doc-chip">LC Retirement Letter</span>
+                <span class="doc-chip">Delivery Order (DO) Request</span>
+              </div>
+              <h4 style="margin-top:14px">Costs (Importer)</h4>
+              <div class="docs-row">
+                <span class="money-chip">HDFC Document Handling: $300</span>
+                <span class="money-chip">LC Retirement / Payment: $999,500</span>
+                <span class="money-chip">Loan Interest (accrued): ~$11,781</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 9 -->
+    <div class="phase india-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 09</div>
+        <div class="phase-title">Vessel Arrival & Cargo Discharge</div>
+        <div class="phase-actors">MSC · Nhava Sheva Port · DTDC</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">MSC vessel arrives at Nhava Sheva. Container is discharged and moved to CFS (Container Freight Station) for customs examination.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>MSC vessel arrives at Jawaharlal Nehru Port (JNPT / Nhava Sheva). The container is discharged to the port terminal. Nexus Imports' customs broker (DTDC Express) files an Import General Manifest (IGM) with Indian Customs on ICEGATE portal. Container is examined and moved to CFS (Container Freight Station). Nexus Imports obtains Delivery Order (DO) from MSC's Mumbai agent by presenting the original Bill of Lading and paying freight dues if any.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Import General Manifest (IGM)</span>
+                <span class="doc-chip">Delivery Order (DO) from MSC Agent</span>
+                <span class="doc-chip">Port Entry Notice</span>
+                <span class="doc-chip">CFS Receipt</span>
+              </div>
+              <h4 style="margin-top:14px">Costs</h4>
+              <div class="docs-row">
+                <span class="money-chip">Port Terminal Handling (India): $550</span>
+                <span class="money-chip">CFS Charges: $480</span>
+                <span class="money-chip">Delivery Order Fee: $120</span>
+                <span class="money-chip">Demurrage (if applicable): $0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 10 -->
+    <div class="phase india-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 10</div>
+        <div class="phase-title">Indian Customs Import Clearance (CBIC)</div>
+        <div class="phase-actors">CBIC · Customs Broker · Importer</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Bill of Entry filed on ICEGATE. BCD, IGST, and SWS computed and paid. MacBooks classified under HS Code 8471 and cleared.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>The customs broker files a Bill of Entry (BE) on the ICEGATE portal under HS Code 8471 30 20 (Laptops/Portable Computers). Assessable Value (AV) = CIF value converted to INR (at RBI rate: 1 USD = ₹83.50): ₹83,457,250. Customs duties assessed:<br><br>
+              • Basic Customs Duty (BCD): 0% (laptops exempt under ITA)<br>
+              • Social Welfare Surcharge (SWS): 10% of BCD = ₹0<br>
+              • IGST: 18% of (AV + BCD + SWS) = ₹15,022,305<br><br>
+              Total duty = ~₹15,022,305 (~$179,909 USD). Paid electronically via ICEGATE. Examiner examines/seals container. Out-of-Charge Order issued.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Bill of Entry (BE)</span>
+                <span class="doc-chip">HS Code Classification Sheet</span>
+                <span class="doc-chip">Duty Payment Challan (TR-6)</span>
+                <span class="doc-chip">Assessment Order</span>
+                <span class="doc-chip">Out-of-Charge Order</span>
+                <span class="doc-chip">Import License (IEC Copy)</span>
+                <span class="doc-chip">FSSAI / BIS NOC (electronics)</span>
+              </div>
+              <h4 style="margin-top:14px">Duties & Fees</h4>
+              <div class="docs-row">
+                <span class="money-chip">BCD: ₹0 (0% on laptops)</span>
+                <span class="money-chip">IGST (18%): ₹15,022,305 (~$179,909)</span>
+                <span class="money-chip">Customs Broker Fee: ₹85,000 (~$1,018)</span>
+                <span class="money-chip">ICEGATE Filing Fee: ₹3,000 (~$36)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 11 -->
+    <div class="phase india-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 11</div>
+        <div class="phase-title">India Logistics & Transportation</div>
+        <div class="phase-actors">DTDC · CFS · Nexus Warehouse</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Cleared container transported from JNPT to Nexus Imports' warehouse in Mumbai. Goods unloaded, verified against packing list, stored.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>DTDC Express arranges a truck to transport the cleared container from JNPT CFS to Nexus Imports' warehouse in Andheri East, Mumbai (~45 km). Upon arrival, warehouse staff unpack and verify 500 MacBook Pro units against the packing list. Serial numbers are recorded. Units are inspected for transit damage. Insurance claim filed for any damaged units. Goods entered into inventory management system.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Truck Way Bill / E-Way Bill</span>
+                <span class="doc-chip">Goods Receipt Note (GRN)</span>
+                <span class="doc-chip">Inventory Entry Record</span>
+                <span class="doc-chip">Inspection Report</span>
+              </div>
+              <h4 style="margin-top:14px">Costs</h4>
+              <div class="docs-row">
+                <span class="money-chip">Trucking JNPT → Warehouse: ₹18,000 (~$216)</span>
+                <span class="money-chip">Unloading Labour: ₹8,000 (~$96)</span>
+                <span class="money-chip">E-Way Bill: ₹0 (online, free)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 12 -->
+    <div class="phase dubai-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 12</div>
+        <div class="phase-title">Broker Commission Settlement</div>
+        <div class="phase-actors">TechTrade · Gulf Trade Brokers</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">Dubai broker's 1.5% commission ($14,993) is settled by TechTrade Inc. via wire transfer to Gulf Trade Brokers DMCC in Dubai.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens</h4>
+              <p>As per the Broker Mandate Agreement signed in Phase 1, TechTrade Inc. wires 1.5% of the contract value to Gulf Trade Brokers DMCC in Dubai. Broker provides a Tax Invoice. TechTrade records the commission as a business expense. The broker's role included identifying the buyer, facilitating negotiations, and coordinating document exchange. Broker may also charge a small fee to the importer side (~0.5%), typically negotiated separately.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Broker Tax Invoice (Dubai)</span>
+                <span class="doc-chip">Wire Transfer Confirmation</span>
+                <span class="doc-chip">Commission Receipt</span>
+              </div>
+              <h4 style="margin-top:14px">Amounts</h4>
+              <div class="docs-row">
+                <span class="money-chip">Commission to Broker (exporter side): $14,993</span>
+                <span class="money-chip">Wire Transfer Fee: $35</span>
+                <span class="money-chip">Broker fee from Importer (0.5%): $4,998</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 13 -->
+    <div class="phase both-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 13</div>
+        <div class="phase-title">Bank Loan Repayments</div>
+        <div class="phase-actors">TechTrade · Nexus · Both Banks</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">TechTrade repays JPMorgan pre-shipment loan from LC proceeds. Nexus Imports repays HDFC working capital loan from sales revenue.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>TechTrade (Exporter) Loan Repayment</h4>
+              <p>LC payment of $999,500 received from JPMorgan. TechTrade repays the pre-shipment credit: $800,000 principal + $8,055 interest (45 days @ 6.5% p.a.) + $500 processing fee = $808,555. Net retained: $190,945 before other expenses (commission, freight, docs).</p>
+              <br>
+              <h4>Nexus Imports (Importer) Loan Repayment</h4>
+              <p>Nexus Imports repays HDFC working capital loan: $750,000 principal equivalent + $11,781 interest (60 days @ 9.5% p.a.). They will recover funds through retail resale of MacBook Pros in India at market price.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">Loan Repayment Confirmation (JPMorgan)</span>
+                <span class="doc-chip">Loan Closure Certificate (HDFC)</span>
+                <span class="doc-chip">Interest Payment Receipt</span>
+                <span class="doc-chip">NOC from Bank (Loan Clearance)</span>
+              </div>
+              <h4 style="margin-top:14px">Debt Summary</h4>
+              <div class="docs-row">
+                <span class="money-chip">TechTrade repays: $808,555 (principal + interest)</span>
+                <span class="money-chip">Nexus repays: ~$761,781 equivalent (principal + interest)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Phase 14 -->
+    <div class="phase both-phase" onclick="toggle(this)">
+      <div class="phase-label">
+        <div class="phase-num">PHASE 14</div>
+        <div class="phase-title">Post-Shipment Compliance & Reporting</div>
+        <div class="phase-actors">Both Parties · RBI · US Authorities</div>
+        <div class="expand-icon">▼</div>
+      </div>
+      <div class="phase-summary"><p class="phase-brief">FEMA reporting to RBI, US EEI reconciliation, GST input credit claimed by importer, and record-keeping obligations fulfilled.</p></div>
+      <div class="phase-detail">
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>What Happens (India Side)</h4>
+              <p>Nexus Imports files a Bill of Entry reconciliation and claims ITC (Input Tax Credit) on the IGST paid (~₹15,022,305) in their GSTR-2B return. RBI FEMA compliance: HDFC Bank reports the import payment to RBI under FEMA regulations. Nexus files softex / eBRC once goods are resold to verify import utilization.</p>
+              <br>
+              <h4>What Happens (USA Side)</h4>
+              <p>TechTrade Inc. reconciles EEI filing with actual shipment. Files Form 1099 if applicable. Updates export records for EAR compliance. Retains all trade documents for 5 years (BIS requirement).</p>
+            </div>
+            <div class="detail-section">
+              <h4>Documents Created</h4>
+              <div class="docs-row">
+                <span class="doc-chip">GSTR-2B ITC Claim (India)</span>
+                <span class="doc-chip">RBI FEMA Reporting (A2 Form)</span>
+                <span class="doc-chip">eBRC — Electronic Bank Realization Certificate</span>
+                <span class="doc-chip">EEI Reconciliation (USA)</span>
+                <span class="doc-chip">Export Records Archive (5 years)</span>
+                <span class="doc-chip">FIRC — Foreign Inward Remittance Certificate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end pipeline -->
+
+  <hr class="div">
+
+  <!-- FINANCIAL SUMMARY -->
+  <div class="section-label">Complete Financial Summary</div>
+  <div class="big-fin">
+    <div class="fin-card">
+      <h3>Contract Value</h3>
+      <div class="fin-number">$999,500</div>
+      <div class="fin-sub">500 units × $1,999 USD<br>CIF Mumbai, Incoterms 2020</div>
+    </div>
+    <div class="fin-card">
+      <h3>Exporter Net Profit (Est.)</h3>
+      <div class="fin-number">~$149,800</div>
+      <div class="fin-sub">After COGS, freight, loan interest,<br>broker fee, docs & compliance</div>
+    </div>
+    <div class="fin-card">
+      <h3>Importer Total Cost (INR)</h3>
+      <div class="fin-number">~₹100.4 Cr</div>
+      <div class="fin-sub">CIF + IGST + Duties + Logistics<br>+ Bank interest + Brokerage</div>
+    </div>
+  </div>
+
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>ITEM</th>
+        <th>PARTY</th>
+        <th>AMOUNT (USD)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3" style="color:var(--usa-accent);font-size:10px;letter-spacing:2px;padding-top:14px;padding-bottom:6px">EXPORTER SIDE (TechTrade Inc.)</td></tr>
+      <tr><td>Revenue from LC</td><td>Receives</td><td class="rev">+$999,500</td></tr>
+      <tr><td>COGS — 500 MacBooks from Apple</td><td>Pays Apple</td><td class="cost">−$875,000</td></tr>
+      <tr><td>Pre-Shipment Loan Interest (45d @ 6.5%)</td><td>Pays JPMorgan</td><td class="cost">−$8,055</td></tr>
+      <tr><td>Loan Processing Fee</td><td>Pays JPMorgan</td><td class="cost">−$500</td></tr>
+      <tr><td>JPMorgan LC Confirmation Fee</td><td>Pays JPMorgan</td><td class="cost">−$1,499</td></tr>
+      <tr><td>JPMorgan Negotiation Fee</td><td>Pays JPMorgan</td><td class="cost">−$750</td></tr>
+      <tr><td>Ocean Freight (Oakland → Mumbai, CIF)</td><td>Pays MSC</td><td class="cost">−$4,800</td></tr>
+      <tr><td>Marine Insurance (0.35%)</td><td>Pays Allianz</td><td class="cost">−$3,498</td></tr>
+      <tr><td>Broker Commission (1.5%)</td><td>Pays Gulf Brokers</td><td class="cost">−$14,993</td></tr>
+      <tr><td>Documentation (AES, COO, SLI, FF)</td><td>Pays various</td><td class="cost">−$550</td></tr>
+      <tr><td>Container / Port / Handling (USA)</td><td>Pays Oakland Port</td><td class="cost">−$535</td></tr>
+      <tr class="total"><td><strong>EXPORTER ESTIMATED NET PROFIT</strong></td><td></td><td><strong>~+$89,320</strong></td></tr>
+
+      <tr><td colspan="3" style="color:var(--india-accent);font-size:10px;letter-spacing:2px;padding-top:18px;padding-bottom:6px">IMPORTER SIDE (Nexus Imports)</td></tr>
+      <tr><td>LC Payment to HDFC</td><td>Pays HDFC</td><td class="cost">−$999,500</td></tr>
+      <tr><td>IGST @ 18% on CIF value</td><td>Pays CBIC</td><td class="cost">−$179,909</td></tr>
+      <tr><td>Working Capital Loan Interest (60d @ 9.5%)</td><td>Pays HDFC</td><td class="cost">−$11,781</td></tr>
+      <tr><td>HDFC LC Issuance + Handling Fees</td><td>Pays HDFC</td><td class="cost">−$2,799</td></tr>
+      <tr><td>Customs Broker Fee (India)</td><td>Pays DTDC</td><td class="cost">−$1,018</td></tr>
+      <tr><td>Port / CFS / Delivery Order (India)</td><td>Pays Port/CFS</td><td class="cost">−$1,150</td></tr>
+      <tr><td>Trucking + Unloading (India)</td><td>Pays DTDC</td><td class="cost">−$312</td></tr>
+      <tr><td>Broker Commission (0.5%)</td><td>Pays Gulf Brokers</td><td class="cost">−$4,998</td></tr>
+      <tr><td>IGST Refund via ITC (claimable)</td><td>Recovers from Govt</td><td class="rev">+$179,909</td></tr>
+      <tr class="total"><td><strong>IMPORTER TOTAL NET COST (post-ITC)</strong></td><td></td><td><strong>~$1,021,558</strong></td></tr>
+
+      <tr><td colspan="3" style="color:var(--dubai-accent);font-size:10px;letter-spacing:2px;padding-top:18px;padding-bottom:6px">BROKER (Gulf Trade Brokers DMCC, Dubai)</td></tr>
+      <tr><td>Commission from Exporter (1.5%)</td><td>Receives</td><td class="rev">+$14,993</td></tr>
+      <tr><td>Commission from Importer (0.5%)</td><td>Receives</td><td class="rev">+$4,998</td></tr>
+      <tr class="total"><td><strong>BROKER GROSS REVENUE</strong></td><td></td><td><strong>+$19,991</strong></td></tr>
+    </tbody>
+  </table>
+
+  <hr class="div">
+
+  <!-- ALL DOCUMENTS -->
+  <div class="docs-section">
+    <div class="section-label">Master Document Registry — All 35 Documents</div>
+    <div class="docs-full-grid">
+      <div class="doc-card usa"><div class="doc-card-title">Proforma Invoice</div><div class="doc-card-origin">🇺🇸 Issued by: TechTrade Inc.</div><div class="doc-card-desc">Pre-shipment quote/offer document sent to buyer. Includes item description, quantity, price, Incoterms, validity period, and payment terms.</div></div>
+      <div class="doc-card both"><div class="doc-card-title">Sales Contract / Purchase Order</div><div class="doc-card-origin">🇺🇸🇮🇳 Signed by: Both Parties</div><div class="doc-card-desc">Legally binding agreement covering price, quantity, delivery terms, payment (LC), dispute resolution, and warranty. Governed by ICC rules.</div></div>
+      <div class="doc-card dubai"><div class="doc-card-title">Broker Mandate Agreement</div><div class="doc-card-origin">🇦🇪 Issued by: Gulf Trade Brokers DMCC</div><div class="doc-card-desc">Authorizes broker to act on behalf of exporter. Specifies commission rate (1.5%), exclusivity period, and payment trigger (LC settlement).</div></div>
+      <div class="doc-card india"><div class="doc-card-title">LC Application Form</div><div class="doc-card-origin">🇮🇳 Filed by: Nexus Imports at HDFC Bank</div><div class="doc-card-desc">Application to open an Irrevocable LC. Specifies all LC terms: beneficiary, amount, expiry, required documents, and Incoterms.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Irrevocable Documentary LC (SWIFT MT700)</div><div class="doc-card-origin">🇮🇳 Issued by: HDFC Bank via SWIFT</div><div class="doc-card-desc">The core payment instrument. Unconditional bank guarantee of $999,500 payable against compliant documents. Transmitted to JPMorgan.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">LC Advice Letter</div><div class="doc-card-origin">🇺🇸 Issued by: JPMorgan Chase</div><div class="doc-card-desc">JPMorgan advises and confirms the LC to TechTrade Inc., adding its own payment guarantee (bank confirmation).</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Loan Agreement (Pre-Shipment Credit)</div><div class="doc-card-origin">🇺🇸 JPMorgan Chase → TechTrade</div><div class="doc-card-desc">$800,000 export packing credit at 6.5% p.a. secured against the confirmed LC. 45-day tenor aligned with shipment timeline.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Commercial Invoice</div><div class="doc-card-origin">🇺🇸 Issued by: TechTrade Inc.</div><div class="doc-card-desc">Final invoice: 500 × Apple MacBook Pro 14" M3 Pro @ $1,999 each = $999,500 CIF Mumbai. Includes HS Code, IEC number, and LC reference.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Packing List</div><div class="doc-card-origin">🇺🇸 Issued by: TechTrade Inc.</div><div class="doc-card-desc">Itemized list: 500 MacBooks in 50 cartons, 10 units each. Gross weight: 8,500 kg. Net weight: 7,500 kg. Dimensions per carton: 45×35×20 cm.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Certificate of Origin (CO)</div><div class="doc-card-origin">🇺🇸 Issued by: US Chamber of Commerce</div><div class="doc-card-desc">Certifies goods are of US origin. Needed for customs duty calculation and eligibility under trade agreements. Notarized and stamped.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Electronic Export Information (EEI/AES)</div><div class="doc-card-origin">🇺🇸 Filed by: TechTrade on ACE portal</div><div class="doc-card-desc">Mandatory US Census Bureau filing for exports over $2,500. Generates ITN number. Required before cargo can be exported.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">ECCN Classification Sheet</div><div class="doc-card-origin">🇺🇸 Prepared by: TechTrade / BIS</div><div class="doc-card-desc">MacBook Pros classified as ECCN 5A992 / EAR99. Confirms no export license required for shipment to India.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Shipper's Letter of Instruction (SLI)</div><div class="doc-card-origin">🇺🇸 Issued by: TechTrade Inc.</div><div class="doc-card-desc">Instructions to freight forwarder on routing, special handling, and documents required. Authorizes FF to sign Bill of Lading.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Freight Booking Confirmation</div><div class="doc-card-origin">🇺🇸 Issued by: MSC Shipping</div><div class="doc-card-desc">Confirms one 20ft container booking on MSC vessel Oakland → Nhava Sheva. Booking reference, vessel name, ETD, and ETA included.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Marine Cargo Insurance Policy</div><div class="doc-card-origin">🇺🇸 Issued by: Allianz Marine</div><div class="doc-card-desc">All-risk marine insurance for $999,500 CIF value. Covers physical loss/damage during transit. Clause A (all risks) coverage. Premium: $3,498.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Insurance Certificate</div><div class="doc-card-origin">🇺🇸 Issued by: Allianz Marine</div><div class="doc-card-desc">Condensed certificate transferable to importer upon presentation of BOL. Required under LC terms as one of the LC documents.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Let Export Order (LEO)</div><div class="doc-card-origin">🇺🇸 Issued by: US CBP at Oakland Port</div><div class="doc-card-desc">CBP authorization for the container to depart US territory. Issued after EEI verification and cargo checks are complete.</div></div>
+      <div class="doc-card both"><div class="doc-card-title">Bill of Lading (BOL) — Original × 3</div><div class="doc-card-origin">🌊 Issued by: MSC Shipping</div><div class="doc-card-desc">The king of trade documents. Title to cargo, receipt of goods, and contract of carriage. All 3 originals required to release cargo at destination. Consigned to HDFC Bank order.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Cargo Manifest</div><div class="doc-card-origin">🇺🇸 Issued by: MSC Shipping</div><div class="doc-card-desc">Complete list of all containers and cargo on the vessel. Filed with CBP before departure and with Indian customs upon arrival.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">Draft / Bill of Exchange</div><div class="doc-card-origin">🇺🇸 Drawn by: TechTrade Inc.</div><div class="doc-card-desc">Financial instrument drawn on HDFC Bank directing payment of $999,500 at sight. Submitted as part of LC document set to JPMorgan.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Import General Manifest (IGM)</div><div class="doc-card-origin">🇮🇳 Filed by: MSC Agent on ICEGATE</div><div class="doc-card-desc">Filed within 24 hrs of vessel arrival at Indian port. Lists all cargo on board. Required for customs to assign Entry Inward date.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Delivery Order (DO)</div><div class="doc-card-origin">🇮🇳 Issued by: MSC Mumbai Agent</div><div class="doc-card-desc">Authorizes port/CFS to release container to importer. Issued only against surrender of original Bill of Lading and payment of any dues.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Bill of Entry (BE)</div><div class="doc-card-origin">🇮🇳 Filed by: Customs Broker on ICEGATE</div><div class="doc-card-desc">Core Indian customs document. Declares goods, HS code, assessable value, and applicable duties. Home Consumption BE filed for this shipment.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Duty Payment Challan (TR-6)</div><div class="doc-card-origin">🇮🇳 Filed by: Nexus Imports</div><div class="doc-card-desc">Proof of IGST payment of ₹15,022,305 (~$179,909) to Government of India. Required for Out-of-Charge order.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Out-of-Charge Order</div><div class="doc-card-origin">🇮🇳 Issued by: CBIC Appraiser</div><div class="doc-card-desc">Final customs clearance. Authorizes release of goods from customs control. Triggers ability to take delivery from CFS.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">E-Way Bill</div><div class="doc-card-origin">🇮🇳 Generated by: Nexus Imports on GST Portal</div><div class="doc-card-desc">GST-required document for movement of goods over ₹50,000 within India. Covers JNPT → Andheri East warehouse.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Goods Receipt Note (GRN)</div><div class="doc-card-origin">🇮🇳 Issued by: Nexus Imports Warehouse</div><div class="doc-card-desc">Internal document confirming receipt and count of 500 MacBook Pro units. Discrepancies trigger insurance claim process.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">FEMA / RBI A2 Form</div><div class="doc-card-origin">🇮🇳 Filed by: HDFC Bank to RBI</div><div class="doc-card-desc">Reports foreign exchange outflow ($999,500 USD) to Reserve Bank of India under FEMA 1999. Compliance requirement for all imports.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">eBRC — Electronic Bank Realization Certificate</div><div class="doc-card-origin">🇮🇳 Issued by: JPMorgan on DGFT Portal</div><div class="doc-card-desc">Confirms that export proceeds were received in India (from exporter's perspective). Required for duty drawback and export incentives.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">GSTR-2B ITC Claim</div><div class="doc-card-origin">🇮🇳 Filed by: Nexus Imports</div><div class="doc-card-desc">Monthly GST return claiming Input Tax Credit on IGST paid at customs (~₹15 Cr). Reduces net tax liability for Nexus Imports.</div></div>
+      <div class="doc-card dubai"><div class="doc-card-title">Broker Tax Invoice (Dubai)</div><div class="doc-card-origin">🇦🇪 Issued by: Gulf Trade Brokers DMCC</div><div class="doc-card-desc">VAT-compliant invoice from Dubai broker for commission earned ($14,993 from exporter + $4,998 from importer = $19,991 total).</div></div>
+      <div class="doc-card india"><div class="doc-card-title">Loan Sanction Letter (HDFC)</div><div class="doc-card-origin">🇮🇳 Issued by: HDFC Bank</div><div class="doc-card-desc">Sanctions ₹62.5 Cr (~$750,000 USD equivalent) working capital to Nexus Imports at 9.5% p.a. for 60 days to fund LC retirement.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">LC Utilization Certificate</div><div class="doc-card-origin">🇺🇸 Issued by: JPMorgan Chase</div><div class="doc-card-desc">Confirms LC was fully utilized. Sent to HDFC Bank along with document set. Triggers reimbursement claim under the LC.</div></div>
+      <div class="doc-card india"><div class="doc-card-title">IEC (Importer Exporter Code)</div><div class="doc-card-origin">🇮🇳 Issued by: DGFT, Govt of India</div><div class="doc-card-desc">10-digit code mandatory for all Indian importers/exporters. Nexus Imports submits their IEC copy with every customs filing.</div></div>
+      <div class="doc-card usa"><div class="doc-card-title">FIRC — Foreign Inward Remittance Certificate</div><div class="doc-card-origin">🇮🇳 Issued by: HDFC Bank to Exporter's Bank</div><div class="doc-card-desc">Proof that USD payment left India legally. Required by US exporter's bank for compliance. Confirms receipt of export proceeds.</div></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- TIMELINE -->
+  <div class="section-label">Approximate Timeline — ~60 Days End-to-End</div>
+  <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:40px;height:36px">
+    <div style="background:linear-gradient(135deg,#1a3a6e,#4a90d9);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 2">Days 1–5: Contract + LC</div>
+    <div style="background:linear-gradient(135deg,#1a3a6e,#3a7abf);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 2">Days 6–12: Finance + Docs</div>
+    <div style="background:linear-gradient(135deg,#1a3a6e,#2a6aaf);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 1">D13–15: Customs USA</div>
+    <div style="background:linear-gradient(135deg,#1a3060,#3a5a90);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 3">Days 16–40: Ocean Transit</div>
+    <div style="background:linear-gradient(135deg,#6a2a00,#c06010);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 2">Days 41–48: India Customs</div>
+    <div style="background:linear-gradient(135deg,#8b3a00,#e8750a);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:#fff;grid-column:span 2">Days 49–60: Delivery + Compliance</div>
+  </div>
+
+  <div style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);padding:24px 0;border-top:1px solid var(--border)">
+    International Trade Pipeline · USA → India · Product: Apple MacBook Pro 14" M3 Pro · 500 Units · $999,500 CIF<br>
+    <span style="color:var(--gold-dim)">Incoterms 2020 · UCP 600 · EAR99 · HS 8471 30 20 · FEMA 1999 · Indian Customs Act 1962</span>
+  </div>
+
+</div>
+
+<script>
+function toggle(el) {
+  const allPhases = document.querySelectorAll('.phase');
+  allPhases.forEach(p => {
+    if (p !== el) p.classList.remove('open');
+  });
+  el.classList.toggle('open');
+  // scroll into view
+  if (el.classList.contains('open')) {
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  }
+}
+</script>
+</body>
+</html>

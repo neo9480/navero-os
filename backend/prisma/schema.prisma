@@ -21,41 +21,309 @@ enum UserRole {
 }
 
 enum DocumentType {
-  COMMERCIAL_INVOICE
-  PACKING_LIST
-  BILL_OF_LADING
-  AIRWAY_BILL
-  CERTIFICATE_OF_ORIGIN
-  INSURANCE_CERTIFICATE
-  EXPORT_DECLARATION
-  IMPORT_DECLARATION
-  CUSTOMS_CLEARANCE
-  PAYMENT_RECEIPT
-  OTHER
+
+  // ── COMMERCIAL DOCUMENTS ──────────────────────────────────────────────────
+  // Core trade documents exchanged between buyer and seller
+
+  COMMERCIAL_INVOICE                    // Final tax invoice — price, qty, HS code, Incoterms
+  PROFORMA_INVOICE                      // Pre-shipment offer / quotation document
+  PACKING_LIST                          // Itemised list of cartons, weights, and dimensions
+  WEIGHT_LIST                           // Detailed gross and net weight per package
+  MEASUREMENT_LIST                      // Volume and dimensions per package (CBM)
+  SALES_CONTRACT                        // Binding purchase agreement between exporter and importer
+  PURCHASE_ORDER                        // Buyer's formal order instruction to seller
+  ORDER_CONFIRMATION                    // Seller's written acknowledgement of purchase order
+  SHIPPING_INSTRUCTIONS                 // Exporter's instructions to freight forwarder / carrier
+  SHIPPING_ADVICE                       // Notification to buyer that goods have been shipped
+  QUOTATION                             // Price quote issued to buyer before contract
+  INDENT                                // Agent's procurement order placed on behalf of importer
+  PERFORMA_STATEMENT                    // Statement of account for trade settlement purposes
+  CERTIFICATE_OF_VALUE                  // Declares customs value of the goods
+  INSPECTION_CERTIFICATE_COMMERCIAL     // Commercial inspection certificate from pre-shipment agent
+
+  // ── TRANSPORT — SEA FREIGHT ───────────────────────────────────────────────
+  // Documents issued for ocean / sea shipments
+
+  BILL_OF_LADING_ORIGINAL               // Negotiable B/L — title to cargo (3 originals issued)
+  BILL_OF_LADING_SEAWAY                 // Non-negotiable sea waybill — no OBL needed for release
+  SWITCH_BILL_OF_LADING                 // Replacement B/L issued in a second country (brokers)
+  CHARTER_PARTY_BILL_OF_LADING          // B/L issued under a charter party contract
+  MATES_RECEIPT                         // Acknowledgement of cargo by ship's mate before B/L
+  DOCK_RECEIPT                          // Receipt for cargo delivered to port terminal / CFS
+  DELIVERY_ORDER                        // Authorises release of cargo to consignee from CFS / port
+  CARGO_MANIFEST                        // All cargo on board — filed with CBP and CBIC
+  FREIGHT_MANIFEST                      // Freight-level manifest for carrier revenue reconciliation
+  STOWAGE_PLAN                          // Shows how cargo is arranged inside the vessel hold
+  SHIPPING_ORDER                        // Carrier's instruction to load cargo onto the vessel
+
+  // ── TRANSPORT — AIR FREIGHT ───────────────────────────────────────────────
+  // Documents issued for airfreight shipments
+
+  AIR_WAYBILL                           // AWB — non-negotiable air cargo contract of carriage
+  HOUSE_AIR_WAYBILL                     // HAWB — issued by freight forwarder to shipper
+  MASTER_AIR_WAYBILL                    // MAWB — issued by airline to freight forwarder
+  AIR_CARGO_MANIFEST                    // Complete list of all air cargo on the flight
+  AIR_CONSIGNMENT_NOTE                  // Air transport document similar to CMR for road
+
+  // ── TRANSPORT — LAND / ROAD / RAIL ───────────────────────────────────────
+  // Documents for road and rail cross-border movements
+
+  CMR_CONSIGNMENT_NOTE                  // International road transport contract (CMR Convention)
+  TRUCK_WAYBILL                         // Domestic or cross-border trucking document
+  RAILWAY_RECEIPT                       // Receipt from railway for goods accepted for carriage
+  ROAD_CONSIGNMENT_NOTE                 // Domestic road consignment note
+  TRANSIT_WAYBILL                       // Waybill for goods moving in transit through a country
+
+  // ── TRANSPORT — MULTIMODAL ────────────────────────────────────────────────
+  // Documents covering more than one mode of transport
+
+  MULTIMODAL_TRANSPORT_DOCUMENT         // Single document covering sea + road / air segments
+  COMBINED_TRANSPORT_BILL_OF_LADING     // B/L covering combined transport (port to door)
+  FIATA_BILL_OF_LADING                  // FBL issued by FIATA-licensed freight forwarder
+
+  // ── TRANSPORT — WAREHOUSE & TERMINAL ─────────────────────────────────────
+  // Documents issued at warehouse, CFS, or port terminal
+
+  WAREHOUSE_RECEIPT                     // Receipt for goods stored in a bonded warehouse
+  STORAGE_RECEIPT                       // Receipt from CFS / bonded warehouse for stored goods
+  GATE_PASS                             // Authorisation for cargo to exit port / terminal gate
+  CARTING_ORDER                         // Order to transport cargo within port premises
+  CART_TICKET                           // Ticket issued for internal port vehicle movement
+  LOADING_LIST                          // List of cargo items being loaded onto a vehicle
+  UNLOADING_REPORT                      // Tally report of goods unloaded at destination
+
+  // ── CUSTOMS — EXPORT (USA / ORIGIN) ──────────────────────────────────────
+  // Documents required to legally export goods from the origin country
+
+  SHIPPING_BILL                         // Indian equivalent of export declaration (India exports)
+  BILL_OF_EXPORT                        // Export clearance document for goods leaving a country
+  EXPORT_DECLARATION_FORM               // EDF / SDF filed with customs at origin country
+  ARE_1_ARE_3                           // Central Excise removal documents for export (India)
+  EXPORT_LICENSE                        // License required for controlled / restricted goods
+  DUTY_DRAWBACK_CLAIM_FORM              // Claim for refund of import duties on re-exported goods
+  EXPORT_GENERAL_MANIFEST               // EGM filed with origin customs after vessel departure
+
+  // ── CUSTOMS — IMPORT (INDIA / DESTINATION) ───────────────────────────────
+  // Documents filed with destination customs (Indian CBIC / ICEGATE)
+
+  BILL_OF_ENTRY                         // India's primary import declaration — filed on ICEGATE
+  IMPORT_LICENSE                        // License for restricted / controlled goods import
+  CUSTOMS_DECLARATION                   // General customs declaration at port of entry
+  ENTRY_SUMMARY_DECLARATION             // Pre-arrival summary declaration (ISF equivalent)
+  IMPORT_GENERAL_MANIFEST               // IGM filed by carrier with Indian customs on arrival
+  TRANSIT_DECLARATION                   // T1 / T2 — goods moving under customs control
+  SINGLE_ADMINISTRATIVE_DOCUMENT        // SAD — EU combined customs entry form
+
+  // ── USA-SPECIFIC EXPORT COMPLIANCE ───────────────────────────────────────
+  // Documents required by U.S. CBP, Census Bureau, and BIS
+
+  EEI_AES_FILING                        // Electronic Export Information via AES (ACE portal)
+  AES_ITN_NUMBER                        // Internal Transaction Number from AES system
+  LET_EXPORT_ORDER                      // CBP authorisation for cargo to depart US territory
+  ECCN_CLASSIFICATION                   // Export Control Classification Number determination
+  SHIPPERS_LETTER_OF_INSTRUCTION        // SLI — exporter's instructions to freight forwarder
+  EXPORT_DECLARATION                    // Formal US export declaration (EX-1 form)
+  LC_ASSIGNMENT                         // Assignment of LC proceeds to bank as loan collateral
+
+  // ── BANKING & TRADE FINANCE ───────────────────────────────────────────────
+  // Documents related to payment instruments and trade finance facilities
+
+  LETTER_OF_CREDIT                      // LC (SWIFT MT700) — primary payment guarantee
+  STANDBY_LETTER_OF_CREDIT              // SBLC — contingency payment guarantee instrument
+  BILL_OF_EXCHANGE                      // Draft drawn on issuing bank for LC payment
+  PROMISSORY_NOTE                       // Written promise to pay a specific amount on a date
+  BANK_DRAFT                            // Bank-issued payment instrument for trade settlement
+  BANK_REALISATION_CERTIFICATE          // BRC — confirms export proceeds received in India
+  EBRC                                  // Electronic BRC — filed on DGFT portal by bank
+  FIRC                                  // Foreign Inward Remittance Certificate — USD receipt proof
+  COLLECTION_ORDER                      // Bank instruction for documentary collection (D/P or D/A)
+  CREDIT_ADVICE                         // Bank notification of credit to account
+  DEBIT_ADVICE                          // Bank notification of debit from account
+  PACKING_CREDIT_DOCUMENTS              // Pre-shipment finance documents (export packing credit)
+  POST_SHIPMENT_FINANCE_DOCUMENTS       // Post-shipment credit documents after goods shipped
+  NEGOTIATION_DOCUMENTS                 // Full doc set presented to bank under LC for payment
+  REMITTANCE_APPLICATION                // Application for outward foreign currency remittance
+  SWIFT_MESSAGE_COPY                    // Copy of SWIFT MT700 / MT202 / MT103 message
+  LC_APPLICATION                        // Importer's application form to open LC at their bank
+  LC_SWIFT_MT700                        // The LC instrument transmitted via SWIFT MT700
+  LC_ADVICE_LETTER                      // Advising bank's letter confirming LC receipt to exporter
+  LC_UTILIZATION_CERTIFICATE            // Confirms full LC utilisation — triggers reimbursement
+  LOAN_AGREEMENT                        // Pre-shipment or working capital loan agreement
+  LOAN_SANCTION_LETTER                  // Bank's formal sanction of trade finance loan
+  LOAN_REPAYMENT_CONFIRMATION           // Confirmation of loan principal + interest repaid
+  LOAN_CLOSURE_CERTIFICATE              // NOC issued by bank on full loan repayment
+
+  // ── INSURANCE ─────────────────────────────────────────────────────────────
+  // Documents related to cargo and marine insurance
+
+  INSURANCE_POLICY                      // Full marine cargo insurance policy document
+  INSURANCE_CERTIFICATE                 // Short-form certificate transferable to importer
+  COVER_NOTE                            // Temporary insurance cover pending full policy issue
+  MARINE_INSURANCE_POLICY               // All-risk marine policy covering sea transit
+  CARGO_INSURANCE_CERTIFICATE           // Certificate specific to a single shipment
+  OPEN_POLICY_DECLARATION               // Declaration under an open marine insurance policy
+  INSURANCE_CLAIM_FORM                  // Claim filed with insurer for transit loss / damage
+  SURVEY_REPORT                         // Independent surveyor's assessment of cargo damage
+  LOSS_DAMAGE_CERTIFICATE               // Certificate confirming extent of loss or damage
+
+  // ── INSPECTION & QUALITY ──────────────────────────────────────────────────
+  // Third-party verification of goods quality, quantity, and condition
+
+  INSPECTION_CERTIFICATE                // General inspection certificate from third-party agency
+  PRE_SHIPMENT_INSPECTION_CERTIFICATE   // PSI before loading (e.g. SGS, Bureau Veritas, Cotecna)
+  QUALITY_CERTIFICATE                   // Confirms goods meet agreed quality specifications
+  QUANTITY_CERTIFICATE                  // Confirms count / weight / volume at point of loading
+  TEST_CERTIFICATE                      // Lab test results (chemical, mechanical, electrical)
+  ANALYSIS_CERTIFICATE                  // Detailed compositional analysis report
+  PHYTOSANITARY_CERTIFICATE             // Issued by agriculture authority for plants / agri goods
+  FUMIGATION_CERTIFICATE                // Confirms wooden packaging / goods have been fumigated
+  HEALTH_CERTIFICATE                    // Confirms goods safe for human / animal consumption
+  SANITARY_CERTIFICATE                  // Hygiene and sanitation compliance certificate
+
+  // ── CERTIFICATES OF ORIGIN & COMPLIANCE ──────────────────────────────────
+  // Documents proving origin of goods for tariff preference or compliance
+
+  CERTIFICATE_OF_ORIGIN                 // COO — standard non-preferential origin certificate
+  PREFERENTIAL_CERTIFICATE_OF_ORIGIN    // Grants reduced tariff under trade agreements
+  NON_PREFERENTIAL_CERTIFICATE_OF_ORIGIN // Standard COO without tariff preference claims
+  GSP_CERTIFICATE                       // Generalised System of Preferences — Form A / REX
+  EUR_1_CERTIFICATE                     // Pan-Euro-Med preferential origin movement certificate
+  FORM_A                                // GSP Form A — for exports to EU / USA
+  ATR_CERTIFICATE                       // EUR-Turkey movement certificate for free circulation
+  REX_STATEMENT                         // Registered Exporter statement on commercial docs
+  CHAMBER_OF_COMMERCE_CERTIFICATE       // Certified origin by local Chamber of Commerce
+
+  // ── REGULATORY & SECTOR-SPECIFIC ─────────────────────────────────────────
+  // Compliance documents for specific product categories or regulations
+
+  DRUG_LICENSE                          // License for pharmaceutical / narcotic goods export
+  PHARMACEUTICAL_CERTIFICATE            // Confirms pharma goods meet GMP / WHO standards
+  FREE_SALE_CERTIFICATE                 // Confirms product is freely sold in origin country
+  CE_CERTIFICATE                        // CE marking — conformity with EU safety standards
+  FDA_CERTIFICATE                       // U.S. Food and Drug Administration clearance
+  MSDS                                  // Material Safety Data Sheet for hazardous substances
+  DANGEROUS_GOODS_DECLARATION           // DGD — IATA / IMDG declaration for hazardous cargo
+  IMDG_CERTIFICATE                      // International Maritime Dangerous Goods compliance
+  HAZARDOUS_CARGO_DECLARATION           // General hazardous goods declaration for any mode
+  RADIATION_CERTIFICATE                 // Certificate confirming goods are radiation-free
+  ORGANIC_CERTIFICATE                   // Confirms goods are organically produced
+  HALAL_CERTIFICATE                     // Confirms goods comply with Halal standards
+  KOSHER_CERTIFICATE                    // Confirms goods comply with Kosher standards
+  TEXTILE_DECLARATION                   // Fibre content / country of origin for textile goods
+  WOOD_PACKAGING_CERTIFICATE            // ISPM-15 phytosanitary treatment for wood packaging
+
+  // ── TAX & DUTIES ──────────────────────────────────────────────────────────
+  // Documents related to GST, customs duties, drawback, and tax compliance
+
+  GST_INVOICE                           // Goods and Services Tax invoice (India)
+  GST_REFUND_DOCUMENTS                  // GST refund application and supporting docs
+  DUTY_DRAWBACK_DOCUMENTS               // Claim for drawback of customs duties on imports
+  ADVANCE_AUTHORIZATION_DOCUMENTS       // DGFT advance authorisation for duty-free imports
+  BOND_LUT                              // Bond or Letter of Undertaking for zero-rated exports
+  EXCISE_CLEARANCE_CERTIFICATE          // Central Excise document (pre-GST / special goods)
+  VAT_DOCUMENTS                         // Value Added Tax documents for non-GST jurisdictions
+  TAX_INVOICE                           // General tax invoice for domestic supply
+  DUTY_PAYMENT_CHALLAN                  // TR-6 challan — proof of customs duty / IGST payment
+  ASSESSMENT_ORDER                      // Customs officer's order determining duty liability
+  OUT_OF_CHARGE_ORDER                   // Final customs release — authorises cargo removal
+  IMPORT_LICENSE_IEC                    // IEC copy filed with customs on every import
+  GSTR_2B_ITC_CLAIM                     // GST return claiming Input Tax Credit on IGST
+  FEMA_A2_FORM                          // RBI / FEMA form for outward foreign currency remittance
+
+  // ── LOGISTICS & OPERATIONS ────────────────────────────────────────────────
+  // Documents used in day-to-day port, terminal, and logistics operations
+
+  FREIGHT_INVOICE                       // Carrier's invoice for freight charges
+  FREIGHT_QUOTATION                     // Freight rate quote from carrier or NVOCC
+  BOOKING_CONFIRMATION                  // Carrier's confirmation of container / space booking
+  CONTAINER_RELEASE_ORDER               // Carrier / port instruction to release container
+  CONTAINER_LOAD_PLAN                   // CLP — how cargo is packed / stacked in container
+  STUFFING_REPORT                       // Report confirming container stuffing completed
+  DE_STUFFING_REPORT                    // Report confirming container de-stuffing at destination
+  EQUIPMENT_INTERCHANGE_RECEIPT         // EIR — receipt for container at terminal gate
+  CONTAINER_INSPECTION_REPORT           // Condition survey of container pre-dispatch or on arrival
+  DEMURRAGE_INVOICE                     // Invoice for container held beyond free days at port
+  DETENTION_INVOICE                     // Invoice for container held beyond free days off-port
+  BROKER_MANDATE                        // Agreement authorising broker to act on party's behalf
+  INCOTERMS_SHEET                       // Summary of agreed Incoterms terms for the deal
+  HS_CODE_CLASSIFICATION                // Harmonised System code determination report
+
+  // ── DIGITAL & ELECTRONIC DOCUMENTS ───────────────────────────────────────
+  // Electronic equivalents and digital-native trade documents
+
+  E_INVOICE                             // Government-registered electronic invoice
+  E_WAY_BILL                            // GST e-way bill for goods movement within India
+  E_BILL_OF_LADING                      // Electronic / paperless bill of lading
+  DIGITAL_CERTIFICATE_OF_ORIGIN         // Electronically issued and certified COO
+  BLOCKCHAIN_BILL_OF_LADING             // B/L issued and tracked on a distributed ledger
+  ELECTRONIC_DATA_INTERCHANGE_FILING    // EDI message set for customs / carrier filing
+  CUSTOMS_E_FILING_DOCUMENTS            // ICEGATE / ACE portal e-filed customs documents
+  PORT_COMMUNITY_SYSTEM_DOCUMENTS       // PCS documents (e.g. DP World, JNPT PCS1)
+
+  // ── DISPUTE & CLAIMS ──────────────────────────────────────────────────────
+  // Documents generated in the event of a commercial dispute or claim
+
+  NOTICE_OF_CLAIM                       // Formal notice of intent to claim against a party
+  LETTER_OF_PROTEST                     // Written objection to cargo condition or short delivery
+  ARBITRATION_DOCUMENTS                 // Documents filed in ICC / LCIA / SIAC arbitration
+  LEGAL_NOTICE                          // Formal legal demand or notice through counsel
+  SETTLEMENT_AGREEMENT                  // Written agreement resolving a trade dispute
+  DISPUTE_RESOLUTION_DOCUMENTS          // All other documents related to dispute resolution
+
+  // ── MISCELLANEOUS ─────────────────────────────────────────────────────────
+  OTHER                                 // Document type not covered by any above category
+}
+
+// -----------------------------------------------------------------------------
+// DocumentStatus — approval workflow state for each uploaded document
+// -----------------------------------------------------------------------------
+enum DocumentStatus {
+  DRAFT           // Document record created but file not yet uploaded
+  PENDING_REVIEW  // File uploaded, awaiting approval by reviewer
+  APPROVED        // Approved by authorised reviewer
+  REJECTED        // Rejected with reason — requires re-upload
+  SUBMITTED       // Submitted to external party (bank, customs, carrier)
+  VERIFIED        // Independently verified by third party
+  ARCHIVED        // Retained for compliance / record-keeping (read-only)
 }
 
 enum LCStatus {
-  APPLIED
-  APPROVED
-  REJECTED
-  ACTIVE
-  CLOSED
+  DRAFT                  // LC terms being prepared internally
+  APPLIED                // Importer has submitted LC application to issuing bank
+  ISSUED                 // Issuing bank has opened the LC (SWIFT MT700 sent)
+  ADVISED                // Advising bank has notified exporter of LC receipt
+  CONFIRMED              // Advising bank has added its payment confirmation
+  DOCUMENTS_SUBMITTED    // Exporter has presented shipping docs to advising bank
+  DOCUMENTS_ACCEPTED     // Bank found all documents compliant with LC terms
+  DOCUMENTS_DISCREPANT   // Bank found one or more discrepancies in documents
+  PAID                   // Payment made to exporter / LC proceeds released
+  RETIRED                // Importer has retired the LC with issuing bank
+  EXPIRED                // LC expired without being fully utilised
+  CANCELLED              // LC cancelled by mutual agreement before expiry
 }
 
 enum ShipmentStatus {
   CREATED
-  IN_TRANSIT
-  CUSTOMS_HOLD
-  CLEARED
-  DELIVERED
+  COMPLETED
 }
 
 enum ShipmentEventType {
-  CUSTOMS_CHECK
-  DOCUMENT_VERIFIED
-  RELEASED
+  BOOKED             // Freight booking confirmed with carrier
+  CARGO_RECEIVED     // Cargo received at origin CFS / terminal
+  LOADED             // Container loaded onto vessel / aircraft
+  DEPARTED           // Vessel / aircraft departed origin port
+  IN_TRANSIT         // Active ocean / air transit in progress
+  ARRIVED_PORT       // Vessel arrived at destination port
+  DISCHARGED         // Container discharged from vessel to terminal
+  AT_CFS             // Container moved to Container Freight Station
+  CUSTOMS_HOLD       // Held for customs examination or query
+  DOCUMENT_VERIFIED  // Customs verified the docs
+  CUSTOMS_CLEARED    // Out-of-Charge order issued — free to collect
+  OUT_FOR_DELIVERY   // On last-mile truck for delivery to warehouse
+  DELIVERED          // Goods delivered and GRN signed at warehouse
   DELAYED
-  ARRIVED
+  EXCEPTION          // Damage, loss, delay, or other exception event
+  
 }
 
 enum TransactionType {
