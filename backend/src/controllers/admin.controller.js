@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import authUtils from "../utils/auth.utils.js";
 import userUtils from "../utils/user.utils.js";
 import shipmentUtils from "../utils/shipment.utils.js";
@@ -7,54 +6,6 @@ import serviceUtils from "../utils/service.utils.js";
 import bookingUtils from "../utils/booking.utils.js";
 import statsUtils from "../utils/stats.utils.js";
 import config from "../config/config.js";
-
-const REFRESH_TOKEN_EXPIRATION = config.REFRESH_TOKEN_EXPIRATION || "7d";
-
-const parseDuration = (str) => {
-  const match = /^(\d+)([smhd])$/.exec(str);
-  if (!match) return 7 * 86400000;
-
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
-
-  return (
-    {
-      s: value * 1000,
-      m: value * 60000,
-      h: value * 3600000,
-      d: value * 86400000,
-    }[unit] ?? 7 * 86400000
-  );
-};
-
-function getRefreshExpiryDate() {
-  return new Date(Date.now() + parseDuration(REFRESH_TOKEN_EXPIRATION));
-}
-
-function generateAccessToken(user) {
-  return jwt.sign({ id: user.id, role: user.role }, config.JWT_SECRET, {
-    expiresIn: config.ACCESS_TOKEN_TTL || "15m",
-  });
-}
-
-function setRefreshCookie(res, token, expiresAt) {
-  res.cookie("refresh_token", token, {
-    httpOnly: true,
-    secure: config.NODE_ENV === "production",
-    sameSite: "strict",
-    expires: expiresAt,
-    path: "/",
-  });
-}
-
-function clearRefreshCookie(res) {
-  res.clearCookie("refresh_token", {
-    httpOnly: true,
-    secure: config.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-  });
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -78,21 +29,17 @@ async function registerSuperAdmin(req, res) {
       });
     }
 
-    const user = await userUtils.createUser(
-      email,
-      password,
-      "SUPER_ADMIN"
-    );
+    const user = await userUtils.createUser(email, password, "SUPER_ADMIN");
 
     const { passwordHash, ...safeUser } = user;
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "SUPER_ADMIN created successfully",
       user: safeUser,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "failed to create super admin" });
+    return res.status(500).json({ message: "failed to create super admin" });
   }
 }
 
@@ -101,7 +48,7 @@ async function registerSuperAdmin(req, res) {
 | REGISTER ADMIN (ONLY SUPER ADMIN)
 |--------------------------------------------------------------------------
 */
-async function registerAdmin( req, res ) {
+async function registerAdmin(req, res) {
   try {
     if (req.user.role !== "SUPER_ADMIN") {
       return res.status(403).json({
@@ -124,21 +71,17 @@ async function registerAdmin( req, res ) {
       });
     }
 
-    const admin = await userUtils.createUser(
-      email,
-      password,
-      "ADMIN"
-    );
+    const admin = await userUtils.createUser(email, password, "ADMIN");
 
     const { passwordHash, ...safeAdmin } = admin;
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "ADMIN created successfully",
       user: safeAdmin,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "failed to create admin" });
+    return res.status(500).json({ message: "failed to create admin" });
   }
 }
 
@@ -169,61 +112,86 @@ async function adminLogin(req, res) {
         message: "Invalid credentials",
       });
     }
+    const refreshToken = await authUtils.generateRefreshToken(
+      user.id,
+    );
+    const refreshTokenHash =
+      await authUtils.generateRefreshTokenHash(refreshToken);
+    const refreshTokenExpiry = await authUtils.getRefreshExpiryDate();
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-      },
-      config.JWT_SECRET,
-      { expiresIn: "7d" },
+    const session = await authUtils.createSession(
+      user.id,
+      refreshTokenHash,
+      req.ip,
+      req.headers["user-agent"],
+      refreshTokenExpiry,
     );
 
-    const accessToken = generateAccessToken(user);
+    const accessToken = await authUtils.generateAccessToken({
+      userId: user.id,
+      sessionId: session.id,
+      role: user.role,
+    });
 
-    const expiresAt = getRefreshExpiryDate();
-    const refreshToken = await authUtils.createRefreshToken(user.id, expiresAt);
-
-    setRefreshCookie(res, refreshToken, expiresAt);
+    await authUtils.setRefreshCookie(res, refreshToken);
 
     const { passwordHash, ...safeUser } = user;
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Login successful",
       accessToken,
       user: safeUser,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "login failed" });
+    return res.status(500).json({ message: "login failed" });
   }
 }
 
 async function logout(req, res) {
   try {
-    const token = req.cookies.refresh_token;
-    if (token) {
-      await authUtils.deleteRefreshToken(token);
+    const refreshToken = req.cookies.refresh_token;
+    if (!refreshToken) {
+      return res.status(400).json({
+        message: "Refresh token not found",
+      });
     }
-    clearRefreshCookie(res);
-    res.json({ message: "Logged out" });
+    const refreshTokenHash =
+      await authUtils.generateRefreshTokenHash(refreshToken);
+    const session = await authUtils.findSession(refreshTokenHash);
+    if (!session) {
+      return res.status(400).json({
+        message: "invalid refresh token",
+      });
+    }
+    await authUtils.updateSession({ id: session.id }, { revoked: true });
+
+    await authUtils.clearRefreshCookie(res);
+    return res.json({ message: "Logged out successfully" });
   } catch (err) {
     console.error("failed to logout admin:", err);
-    res.status(500).json({ error: "Failed to logout admin" });
+    return res.status(500).json({ error: "Failed to logout admin" });
   }
 }
 
 async function logoutAll(req, res) {
   try {
-    const userId = req.user.id;
-
-    await authUtils.deleteAllTokensForUser(userId);
-    clearRefreshCookie(res);
-
-    res.json({ message: "Logged out from all devices" });
+    const refreshToken = req.cookies.refresh_token;
+    if (!refreshToken) {
+      return res.status(400).json({
+        message: "Refresh token not found",
+      });
+    }
+    const decoded = await authUtils.verifyToken(refreshToken);
+    await authUtils.updateSession(
+      { userId: decoded.userId, revoked: false },
+      { revoked: true },
+    );
+    await authUtils.clearRefreshCookie(res);
+    return res.json({ message: "Logged out from all devices" });
   } catch (err) {
     console.error("failed to logout from all devices:", err);
-    res.status(500).json({ error: "Failed to logout all devices" });
+    return res.status(500).json({ error: "Failed to logout all devices" });
   }
 }
 
@@ -234,10 +202,10 @@ async function deleteAdmin(req, res) {
     await authUtils.deleteAllTokensForUser(userId);
     await userUtils.deleteUser(userId);
 
-    res.status(200).json({ message: "Admin deleted successfully" });
+    return res.status(200).json({ message: "Admin deleted successfully" });
   } catch (err) {
     console.error("failed to delete admin", err);
-    res.status(500).json({ error: "Failed to delete admin" });
+    return res.status(500).json({ error: "Failed to delete admin" });
   }
 }
 
@@ -246,12 +214,13 @@ async function getAllUsers(req, res) {
     const users = await userUtils.findAllUsers();
     const safeUser = users.map(({ passwordHash, ...rest }) => rest);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "users fetched successfully",
       User: safeUser,
     });
   } catch (err) {
     console.error("failed to fetch users", err);
+    return res.status(500).json({ error: "Failed to get all users" });
   }
 }
 
@@ -269,12 +238,13 @@ async function getUserById(req, res) {
 
     const { passwordHash, ...safeUser } = user;
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "user fetched successfully",
       User: safeUser,
     });
   } catch (err) {
     console.error("failed to fetch user", err);
+    return res.status(500).json({ error: "Failed to get user by id" });
   }
 }
 
@@ -285,11 +255,12 @@ async function deleteUser(req, res) {
     await authUtils.deleteAllTokensForUser(userId);
     await userUtils.deleteUser(userId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "user deleted successfully",
     });
   } catch (err) {
     console.error("failed to delete user", err);
+    return res.status(500).json({ error: "Failed to delete user" });
   }
 }
 
@@ -297,12 +268,13 @@ async function getAllShipments(req, res) {
   try {
     const shipments = await shipmentUtils.getShipments();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "shipments fetched successfully",
       Shipments: shipments,
     });
   } catch (err) {
     console.error("failed to fetch shipments", err);
+    return res.status(500).json({ error: "Failed to get all shipments" });
   }
 }
 
@@ -312,16 +284,17 @@ async function getShipmentById(req, res) {
     const shipment = await shipmentUtils.getShipmentById(shipmentId);
     if (!shipment) {
       return res.status(404).json({
-        message: "user not found",
+        message: "Shipment not found",
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "shipment fetched successfully",
       Shipment: shipment,
     });
   } catch (err) {
     console.error("failed to fetch shipment", err);
+    return res.status(500).json({ error: "Failed to get shipments by id" });
   }
 }
 
@@ -330,11 +303,12 @@ async function deleteShipment(req, res) {
     const shipmentId = req.params.id;
     await shipmentUtils.deleteShipment(shipmentId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "shipment deleted successfully",
     });
   } catch (err) {
     console.error("failed to delete shipment", err);
+    return res.status(500).json({ error: "Failed to delete shipment" });
   }
 }
 
@@ -342,12 +316,13 @@ async function getAllTransactions(req, res) {
   try {
     const transactions = await transactionUtils.getAllUserTransactions();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "transactions fetched successfully",
       Transactions: transactions,
     });
   } catch (err) {
     console.error("failed to fetch transactions", err);
+    return res.status(500).json({ error: "Failed to get all transactions" });
   }
 }
 
@@ -363,24 +338,26 @@ async function getTransactionById(req, res) {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "transaction fetched successfully",
       Transaction: transaction,
     });
   } catch (err) {
     console.error("failed to fetch transaction", err);
+    return res.status(500).json({ error: "Failed to get transactions by id" });
   }
 }
 
 async function getAllServices(req, res) {
   try {
     const services = await serviceUtils.getAllServices();
-    res.status(200).json({
+    return res.status(200).json({
       message: "services fetched successfully",
       Services: services,
     });
   } catch (err) {
     console.error("failed to fetch services", err);
+    return res.status(500).json({ error: "Failed to get all services" });
   }
 }
 
@@ -393,12 +370,13 @@ async function getServiceById(req, res) {
         message: "service not found",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       message: "service fetched successfully",
       Service: service,
     });
   } catch (err) {
     console.error("failed to fetch service", err);
+    return res.status(500).json({ error: "Failed to get service by id" });
   }
 }
 
@@ -407,23 +385,25 @@ async function deleteService(req, res) {
     const serviceId = req.params.id;
     await serviceUtils.deleteService(serviceId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "service deleted successfully",
     });
   } catch (err) {
     console.error("failed to delete service", err);
+    return res.status(500).json({ error: "Failed to delete service" });
   }
 }
 
 async function getAllBookings(req, res) {
   try {
     const bookings = await bookingUtils.getAllUserBookings();
-    res.status(200).json({
+    return res.status(200).json({
       message: "bookings fetched successfully",
       Bookings: bookings,
     });
   } catch (err) {
     console.error("failed to fetch bookings", err);
+    return res.status(500).json({ error: "Failed to get all bookings" });
   }
 }
 
@@ -436,12 +416,13 @@ async function getBookingById(req, res) {
         message: "booking not found",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       message: "booking fetched successfully",
       Booking: booking,
     });
   } catch (err) {
     console.error("failed to fetch booking", err);
+    return res.status(500).json({ error: "Failed to get booking by id" });
   }
 }
 
@@ -450,11 +431,12 @@ async function deleteBooking(req, res) {
     const bookingId = req.params.id;
 
     await bookingUtils.deleteBooking(bookingId);
-    res.status(200).json({
+    return res.status(200).json({
       message: "booking deleted successfully",
     });
   } catch (err) {
     console.error("failed to delete booking", err);
+    return res.status(500).json({ error: "Failed to delete booking" });
   }
 }
 
@@ -470,7 +452,7 @@ export async function getStats(req, res) {
     const growth = await statsUtils.computeGrowthMetrics({ windowDays: 30 });
 
     // optional: quick breakdowns (top providers, pending shipments) - add if needed
-    res.status(200).json({
+    return res.status(200).json({
       message: "stats fetched successfully",
       stats: {
         live,
@@ -480,7 +462,7 @@ export async function getStats(req, res) {
     });
   } catch (err) {
     console.error("failed to fetch stats", err);
-    res.status(500).json({ error: "failed to fetch stats" });
+    return res.status(500).json({ error: "failed to fetch stats" });
   }
 }
 

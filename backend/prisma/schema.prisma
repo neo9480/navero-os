@@ -628,6 +628,8 @@ model OTP {
   userId  String  
   email String  
   otpHash String  
+  expiresAt DateTime @default(dbgenerated("(now() + interval '5 minutes')"))
+  attempts Int @default(0)
   createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id])

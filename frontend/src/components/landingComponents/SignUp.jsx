@@ -2,7 +2,15 @@ import { useState } from "react";
 import ABgLight from "@/components/commonComponents/ABgLight";
 import { toast, Toaster } from "sonner";
 import Stepper, { Step } from "@/components/shadcnComponents/Stepper";
-import { Eye, EyeClosed, LockKeyhole, LockKeyholeOpen, Mail, Ship, User } from "lucide-react";
+import {
+  Eye,
+  EyeClosed,
+  LockKeyhole,
+  LockKeyholeOpen,
+  Mail,
+  Ship,
+  User,
+} from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "@/store/authStore.js";
 import {
@@ -104,7 +112,7 @@ const SignUp = () => {
         return value ? "" : "Office / street / area is required.";
       case "city":
         return value ? "" : "City is required.";
-      case "state":
+      case "State":
         return value ? "" : "State is required.";
       case "country":
         return value ? "" : "Country is required.";
@@ -210,10 +218,9 @@ const SignUp = () => {
       toast.success("OTP is sent to your email", {
         position: "top-center",
       });
-      setTimeout(
-        () => navigate("/sign-up/verify-email", { state: { email: formData.email, password: formData.confirmPassword },  }),
-        800,
-      );
+      navigate("/sign-up/verify-email", {
+        state: { email: formData.email, password: formData.confirmPassword },
+      });
     } catch (err) {
       console.error("signup error:", err);
       if (err.response?.data?.error) {
@@ -273,7 +280,6 @@ const SignUp = () => {
               setErrors({});
               setCurrentStep(1);
             }}>
-
             {/* -------- STEP 1 — ROLE -------- */}
             <Step>
               <div className="space-y-2">
@@ -283,8 +289,7 @@ const SignUp = () => {
 
                 <Select
                   value={formData.role}
-                  onValueChange={( val ) => updateField( "role", val )}
-                  >
+                  onValueChange={(val) => updateField("role", val)}>
                   <SelectTrigger className="w-full max-w-48">
                     <SelectValue placeholder="Select Your Role" />
                   </SelectTrigger>
@@ -370,7 +375,7 @@ const SignUp = () => {
                       onBlur={() =>
                         setErrors((p) => ({
                           ...p,
-                          addressLine: validateField("city", formData.city),
+                          city: validateField("city", formData.city),
                         }))
                       }
                     />
@@ -381,7 +386,7 @@ const SignUp = () => {
                       onBlur={() =>
                         setErrors((p) => ({
                           ...p,
-                          addressLine: validateField("State", formData.State),
+                          State: validateField("State", formData.State),
                         }))
                       }
                     />
@@ -393,7 +398,7 @@ const SignUp = () => {
                     onBlur={() =>
                       setErrors((p) => ({
                         ...p,
-                        addressLine: validateField("country", formData.country),
+                        country: validateField("country", formData.country),
                       }))
                     }
                   />
@@ -554,7 +559,6 @@ const SignUp = () => {
           </p>
         </div>
       </div>
-      {console.log(formData.State)}
     </div>
   );
 };

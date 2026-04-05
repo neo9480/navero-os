@@ -19376,8 +19376,18 @@ export namespace Prisma {
 
   export type AggregateOTP = {
     _count: OTPCountAggregateOutputType | null
+    _avg: OTPAvgAggregateOutputType | null
+    _sum: OTPSumAggregateOutputType | null
     _min: OTPMinAggregateOutputType | null
     _max: OTPMaxAggregateOutputType | null
+  }
+
+  export type OTPAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type OTPSumAggregateOutputType = {
+    attempts: number | null
   }
 
   export type OTPMinAggregateOutputType = {
@@ -19385,6 +19395,8 @@ export namespace Prisma {
     userId: string | null
     email: string | null
     otpHash: string | null
+    expiresAt: Date | null
+    attempts: number | null
     createdAt: Date | null
   }
 
@@ -19393,6 +19405,8 @@ export namespace Prisma {
     userId: string | null
     email: string | null
     otpHash: string | null
+    expiresAt: Date | null
+    attempts: number | null
     createdAt: Date | null
   }
 
@@ -19401,16 +19415,28 @@ export namespace Prisma {
     userId: number
     email: number
     otpHash: number
+    expiresAt: number
+    attempts: number
     createdAt: number
     _all: number
   }
 
+
+  export type OTPAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type OTPSumAggregateInputType = {
+    attempts?: true
+  }
 
   export type OTPMinAggregateInputType = {
     id?: true
     userId?: true
     email?: true
     otpHash?: true
+    expiresAt?: true
+    attempts?: true
     createdAt?: true
   }
 
@@ -19419,6 +19445,8 @@ export namespace Prisma {
     userId?: true
     email?: true
     otpHash?: true
+    expiresAt?: true
+    attempts?: true
     createdAt?: true
   }
 
@@ -19427,6 +19455,8 @@ export namespace Prisma {
     userId?: true
     email?: true
     otpHash?: true
+    expiresAt?: true
+    attempts?: true
     createdAt?: true
     _all?: true
   }
@@ -19469,6 +19499,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: OTPAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OTPSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OTPMinAggregateInputType
@@ -19499,6 +19541,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: OTPCountAggregateInputType | true
+    _avg?: OTPAvgAggregateInputType
+    _sum?: OTPSumAggregateInputType
     _min?: OTPMinAggregateInputType
     _max?: OTPMaxAggregateInputType
   }
@@ -19508,8 +19552,12 @@ export namespace Prisma {
     userId: string
     email: string
     otpHash: string
+    expiresAt: Date
+    attempts: number
     createdAt: Date
     _count: OTPCountAggregateOutputType | null
+    _avg: OTPAvgAggregateOutputType | null
+    _sum: OTPSumAggregateOutputType | null
     _min: OTPMinAggregateOutputType | null
     _max: OTPMaxAggregateOutputType | null
   }
@@ -19533,6 +19581,8 @@ export namespace Prisma {
     userId?: boolean
     email?: boolean
     otpHash?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oTP"]>
@@ -19542,6 +19592,8 @@ export namespace Prisma {
     userId?: boolean
     email?: boolean
     otpHash?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oTP"]>
@@ -19551,6 +19603,8 @@ export namespace Prisma {
     userId?: boolean
     email?: boolean
     otpHash?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oTP"]>
@@ -19560,10 +19614,12 @@ export namespace Prisma {
     userId?: boolean
     email?: boolean
     otpHash?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
     createdAt?: boolean
   }
 
-  export type OTPOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "email" | "otpHash" | "createdAt", ExtArgs["result"]["oTP"]>
+  export type OTPOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "email" | "otpHash" | "expiresAt" | "attempts" | "createdAt", ExtArgs["result"]["oTP"]>
   export type OTPInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -19584,6 +19640,8 @@ export namespace Prisma {
       userId: string
       email: string
       otpHash: string
+      expiresAt: Date
+      attempts: number
       createdAt: Date
     }, ExtArgs["result"]["oTP"]>
     composites: {}
@@ -20013,6 +20071,8 @@ export namespace Prisma {
     readonly userId: FieldRef<"OTP", 'String'>
     readonly email: FieldRef<"OTP", 'String'>
     readonly otpHash: FieldRef<"OTP", 'String'>
+    readonly expiresAt: FieldRef<"OTP", 'DateTime'>
+    readonly attempts: FieldRef<"OTP", 'Int'>
     readonly createdAt: FieldRef<"OTP", 'DateTime'>
   }
     
@@ -20655,6 +20715,8 @@ export namespace Prisma {
     userId: 'userId',
     email: 'email',
     otpHash: 'otpHash',
+    expiresAt: 'expiresAt',
+    attempts: 'attempts',
     createdAt: 'createdAt'
   };
 
@@ -22069,6 +22131,8 @@ export namespace Prisma {
     userId?: StringFilter<"OTP"> | string
     email?: StringFilter<"OTP"> | string
     otpHash?: StringFilter<"OTP"> | string
+    expiresAt?: DateTimeFilter<"OTP"> | Date | string
+    attempts?: IntFilter<"OTP"> | number
     createdAt?: DateTimeFilter<"OTP"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -22078,6 +22142,8 @@ export namespace Prisma {
     userId?: SortOrder
     email?: SortOrder
     otpHash?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
@@ -22090,6 +22156,8 @@ export namespace Prisma {
     userId?: StringFilter<"OTP"> | string
     email?: StringFilter<"OTP"> | string
     otpHash?: StringFilter<"OTP"> | string
+    expiresAt?: DateTimeFilter<"OTP"> | Date | string
+    attempts?: IntFilter<"OTP"> | number
     createdAt?: DateTimeFilter<"OTP"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -22099,10 +22167,14 @@ export namespace Prisma {
     userId?: SortOrder
     email?: SortOrder
     otpHash?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
     createdAt?: SortOrder
     _count?: OTPCountOrderByAggregateInput
+    _avg?: OTPAvgOrderByAggregateInput
     _max?: OTPMaxOrderByAggregateInput
     _min?: OTPMinOrderByAggregateInput
+    _sum?: OTPSumOrderByAggregateInput
   }
 
   export type OTPScalarWhereWithAggregatesInput = {
@@ -22113,6 +22185,8 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"OTP"> | string
     email?: StringWithAggregatesFilter<"OTP"> | string
     otpHash?: StringWithAggregatesFilter<"OTP"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"OTP"> | Date | string
+    attempts?: IntWithAggregatesFilter<"OTP"> | number
     createdAt?: DateTimeWithAggregatesFilter<"OTP"> | Date | string
   }
 
@@ -23355,6 +23429,8 @@ export namespace Prisma {
     id?: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutOtpInput
   }
@@ -23364,6 +23440,8 @@ export namespace Prisma {
     userId: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
   }
 
@@ -23371,6 +23449,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOtpNestedInput
   }
@@ -23380,6 +23460,8 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23388,6 +23470,8 @@ export namespace Prisma {
     userId: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
   }
 
@@ -23395,6 +23479,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23403,6 +23489,8 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24548,7 +24636,13 @@ export namespace Prisma {
     userId?: SortOrder
     email?: SortOrder
     otpHash?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type OTPAvgOrderByAggregateInput = {
+    attempts?: SortOrder
   }
 
   export type OTPMaxOrderByAggregateInput = {
@@ -24556,6 +24650,8 @@ export namespace Prisma {
     userId?: SortOrder
     email?: SortOrder
     otpHash?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -24564,7 +24660,13 @@ export namespace Prisma {
     userId?: SortOrder
     email?: SortOrder
     otpHash?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type OTPSumOrderByAggregateInput = {
+    attempts?: SortOrder
   }
 
   export type DocumentCreateNestedManyWithoutUploadedByInput = {
@@ -26929,6 +27031,8 @@ export namespace Prisma {
     id?: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
   }
 
@@ -26936,6 +27040,8 @@ export namespace Prisma {
     id?: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
   }
 
@@ -27413,6 +27519,8 @@ export namespace Prisma {
     userId?: StringFilter<"OTP"> | string
     email?: StringFilter<"OTP"> | string
     otpHash?: StringFilter<"OTP"> | string
+    expiresAt?: DateTimeFilter<"OTP"> | Date | string
+    attempts?: IntFilter<"OTP"> | number
     createdAt?: DateTimeFilter<"OTP"> | Date | string
   }
 
@@ -30817,6 +30925,8 @@ export namespace Prisma {
     id?: string
     email: string
     otpHash: string
+    expiresAt?: Date | string
+    attempts?: number
     createdAt?: Date | string
   }
 
@@ -31352,6 +31462,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -31359,6 +31471,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -31366,6 +31480,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     otpHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

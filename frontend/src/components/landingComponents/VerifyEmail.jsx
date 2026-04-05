@@ -163,7 +163,6 @@ const VerifyEmail = () => {
           </>
         )}
       </div>
-      {console.log(OTP, email, manualEmail)}
     </div>
   );
 };

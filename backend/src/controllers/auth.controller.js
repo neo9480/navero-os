@@ -31,8 +31,16 @@ const ALLOWED_SELF_REGISTER_ROLES = [
 // ---------------------------------------------------------------------------
 async function register(req, res) {
   try {
-    const { email, password, role, companyName, phone, address, country,  plan } =
-      req.body;
+    const {
+      email,
+      password,
+      role,
+      companyName,
+      phone,
+      address,
+      country,
+      plan,
+    } = req.body;
 
     if (!ALLOWED_SELF_REGISTER_ROLES.includes(role)) {
       return res.status(400).json({ error: "Invalid role" });
@@ -76,20 +84,7 @@ async function register(req, res) {
       return user;
     });
 
-    const otp = otpUtils.generateOTP();
-
-    const otpHash = await otpUtils.otpHash(otp);
-
-    const html = otpUtils.getOtpHtml(otp);
-
-    await otpUtils.createOtp(result.id, email, otpHash);
-
-    await emailService.sendEmail(
-      email,
-      "OTP Verification",
-      `Your OTP code is ${otp}`,
-      html,
-    );
+    await otpUtils.sendOTP(result.id, email);
 
     const safeUser = await userUtils.findUserById(result.id);
 
@@ -114,7 +109,7 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await userUtils.findUserByEmail(email)
+    const user = await userUtils.findUserByEmail(email);
 
     // Use a generic message to avoid leaking whether the email exists.
     if (!user) {
@@ -128,19 +123,30 @@ async function login(req, res) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const refreshToken = await authUtils.generateRefreshToken( user.id )
-    
-    const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
+    const refreshToken = await authUtils.generateRefreshToken(user.id);
 
-    const refreshTokenExpiry = await authUtils.getRefreshExpiryDate()
-    
-    const session = await authUtils.createSession(user.id, refreshTokenHash, req.ip, req.headers["user-agent"], refreshTokenExpiry)
-    
-    const accessToken = await authUtils.generateAccessToken({userId: user.id, sessionId: session.id, role: user.role})
+    const refreshTokenHash =
+      await authUtils.generateRefreshTokenHash(refreshToken);
+
+    const refreshTokenExpiry = await authUtils.getRefreshExpiryDate();
+
+    const session = await authUtils.createSession(
+      user.id,
+      refreshTokenHash,
+      req.ip,
+      req.headers["user-agent"],
+      refreshTokenExpiry,
+    );
+
+    const accessToken = await authUtils.generateAccessToken({
+      userId: user.id,
+      sessionId: session.id,
+      role: user.role,
+    });
     // Strip passwordHash before sending to the client.
     const { passwordHash: _unused, ...safeUser } = user;
 
-    await authUtils.setRefreshCookie(res, refreshToken)
+    await authUtils.setRefreshCookie(res, refreshToken);
 
     return res.status(200).json({
       message: "User login successful",
@@ -160,35 +166,43 @@ async function login(req, res) {
 async function refresh(req, res) {
   try {
     const refreshToken = req.cookies.refresh_token;
-    if ( !refreshToken ) {
-      return res.status( 401 ).json( { error: "Refresh token not found" } );
+    if (!refreshToken) {
+      return res.status(401).json({ error: "Refresh token not found" });
     }
-    const decoded = await authUtils.verifyToken( refreshToken )
-    
-    const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
-    
+    const decoded = await authUtils.verifyToken(refreshToken);
+
+    const refreshTokenHash =
+      await authUtils.generateRefreshTokenHash(refreshToken);
+
     const session = await authUtils.findSession(refreshTokenHash);
-    if ( !session || session.revoked ) {
-      return res.status( 401 ).json( { error: "Invalid refresh token" } );
+    if (!session || session.revoked) {
+      return res.status(401).json({ error: "Invalid refresh token" });
     }
 
-		const accessToken = await authUtils.generateAccessToken( {userId: decoded.id} )
-		
-		const newRefreshToken = await authUtils.generateRefreshToken( decoded.id )
-		
-    const newRefreshTokenHash = await authUtils.generateRefreshTokenHash( newRefreshToken )
-    
-    const newRefreshTokenExpiry = await authUtils.getRefreshExpiryDate()
-		
-		await authUtils.updateSession( {id: session.id}, { refreshToken: newRefreshTokenHash, expiresAt: newRefreshTokenExpiry } )
-		
-		await authUtils.setRefreshCookie( res, newRefreshToken )
-		
-		return res.status( 200 ).json( {
-			message: "Access token refreshed successfully",
-			accessToken
-		})
+    const accessToken = await authUtils.generateAccessToken({
+      userId: decoded.userId,
+    });
 
+    const newRefreshToken = await authUtils.generateRefreshToken(
+      decoded.userId,
+    );
+
+    const newRefreshTokenHash =
+      await authUtils.generateRefreshTokenHash(newRefreshToken);
+
+    const newRefreshTokenExpiry = await authUtils.getRefreshExpiryDate();
+
+    await authUtils.updateSession(
+      { id: session.id },
+      { refreshToken: newRefreshTokenHash, expiresAt: newRefreshTokenExpiry },
+    );
+
+    await authUtils.setRefreshCookie(res, newRefreshToken);
+
+    return res.status(200).json({
+      message: "Access token refreshed successfully",
+      accessToken,
+    });
   } catch (err) {
     console.error("failed to refresh token:", err);
     res.status(500).json({ error: "Failed to refresh token" });
@@ -203,23 +217,24 @@ async function logout(req, res) {
   try {
     const refreshToken = req.cookies.refresh_token;
     if (!refreshToken) {
-			return res.status.json( 400 ).json( {
-				message: "Refresh token not found"
-			})
-		}
-		const refreshTokenHash = await authUtils.generateRefreshTokenHash( refreshToken )
-		
-		const session = await authUtils.findSession( refreshTokenHash )
-		if ( !session ) {
-			return res.status( 400 ).json( {
-				message: "Invalid refresh token"
-			})
-		}
-		await authUtils.updateSession( { id: session.id }, { revoked: true } )
-		res.clearCookie( "refresh_token" )
-		return res.status( 200 ).json( {
-			message: "Logged out successfully"
-		})
+      return res.status(400).json({
+        message: "Refresh token not found",
+      });
+    }
+    const refreshTokenHash =
+      await authUtils.generateRefreshTokenHash(refreshToken);
+
+    const session = await authUtils.findSession(refreshTokenHash);
+    if (!session) {
+      return res.status(400).json({
+        message: "Invalid refresh token",
+      });
+    }
+    await authUtils.updateSession({ id: session.id }, { revoked: true });
+    await authUtils.clearRefreshCookie(res);
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
   } catch (err) {
     console.error("failed to logout user:", err);
     res.status(500).json({ error: "Failed to logout user" });
@@ -231,19 +246,22 @@ async function logout(req, res) {
 // Revokes all refresh tokens for the user (signs out every device).
 // ---------------------------------------------------------------------------
 async function logoutAll(req, res) {
-	try {
-		const refreshToken = req.cookies.refresh_token
-		if ( !refreshToken ) {
-			return res.status( 400 ).json( {
-				message: "Refresh token not found"
-			})
-		}
-		const decoded = await authUtils.verifyToken( refreshToken )
-		await authUtils.updateSession( { userId: decoded.id, revoked:false }, { revoked: true } )
-		res.clearCookie( "refresh_token" )
-		return res.status( 200 ).json( {
-			message: "Logged out of all devices"
-		})
+  try {
+    const refreshToken = req.cookies.refresh_token;
+    if (!refreshToken) {
+      return res.status(400).json({
+        message: "Refresh token not found",
+      });
+    }
+    const decoded = await authUtils.verifyToken(refreshToken);
+    await authUtils.updateSession(
+      { userId: decoded.userId, revoked: false },
+      { revoked: true },
+    );
+    await authUtils.clearRefreshCookie(res);
+    return res.status(200).json({
+      message: "Logged out of all devices",
+    });
   } catch (err) {
     console.error("failed to logout all users:", err);
     res.status(500).json({ error: "Failed to logout all devices" });
@@ -331,7 +349,7 @@ async function deleteUserProfile(req, res) {
   }
 }
 
-async function verifyEmail( req, res ) {
+async function verifyEmail(req, res) {
   try {
     const { email, otp } = req.body;
 
@@ -361,51 +379,39 @@ async function verifyEmail( req, res ) {
     console.error("failed to verify email:", err);
     res.status(500).json({ error: "Failed to verify email" });
   }
-  
 }
 
 async function sendCode(req, res) {
-    try {
-      const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-      // User must already exist (registered but unverified)
-      const user = await userUtils.findUserByEmail(email);
+    // User must already exist (registered but unverified)
+    const user = await userUtils.findUserByEmail(email);
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ error: "No account found with this email" });
-      }
-
-      if (user.verified) {
-        return res.status(400).json({ error: "Email is already verified" });
-      }
-
-      // Delete any existing OTP for this user before creating a new one
-      await otpUtils.deleteOtp(user.id);
-
-      const otp = otpUtils.generateOTP();
-      const otpHash = await otpUtils.otpHash(otp);
-      const html = otpUtils.getOtpHtml(otp);
-
-      await otpUtils.createOtp(user.id, email, otpHash);
-
-      await emailService.sendEmail(
-        email,
-        "OTP Verification",
-        `Your OTP code is ${otp}`,
-        html,
-      );
-
-      return res.status(200).json({
-        message: "OTP sent successfully",
-        userId: user.id, // send this back to the frontend
-        email,
-      });
-    } catch (err) {
-      console.error("failed to send code:", err);
-      res.status(500).json({ error: "Failed to send code" });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "No account found with this email" });
     }
+
+    if (user.verified) {
+      return res.status(400).json({ error: "Email is already verified" });
+    }
+
+    // Delete any existing OTP for this user before creating a new one
+    await otpUtils.deleteOtp(user.id);
+
+    await otpUtils.sendOTP(user.id, email);
+
+    return res.status(200).json({
+      message: "OTP sent successfully",
+      userId: user.id, // send this back to the frontend
+      email,
+    });
+  } catch (err) {
+    console.error("failed to send code:", err);
+    res.status(500).json({ error: "Failed to send code" });
+  }
 }
 
 export default {
@@ -418,5 +424,5 @@ export default {
   updateUserProfile,
   deleteUserProfile,
   verifyEmail,
-  sendCode
+  sendCode,
 };

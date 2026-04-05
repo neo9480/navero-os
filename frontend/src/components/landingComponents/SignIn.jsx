@@ -8,21 +8,19 @@ import { QUOTES } from "@/constants/quotes";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
-  const [ password, setPassword ] = useState( "" );
-  const [ showPassword, setShowPassword ] = useState( false );
-  const {login} = useAuthStore()
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await login(email, password)
+      await login(email, password);
       toast.success("Login Successfull", { position: "top-center" });
 
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
 
@@ -36,7 +34,7 @@ const SignIn = () => {
     }
   };
 
-  const quotes = QUOTES
+  const quotes = QUOTES;
 
   const [quote] = useState(() => {
     return quotes[Math.floor(Math.random() * quotes.length)];
@@ -106,9 +104,7 @@ const SignIn = () => {
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-[1vw] top-1/2 -translate-y-1/2  hover:text-space_indigo-200 cursor-pointer transition">
                       {showPassword ?
-                        
-                          <Eye className="size-4" />
-                        
+                        <Eye className="size-4" />
                       : <EyeClosed className="size-4" />}
                     </button>
                   </div>

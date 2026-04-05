@@ -131,12 +131,13 @@ async function getRefreshExpiryDate() {
   return new Date(Date.now() + parseDuration(config.REFRESH_TOKEN_TTL));
 }
 
-async function setRefreshCookie(res, refreshToken) {
+async function setRefreshCookie( res, refreshToken ) {
+  const refreshTtlMins = parseDuration(config.REFRESH_TOKEN_TTL)
   return res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: refreshTtlMins
   });
 }
 

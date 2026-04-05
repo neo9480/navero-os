@@ -291,6 +291,8 @@ exports.Prisma.OTPScalarFieldEnum = {
   userId: 'userId',
   email: 'email',
   otpHash: 'otpHash',
+  expiresAt: 'expiresAt',
+  attempts: 'attempts',
   createdAt: 'createdAt'
 };
 

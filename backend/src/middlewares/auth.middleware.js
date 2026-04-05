@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import userUtils from "../utils/user.utils.js";
 import authUtils from "../utils/auth.utils.js";
 
 async function authMiddleware(req, res, next) {
   try {
-    const accessToken = getAccessToken(req);
+    const accessToken = await authUtils.getAccessToken(req);
 
     if (!accessToken) {
       return res.status(401).json({ message: "login required" });
@@ -25,7 +23,10 @@ async function authMiddleware(req, res, next) {
         .json({ message: "access token invalid or expired" });
     }
   } catch (err) {
-    console.error('', err);
+    console.error("Access Denied: Unauthorised Access", err);
+    return res.status( 400 ).json( {
+      message: "Access Denied: Unauthorised Access"
+    })
   }
 }
 

@@ -20,11 +20,12 @@ async function createUser(
   companyName,
   phone,
   address,
-  country
+  country,
+  db = prisma,
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  return db.user.create({
     data: {
       email,
       passwordHash,

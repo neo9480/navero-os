@@ -1,6 +1,6 @@
-import crypto from "crypto"
+import crypto from "crypto";
 import prisma from "../db/prismaClient.js";
-
+import emailService from "../services/email.service.js";
 
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
@@ -47,17 +47,20 @@ function getOtpHtml(otp) {
 }
 
 async function createOtp(userId, email, otpHash) {
-  return await prisma.oTP.create( {
+  return await prisma.oTP.create({
     data: {
       userId,
       email,
-      otpHash
-  }
-})
+      otpHash,
+    },
+  });
 }
 
 async function otpHash(otp) {
-  const otpHash = crypto.createHash("sha256").update(otp.toString()).digest("hex")
+  const otpHash = crypto
+    .createHash("sha256")
+    .update(otp.toString())
+    .digest("hex");
   return otpHash;
 }
 
@@ -76,11 +79,26 @@ async function deleteOtp(userId) {
   });
 }
 
-async function updateUser( userId ) {
+async function updateUser(userId) {
   return prisma.user.update({
     where: { id: userId },
     data: { verified: true },
   });
+}
+
+async function sendOTP(userId, email) {
+  const otp = generateOTP();
+  const hashedOtp = await otpHash(otp);
+  const html = getOtpHtml(otp);
+
+  await createOtp(userId, email, hashedOtp);
+
+  await emailService.sendEmail(
+    email,
+    "OTP Verification",
+    `Your OTP code is ${otp}`,
+    html,
+  );
 }
 
 export default {
@@ -90,5 +108,6 @@ export default {
   findOtp,
   deleteOtp,
   updateUser,
-  createOtp
+  createOtp,
+  sendOTP,
 };
