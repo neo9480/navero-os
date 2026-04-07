@@ -1,4 +1,14 @@
-async function uploadDocs(req, res) {}
+import storageService from "../services/storage.service.js";
+import { v4 as uuidv4 } from "uuid";
+
+async function uploadDocs(req, res) {
+  const file = req.file.buffer.toString( "base64" )
+  const fileName = `${uuidv4()}_${req.file.originalName}`
+  const uploadResult = await storageService.uploadFile( file, fileName )
+  res.status( 200 ).json( {
+    upload: uploadResult
+  });
+}
 async function requestDocs(req, res) {}
 async function getDocs(req, res) {}
 async function getAllDocs(req, res) {}

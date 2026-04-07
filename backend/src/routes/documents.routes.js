@@ -1,12 +1,17 @@
 import express from "express";
-import documentsController from "../controllers/documents.controller";
+import documentsController from "../controllers/documents.controller.js";
+// import authMiddleware from "../middlewares/auth.middleware.js"
+import multer from "multer"
 
+const upload = multer( {
+  storage: multer.memoryStorage(),
+})
 const router = express.Router();
 
 // GET    /deal/:dealId            — list docs for a deal
 // GET    /deal/:dealId/summary    — approval summary by phase
 
-router.post("/upload", documentsController.uploadDocs); // - upload a new document
+router.post("/upload", upload.single("document"), documentsController.uploadDocs); // - upload a new document
 router.post("/request", documentsController.requestDocs); // - request a document
 router.get("/:userId/:id", documentsController.getDocs); // — get single document
 router.get("/:userId/my", documentsController.getAllDocs); // - get all user documents
