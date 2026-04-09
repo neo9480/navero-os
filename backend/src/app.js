@@ -10,6 +10,12 @@ import config from "./config/config.js";
 import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import documentsRoutes from "./routes/documents.routes.js";
+// import financeRoutes from "./routes/finance.routes.js";
+// import operationRoutes from "./routes/operations.routes.js";
+// import operatorRoutes from "./routes/operators.routes.js";
+// import userRoutes from "./routes/user.routes.js";
+// import shipmentRoutes from "./routes/shipment.routes.js";
+// import serviceRoutes from "./routes/service.routes.js";
 import path from "path";
 
 const app = express();
@@ -52,6 +58,12 @@ app.get("/", async (req, res) => {
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", documentsRoutes);
+// app.use("/api/finance", financeRoutes);
+// app.use("/api/operations", operationRoutes);
+// app.use("/api/operators", operatorRoutes);
+// app.use("/api/user", userRoutes);
+// app.use("/api/shipment", shipmentRoutes);
+// app.use("/api/service", serviceRoutes);
 
 if (config.NODE_ENV === "Production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

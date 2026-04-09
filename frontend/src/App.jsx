@@ -13,6 +13,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
+import Download from "./components/commonComponents/Download";
 
 const App = () => {
   useEffect(() => {
@@ -71,6 +72,7 @@ const App = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/shipments" element={<ShipmentsPage />} />
+            <Route path="/download" element={<Download />} />
           </Routes>
         </>
       )}
