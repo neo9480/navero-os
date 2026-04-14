@@ -6,7 +6,7 @@ import ABgDark from "@/components/commonComponents/ABgDark";
 import { useLocation, useNavigate } from "react-router-dom";
 import InputStartIcon from "../shadcn-studio/input/InputStartIcon";
 import { Mail } from "lucide-react";
-import useAuthStore from "@/store/authStore";
+import useAuthStore from "@/store/useAuthStore";
 import { toast, Toaster } from "sonner";
 
 const VerifyEmail = () => {

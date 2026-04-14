@@ -13,7 +13,6 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
-import Download from "./components/commonComponents/Download";
 
 const App = () => {
   useEffect(() => {
@@ -50,8 +49,22 @@ const App = () => {
       cursor.style.top = e.y - 7 + "px";
     };
 
+    const mouseLeave = () => {
+      cursor.style.scale = 0;
+    };
+
+    const mouseEnter = () => {
+      cursor.style.scale = 1;
+    };
+
     main.addEventListener("mousemove", moveCursor);
-    return () => main.removeEventListener("mousemove", moveCursor);
+    main.addEventListener("mouseleave", mouseLeave);
+    main.addEventListener("mouseenter", mouseEnter);
+    return () => {
+      main.removeEventListener("mousemove", moveCursor);
+      main.removeEventListener("mouseleave", mouseLeave);
+      main.removeEventListener("mouseenter", mouseEnter);
+    };
   }, [showLoader]);
 
   return (
@@ -72,7 +85,6 @@ const App = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/shipments" element={<ShipmentsPage />} />
-            <Route path="/download" element={<Download />} />
           </Routes>
         </>
       )}

@@ -18,6 +18,7 @@ async function signedUrl(filePath) {
     urlEndpoint: config.IMAGEKIT_URL_ENDPOINT,
     src: filePath,
     signed: true,
+    expiresIn: 3600,
     queryParameters: {
       "ik-attachment": "true",
     },

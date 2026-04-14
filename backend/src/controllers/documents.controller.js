@@ -8,7 +8,7 @@ async function uploadDocs(req, res) {
     const { docType } = req.body; // add shipmentId as well in the future
     const userId = req.user.id;
     if (!req.file) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "File is empty or is currently being processed ",
       });
     }
@@ -26,9 +26,14 @@ async function uploadDocs(req, res) {
       });
     }
     const fileId = uploadResult.fileId;
-    const filepath = uploadResult.filePath
+    const filePath = uploadResult.filePath
     const fileUrl = uploadResult.url;
-    await documentUtils.createDocument(fileId, docType, fileUrl, filepath, userId);
+    if ( !fileId && !filePath && !fileUrl ) {
+      return res.status( 400 ).json( {
+        message: "Cannot uplaod Document: Insufficient fields"
+      })
+    }
+    await documentUtils.createDocument(fileId, docType, fileUrl, filePath, userId);
     return res.status(200).json({
       message: "Successfully uploaded the document",
       upload: uploadResult,

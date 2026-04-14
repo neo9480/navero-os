@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import ABgDark from "@/components/commonComponents/ABgDark";
-import useAuthStore from "@/store/authStore";
+import useAuthStore from "@/store/useAuthStore";
 import { QUOTES } from "@/constants/quotes";
 
 const SignIn = () => {

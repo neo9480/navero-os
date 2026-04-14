@@ -2,7 +2,7 @@ import prisma from "../db/prismaClient.js";
 import crypto from "crypto";
 
 async function createDocument(fileId, docType, fileUrl,filePath, userId) {
-  if (!docType || !fileUrl || !userId) {
+  if (!fileId || !docType || !fileUrl || !filePath || !userId) {
     return null;
   }
   return prisma.document.create({

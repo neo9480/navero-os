@@ -12,7 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import useAuthStore from "@/store/authStore.js";
+import useAuthStore from "@/store/useAuthStore.js";
 import {
   Select,
   SelectContent,

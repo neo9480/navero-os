@@ -17,7 +17,7 @@ router.get("/:id",authMiddleware, documentsController.getDocs); // — get singl
 router.get("/:userId/my",authMiddleware, documentsController.getAllDocs); // - get all user documents
 router.patch("/:userId/:id",authMiddleware, documentsController.updateDocs); // — update document metadata
 router.post("/:id/approval",authMiddleware, documentsController.approveOrRejectDocs); // — approve document
-router.get("/download/:id/", documentsController.downloadDocs); // — get signed download URL
+router.get("/download/:id/", authMiddleware, documentsController.downloadDocs); // — get signed download URL
 router.post("/:userId/:id/replace",authMiddleware, documentsController.replaceDocs); // — replace file (new version)
 router.delete("/:userId/:id",authMiddleware, documentsController.deleteDocs); // - delete document
 
