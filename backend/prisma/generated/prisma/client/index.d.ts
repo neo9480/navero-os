@@ -292,15 +292,20 @@ export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
 
 export const DocumentStatus: {
   DRAFT: 'DRAFT',
-  PENDING_REVIEW: 'PENDING_REVIEW',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED',
   SUBMITTED: 'SUBMITTED',
-  VERIFIED: 'VERIFIED',
   ARCHIVED: 'ARCHIVED'
 };
 
 export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]
+
+
+export const DocumentApproval: {
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type DocumentApproval = (typeof DocumentApproval)[keyof typeof DocumentApproval]
 
 
 export const LCStatus: {
@@ -422,6 +427,10 @@ export const DocumentType: typeof $Enums.DocumentType
 export type DocumentStatus = $Enums.DocumentStatus
 
 export const DocumentStatus: typeof $Enums.DocumentStatus
+
+export type DocumentApproval = $Enums.DocumentApproval
+
+export const DocumentApproval: typeof $Enums.DocumentApproval
 
 export type LCStatus = $Enums.LCStatus
 
@@ -11450,8 +11459,10 @@ export namespace Prisma {
     id: string | null
     type: $Enums.DocumentType | null
     fileUrl: string | null
+    filePath: string | null
     verified: boolean | null
     createdAt: Date | null
+    approval: $Enums.DocumentApproval | null
     uploadedById: string | null
     verifiedById: string | null
     shipmentId: string | null
@@ -11462,8 +11473,10 @@ export namespace Prisma {
     id: string | null
     type: $Enums.DocumentType | null
     fileUrl: string | null
+    filePath: string | null
     verified: boolean | null
     createdAt: Date | null
+    approval: $Enums.DocumentApproval | null
     uploadedById: string | null
     verifiedById: string | null
     shipmentId: string | null
@@ -11474,8 +11487,10 @@ export namespace Prisma {
     id: number
     type: number
     fileUrl: number
+    filePath: number
     verified: number
     createdAt: number
+    approval: number
     uploadedById: number
     verifiedById: number
     shipmentId: number
@@ -11488,8 +11503,10 @@ export namespace Prisma {
     id?: true
     type?: true
     fileUrl?: true
+    filePath?: true
     verified?: true
     createdAt?: true
+    approval?: true
     uploadedById?: true
     verifiedById?: true
     shipmentId?: true
@@ -11500,8 +11517,10 @@ export namespace Prisma {
     id?: true
     type?: true
     fileUrl?: true
+    filePath?: true
     verified?: true
     createdAt?: true
+    approval?: true
     uploadedById?: true
     verifiedById?: true
     shipmentId?: true
@@ -11512,8 +11531,10 @@ export namespace Prisma {
     id?: true
     type?: true
     fileUrl?: true
+    filePath?: true
     verified?: true
     createdAt?: true
+    approval?: true
     uploadedById?: true
     verifiedById?: true
     shipmentId?: true
@@ -11597,8 +11618,10 @@ export namespace Prisma {
     id: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified: boolean
     createdAt: Date
+    approval: $Enums.DocumentApproval
     uploadedById: string
     verifiedById: string | null
     shipmentId: string | null
@@ -11626,8 +11649,10 @@ export namespace Prisma {
     id?: boolean
     type?: boolean
     fileUrl?: boolean
+    filePath?: boolean
     verified?: boolean
     createdAt?: boolean
+    approval?: boolean
     uploadedById?: boolean
     verifiedById?: boolean
     shipmentId?: boolean
@@ -11642,8 +11667,10 @@ export namespace Prisma {
     id?: boolean
     type?: boolean
     fileUrl?: boolean
+    filePath?: boolean
     verified?: boolean
     createdAt?: boolean
+    approval?: boolean
     uploadedById?: boolean
     verifiedById?: boolean
     shipmentId?: boolean
@@ -11658,8 +11685,10 @@ export namespace Prisma {
     id?: boolean
     type?: boolean
     fileUrl?: boolean
+    filePath?: boolean
     verified?: boolean
     createdAt?: boolean
+    approval?: boolean
     uploadedById?: boolean
     verifiedById?: boolean
     shipmentId?: boolean
@@ -11674,15 +11703,17 @@ export namespace Prisma {
     id?: boolean
     type?: boolean
     fileUrl?: boolean
+    filePath?: boolean
     verified?: boolean
     createdAt?: boolean
+    approval?: boolean
     uploadedById?: boolean
     verifiedById?: boolean
     shipmentId?: boolean
     lcId?: boolean
   }
 
-  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "fileUrl" | "verified" | "createdAt" | "uploadedById" | "verifiedById" | "shipmentId" | "lcId", ExtArgs["result"]["document"]>
+  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "fileUrl" | "filePath" | "verified" | "createdAt" | "approval" | "uploadedById" | "verifiedById" | "shipmentId" | "lcId", ExtArgs["result"]["document"]>
   export type DocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
     verifiedBy?: boolean | Document$verifiedByArgs<ExtArgs>
@@ -11714,8 +11745,10 @@ export namespace Prisma {
       id: string
       type: $Enums.DocumentType
       fileUrl: string
+      filePath: string
       verified: boolean
       createdAt: Date
+      approval: $Enums.DocumentApproval
       uploadedById: string
       verifiedById: string | null
       shipmentId: string | null
@@ -12150,8 +12183,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Document", 'String'>
     readonly type: FieldRef<"Document", 'DocumentType'>
     readonly fileUrl: FieldRef<"Document", 'String'>
+    readonly filePath: FieldRef<"Document", 'String'>
     readonly verified: FieldRef<"Document", 'Boolean'>
     readonly createdAt: FieldRef<"Document", 'DateTime'>
+    readonly approval: FieldRef<"Document", 'DocumentApproval'>
     readonly uploadedById: FieldRef<"Document", 'String'>
     readonly verifiedById: FieldRef<"Document", 'String'>
     readonly shipmentId: FieldRef<"Document", 'String'>
@@ -20607,8 +20642,10 @@ export namespace Prisma {
     id: 'id',
     type: 'type',
     fileUrl: 'fileUrl',
+    filePath: 'filePath',
     verified: 'verified',
     createdAt: 'createdAt',
+    approval: 'approval',
     uploadedById: 'uploadedById',
     verifiedById: 'verifiedById',
     shipmentId: 'shipmentId',
@@ -20882,6 +20919,20 @@ export namespace Prisma {
    * Reference to a field of type 'DocumentType[]'
    */
   export type ListEnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DocumentApproval'
+   */
+  export type EnumDocumentApprovalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentApproval'>
+    
+
+
+  /**
+   * Reference to a field of type 'DocumentApproval[]'
+   */
+  export type ListEnumDocumentApprovalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentApproval[]'>
     
 
 
@@ -21582,8 +21633,10 @@ export namespace Prisma {
     id?: StringFilter<"Document"> | string
     type?: EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
     fileUrl?: StringFilter<"Document"> | string
+    filePath?: StringFilter<"Document"> | string
     verified?: BoolFilter<"Document"> | boolean
     createdAt?: DateTimeFilter<"Document"> | Date | string
+    approval?: EnumDocumentApprovalFilter<"Document"> | $Enums.DocumentApproval
     uploadedById?: StringFilter<"Document"> | string
     verifiedById?: StringNullableFilter<"Document"> | string | null
     shipmentId?: StringNullableFilter<"Document"> | string | null
@@ -21598,8 +21651,10 @@ export namespace Prisma {
     id?: SortOrder
     type?: SortOrder
     fileUrl?: SortOrder
+    filePath?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
+    approval?: SortOrder
     uploadedById?: SortOrder
     verifiedById?: SortOrderInput | SortOrder
     shipmentId?: SortOrderInput | SortOrder
@@ -21617,8 +21672,10 @@ export namespace Prisma {
     NOT?: DocumentWhereInput | DocumentWhereInput[]
     type?: EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
     fileUrl?: StringFilter<"Document"> | string
+    filePath?: StringFilter<"Document"> | string
     verified?: BoolFilter<"Document"> | boolean
     createdAt?: DateTimeFilter<"Document"> | Date | string
+    approval?: EnumDocumentApprovalFilter<"Document"> | $Enums.DocumentApproval
     uploadedById?: StringFilter<"Document"> | string
     verifiedById?: StringNullableFilter<"Document"> | string | null
     shipmentId?: StringNullableFilter<"Document"> | string | null
@@ -21633,8 +21690,10 @@ export namespace Prisma {
     id?: SortOrder
     type?: SortOrder
     fileUrl?: SortOrder
+    filePath?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
+    approval?: SortOrder
     uploadedById?: SortOrder
     verifiedById?: SortOrderInput | SortOrder
     shipmentId?: SortOrderInput | SortOrder
@@ -21651,8 +21710,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Document"> | string
     type?: EnumDocumentTypeWithAggregatesFilter<"Document"> | $Enums.DocumentType
     fileUrl?: StringWithAggregatesFilter<"Document"> | string
+    filePath?: StringWithAggregatesFilter<"Document"> | string
     verified?: BoolWithAggregatesFilter<"Document"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
+    approval?: EnumDocumentApprovalWithAggregatesFilter<"Document"> | $Enums.DocumentApproval
     uploadedById?: StringWithAggregatesFilter<"Document"> | string
     verifiedById?: StringNullableWithAggregatesFilter<"Document"> | string | null
     shipmentId?: StringNullableWithAggregatesFilter<"Document"> | string | null
@@ -22837,8 +22898,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedBy: UserCreateNestedOneWithoutUploadedDocumentsInput
     verifiedBy?: UserCreateNestedOneWithoutVerifiedDocumentsInput
     shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
@@ -22849,8 +22912,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     shipmentId?: string | null
@@ -22861,8 +22926,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedBy?: UserUpdateOneRequiredWithoutUploadedDocumentsNestedInput
     verifiedBy?: UserUpdateOneWithoutVerifiedDocumentsNestedInput
     shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
@@ -22873,8 +22940,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22885,8 +22954,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     shipmentId?: string | null
@@ -22897,16 +22968,20 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
   }
 
   export type DocumentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24208,6 +24283,13 @@ export namespace Prisma {
     not?: NestedEnumDocumentTypeFilter<$PrismaModel> | $Enums.DocumentType
   }
 
+  export type EnumDocumentApprovalFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentApproval | EnumDocumentApprovalFieldRefInput<$PrismaModel>
+    in?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    not?: NestedEnumDocumentApprovalFilter<$PrismaModel> | $Enums.DocumentApproval
+  }
+
   export type ShipmentNullableScalarRelationFilter = {
     is?: ShipmentWhereInput | null
     isNot?: ShipmentWhereInput | null
@@ -24222,8 +24304,10 @@ export namespace Prisma {
     id?: SortOrder
     type?: SortOrder
     fileUrl?: SortOrder
+    filePath?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
+    approval?: SortOrder
     uploadedById?: SortOrder
     verifiedById?: SortOrder
     shipmentId?: SortOrder
@@ -24234,8 +24318,10 @@ export namespace Prisma {
     id?: SortOrder
     type?: SortOrder
     fileUrl?: SortOrder
+    filePath?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
+    approval?: SortOrder
     uploadedById?: SortOrder
     verifiedById?: SortOrder
     shipmentId?: SortOrder
@@ -24246,8 +24332,10 @@ export namespace Prisma {
     id?: SortOrder
     type?: SortOrder
     fileUrl?: SortOrder
+    filePath?: SortOrder
     verified?: SortOrder
     createdAt?: SortOrder
+    approval?: SortOrder
     uploadedById?: SortOrder
     verifiedById?: SortOrder
     shipmentId?: SortOrder
@@ -24262,6 +24350,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentTypeFilter<$PrismaModel>
     _max?: NestedEnumDocumentTypeFilter<$PrismaModel>
+  }
+
+  export type EnumDocumentApprovalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentApproval | EnumDocumentApprovalFieldRefInput<$PrismaModel>
+    in?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    not?: NestedEnumDocumentApprovalWithAggregatesFilter<$PrismaModel> | $Enums.DocumentApproval
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDocumentApprovalFilter<$PrismaModel>
+    _max?: NestedEnumDocumentApprovalFilter<$PrismaModel>
   }
 
   export type NotificationCountOrderByAggregateInput = {
@@ -25943,6 +26041,10 @@ export namespace Prisma {
     set?: $Enums.DocumentType
   }
 
+  export type EnumDocumentApprovalFieldUpdateOperationsInput = {
+    set?: $Enums.DocumentApproval
+  }
+
   export type UserUpdateOneRequiredWithoutUploadedDocumentsNestedInput = {
     create?: XOR<UserCreateWithoutUploadedDocumentsInput, UserUncheckedCreateWithoutUploadedDocumentsInput>
     connectOrCreate?: UserCreateOrConnectWithoutUploadedDocumentsInput
@@ -26395,6 +26497,13 @@ export namespace Prisma {
     not?: NestedEnumDocumentTypeFilter<$PrismaModel> | $Enums.DocumentType
   }
 
+  export type NestedEnumDocumentApprovalFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentApproval | EnumDocumentApprovalFieldRefInput<$PrismaModel>
+    in?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    not?: NestedEnumDocumentApprovalFilter<$PrismaModel> | $Enums.DocumentApproval
+  }
+
   export type NestedEnumDocumentTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel>
     in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel>
@@ -26403,6 +26512,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentTypeFilter<$PrismaModel>
     _max?: NestedEnumDocumentTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDocumentApprovalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentApproval | EnumDocumentApprovalFieldRefInput<$PrismaModel>
+    in?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DocumentApproval[] | ListEnumDocumentApprovalFieldRefInput<$PrismaModel>
+    not?: NestedEnumDocumentApprovalWithAggregatesFilter<$PrismaModel> | $Enums.DocumentApproval
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDocumentApprovalFilter<$PrismaModel>
+    _max?: NestedEnumDocumentApprovalFilter<$PrismaModel>
   }
 
   export type NestedEnumTransactionTypeFilter<$PrismaModel = never> = {
@@ -26511,8 +26630,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     verifiedBy?: UserCreateNestedOneWithoutVerifiedDocumentsInput
     shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
     lc?: LCCreateNestedOneWithoutDocumentsInput
@@ -26522,8 +26643,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     verifiedById?: string | null
     shipmentId?: string | null
     lcId?: string | null
@@ -26543,8 +26666,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedBy: UserCreateNestedOneWithoutUploadedDocumentsInput
     shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
     lc?: LCCreateNestedOneWithoutDocumentsInput
@@ -26554,8 +26679,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     shipmentId?: string | null
     lcId?: string | null
@@ -27109,8 +27236,10 @@ export namespace Prisma {
     id?: StringFilter<"Document"> | string
     type?: EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
     fileUrl?: StringFilter<"Document"> | string
+    filePath?: StringFilter<"Document"> | string
     verified?: BoolFilter<"Document"> | boolean
     createdAt?: DateTimeFilter<"Document"> | Date | string
+    approval?: EnumDocumentApprovalFilter<"Document"> | $Enums.DocumentApproval
     uploadedById?: StringFilter<"Document"> | string
     verifiedById?: StringNullableFilter<"Document"> | string | null
     shipmentId?: StringNullableFilter<"Document"> | string | null
@@ -28392,8 +28521,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedBy: UserCreateNestedOneWithoutUploadedDocumentsInput
     verifiedBy?: UserCreateNestedOneWithoutVerifiedDocumentsInput
     shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
@@ -28403,8 +28534,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     shipmentId?: string | null
@@ -28885,8 +29018,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedBy: UserCreateNestedOneWithoutUploadedDocumentsInput
     verifiedBy?: UserCreateNestedOneWithoutVerifiedDocumentsInput
     lc?: LCCreateNestedOneWithoutDocumentsInput
@@ -28896,8 +29031,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     lcId?: string | null
@@ -30757,8 +30894,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     verifiedById?: string | null
     shipmentId?: string | null
     lcId?: string | null
@@ -30768,8 +30907,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     shipmentId?: string | null
     lcId?: string | null
@@ -30934,8 +31075,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     verifiedBy?: UserUpdateOneWithoutVerifiedDocumentsNestedInput
     shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
     lc?: LCUpdateOneWithoutDocumentsNestedInput
@@ -30945,8 +31088,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30956,8 +31101,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30967,8 +31114,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedBy?: UserUpdateOneRequiredWithoutUploadedDocumentsNestedInput
     shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
     lc?: LCUpdateOneWithoutDocumentsNestedInput
@@ -30978,8 +31127,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30989,8 +31140,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31613,8 +31766,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     shipmentId?: string | null
@@ -31624,8 +31779,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedBy?: UserUpdateOneRequiredWithoutUploadedDocumentsNestedInput
     verifiedBy?: UserUpdateOneWithoutVerifiedDocumentsNestedInput
     shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
@@ -31635,8 +31792,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31646,8 +31805,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31657,8 +31818,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.DocumentType
     fileUrl: string
+    filePath: string
     verified?: boolean
     createdAt?: Date | string
+    approval?: $Enums.DocumentApproval
     uploadedById: string
     verifiedById?: string | null
     lcId?: string | null
@@ -31676,8 +31839,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedBy?: UserUpdateOneRequiredWithoutUploadedDocumentsNestedInput
     verifiedBy?: UserUpdateOneWithoutVerifiedDocumentsNestedInput
     lc?: LCUpdateOneWithoutDocumentsNestedInput
@@ -31687,8 +31852,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31698,8 +31865,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
     fileUrl?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approval?: EnumDocumentApprovalFieldUpdateOperationsInput | $Enums.DocumentApproval
     uploadedById?: StringFieldUpdateOperationsInput | string
     verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     lcId?: NullableStringFieldUpdateOperationsInput | string | null

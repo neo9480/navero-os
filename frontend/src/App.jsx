@@ -49,8 +49,22 @@ const App = () => {
       cursor.style.top = e.y - 7 + "px";
     };
 
+    const mouseLeave = () => {
+      cursor.style.scale = 0;
+    };
+
+    const mouseEnter = () => {
+      cursor.style.scale = 1;
+    };
+
     main.addEventListener("mousemove", moveCursor);
-    return () => main.removeEventListener("mousemove", moveCursor);
+    main.addEventListener("mouseleave", mouseLeave);
+    main.addEventListener("mouseenter", mouseEnter);
+    return () => {
+      main.removeEventListener("mousemove", moveCursor);
+      main.removeEventListener("mouseleave", mouseLeave);
+      main.removeEventListener("mouseenter", mouseEnter);
+    };
   }, [showLoader]);
 
   return (

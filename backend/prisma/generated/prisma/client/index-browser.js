@@ -204,8 +204,10 @@ exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
   type: 'type',
   fileUrl: 'fileUrl',
+  filePath: 'filePath',
   verified: 'verified',
   createdAt: 'createdAt',
+  approval: 'approval',
   uploadedById: 'uploadedById',
   verifiedById: 'verifiedById',
   shipmentId: 'shipmentId',
@@ -537,6 +539,12 @@ exports.DocumentType = exports.$Enums.DocumentType = {
   SETTLEMENT_AGREEMENT: 'SETTLEMENT_AGREEMENT',
   DISPUTE_RESOLUTION_DOCUMENTS: 'DISPUTE_RESOLUTION_DOCUMENTS',
   OTHER: 'OTHER'
+};
+
+exports.DocumentApproval = exports.$Enums.DocumentApproval = {
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
 };
 
 exports.TransactionType = exports.$Enums.TransactionType = {
