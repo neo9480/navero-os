@@ -1,136 +1,100 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard, Ship, FileText, BarChart3, Store,
-  Bell, User, Settings, ChevronLeft, ChevronRight,
-  Search, LogOut
-} from 'lucide-react';
+import { dashboardNavItems } from "@/constants/dashboardNavItems";
+import { Sidebar } from "lucide-react";
+import { useState } from "react";
+import ABgDark from "../commonComponents/ABgDark";
+import { useLocation } from "react-router-dom";
+import { ScrollArea } from "../ui/scroll-area";
 
-const NAV_ITEMS = [
-  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { label: 'Shipments', path: '/shipments', icon: Ship },
-  { label: 'Documents', path: '/documents', icon: FileText },
-  { label: 'Analytics', path: '/analytics', icon: BarChart3 },
-  { label: 'Marketplace', path: '/marketplace', icon: Store },
-  { label: 'Notifications', path: '/notifications', icon: Bell },
-  { label: 'Profile', path: '/profile', icon: User },
-  { label: 'Settings', path: '/settings', icon: Settings },
-];
-
-export default function DashboardLayout({ children }) {
+const DashboardLayout = ({ Children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-
+  const sidebarNavItems = dashboardNavItems;
   return (
-    <div className="flex h-screen bg-space_indigo-200 overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className={`flex flex-col bg-space_indigo-100 border-r border-space_indigo-400/50 transition-all duration-300 ${
-          collapsed ? 'w-16' : 'w-64'
-        }`}
-      >
-        {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-space_indigo-400/50">
-          {!collapsed && (
-            <Link to="/" className="flex items-center gap-2">
-              <Ship className="w-6 h-6 text-punch_red-500" />
-              <span className="text-lg font-bold font-host_grotesk text-platinum-500">NAVERO</span>
-            </Link>
-          )}
-          {collapsed && (
-            <Link to="/" className="mx-auto">
-              <Ship className="w-6 h-6 text-punch_red-500" />
-            </Link>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={`text-platinum-400 hover:text-platinum-500 transition-colors ${collapsed ? 'hidden' : ''}`}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Nav items */}
-        <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto custom-scrollbar">
-          {NAV_ITEMS.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-punch_red-500/10 text-punch_red-500'
-                    : 'text-platinum-400 hover:bg-space_indigo-300/50 hover:text-platinum-500'
-                } ${collapsed ? 'justify-center' : ''}`}
-                title={collapsed ? item.label : undefined}
-              >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-punch_red-500' : ''}`} />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Expand button (when collapsed) */}
-        {collapsed && (
-          <div className="p-2 border-t border-space_indigo-400/50">
-            <button
-              onClick={() => setCollapsed(false)}
-              className="w-full flex items-center justify-center py-2 text-platinum-400 hover:text-platinum-500"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        {/* Logout */}
-        {!collapsed && (
-          <div className="p-4 border-t border-space_indigo-400/50">
-            <Link
-              to="/"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-platinum-400 hover:bg-space_indigo-300/50 hover:text-platinum-500 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Back to Home</span>
-            </Link>
-          </div>
-        )}
-      </aside>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top header */}
-        <header className="h-16 bg-space_indigo-100 border-b border-space_indigo-400/50 flex items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-bold text-platinum-500 font-host_grotesk">
-              Welcome back, User
-            </h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-platinum-400" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-lg bg-space_indigo-300/50 border border-space_indigo-500 text-platinum-500 text-sm placeholder:text-platinum-400/50 focus:outline-none focus:border-punch_red-500/50 w-64"
-              />
+    <div>
+      <ABgDark />
+      <div className="bg-zinc-900/70 text-platinum-500 z-10 backdrop-blur-xl w-full h-screen flex">
+        {collapsed ?
+          <nav className="h-full w-[5vw]">
+            <div className="h-[10vh] flex justify-center items-center">
+              <div className="flex flex-col h-full justify-center gap-2 mt-10 items-center ">
+                <img className="size-6" src="imgs/dark-N-removebg.png" />
+                <Sidebar
+                  className="size-6  cursor-pointer"
+                  onClick={() => setCollapsed(false)}
+                />
+              </div>
             </div>
-            <Link to="/notifications" className="relative p-2 rounded-lg hover:bg-space_indigo-300/50 transition-colors">
-              <Bell className="w-5 h-5 text-platinum-400" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-punch_red-500" />
-            </Link>
-            <Link to="/profile" className="w-8 h-8 rounded-full bg-linear-to-br from-punch_red-500 to-flag_red-500 flex items-center justify-center text-white text-sm font-bold">
-              D
-            </Link>
-          </div>
-        </header>
+            <div className="h-[90vh] flex flex-col pt-10 items-center gap-8">
+              {sidebarNavItems.map(({ group, items }) => {
+                return (
+                  <div key={group} className="flex flex-col gap-2">
+                    {items.map(({ id, path, icon: Icon }) => {
+                      const isActive = location.pathname === path;
+                      return (
+                        <div
+                          key={id}
+                          className={`h-[4vh] w-[4vh] flex justify-center items-center hover:bg-flag_red-500/50 rounded-sm ${isActive && "bg-flag_red-400"}`}>
+                          <a href={path}>
+                            <Icon
+                              className={`size-6`}
+                            />
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </nav>
+        : <nav className="h-full w-[20vw]">
+            <div className="h-[10vh] w-full flex justify-center items-center gap-2">
+              <div className="flex justify-center items-center gap-2 h-full w-full">
+                <img className="size-8" src="imgs/dark-N-removebg.png" />
+                <img className="h-6" src="imgs/dark-navero-removebg.png" />
+              </div>
+              <span className="h-10 w-10 flex justify-center items-center">
+                <Sidebar
+                  className="size-6  cursor-pointer"
+                  onClick={() => setCollapsed(true)}
+                />
+              </span>
+            </div>
+            <div className="h-[90vh] flex flex-col p-7 gap-8">
+              {sidebarNavItems.map(({ group, items }) => {
+                return (
+                  <div key={group} className="">
+                    <p className="text-platinum-500/50">{group}</p>
+                    {items.map( ( { id, label, path, icon: Icon } ) => {
+                      const isActive = location.pathname === path
+                      return (
+                        <div className={`flex items-center w-full rounded-sm hover:bg-flag_red-500/50 cursor-pointer ${isActive && "bg-flag_red-500/80"} mt-1 border border-lavender_grey-200/50 shadow  p-1.5`}>
+                          <a
+                            key={id}
+                            href={path}
+                            className=" flex justify-center items-center gap-2">
+                            <Icon className="size-6 " />
+                            <p className="">{label}</p>
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </nav>
+        }
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+        <div className="m-[0.5vh] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
+          <nav className="w-full h-[9.5vh] "></nav>
+          <hr className="border-zinc-700" />
+          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh]">
+            {Children}
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
-}
+};
+export default DashboardLayout;

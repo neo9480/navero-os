@@ -8,7 +8,6 @@ import {
   TrendingUp,
   Award,
   PiggyBankIcon,
-  ArrowUpRight,
 } from "lucide-react";
 import GradBlindBg from "@/components/commonComponents/GradBlindBg";
 import AnimBtn from "@/components/commonComponents/AnimBtn";

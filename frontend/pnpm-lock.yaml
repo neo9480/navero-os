@@ -32,9 +32,6 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      country-data-list:
-        specifier: ^1.6.0
-        version: 1.6.0
       framer-motion:
         specifier: ^12.23.25
         version: 12.38.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -68,9 +65,6 @@ importers:
       react:
         specifier: ^19.2.0
         version: 19.2.4
-      react-circle-flags:
-        specifier: ^0.0.27
-        version: 0.0.27(react@19.2.4)
       react-dom:
         specifier: ^19.2.0
         version: 19.2.4(react@19.2.4)
@@ -1950,9 +1944,6 @@ packages:
       typescript:
         optional: true
 
-  country-data-list@1.6.0:
-    resolution: {integrity: sha512-KG1flNkUHtde7q9zw1/NcH5fFgDxU6gRt4f7jhBm2ucNXrSO8UBWv/w8UyueOhJGabzzjHJ7fTyRVLrKruWpUw==}
-
   country-flag-icons@1.6.15:
     resolution: {integrity: sha512-92HoA8l6DluEidku8tKBftjuFRj4Rv3zDW1lXxCuNnqAxhUSkvso9gM/Afj4F5BnK+wneHIe3ydI+s+4NA29/Q==}
 
@@ -3273,12 +3264,6 @@ packages:
   raw-body@3.0.2:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
-
-  react-circle-flags@0.0.27:
-    resolution: {integrity: sha512-34WtRgFX74DtmL4UiOZk+i+OmX5lHXevaRelF7zEUIBCrUAPyfJ1P3Oi8ebxcfysn8Z4+EZPKGvKcS9hqp5fCw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16.0.0 || 17.x || 18.x || 19.x
 
   react-dom@19.2.4:
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
@@ -5704,8 +5689,6 @@ snapshots:
       js-yaml: 4.1.1
       parse-json: 5.2.0
 
-  country-data-list@1.6.0: {}
-
   country-flag-icons@1.6.15: {}
 
   cross-spawn@7.0.6:
@@ -7121,10 +7104,6 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.7.2
       unpipe: 1.0.0
-
-  react-circle-flags@0.0.27(react@19.2.4):
-    dependencies:
-      react: 19.2.4
 
   react-dom@19.2.4(react@19.2.4):
     dependencies:
