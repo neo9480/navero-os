@@ -1,4 +1,5 @@
 import { Receipt } from "lucide-react";
+import { User } from "lucide-react";
 import { CreditCard } from "lucide-react";
 import {
   Bell,
@@ -38,6 +39,8 @@ export const dashboardNavItems = [
     items: [
       { id: 7, label: "Notifications", path: "/notifications", icon: Bell },
       { id: 8, label: "Settings", path: "/settings", icon: Settings },
+      { id: 9, label: "Profile", path: "/Profile", icon: User },
+      
     ],
   },
 ];

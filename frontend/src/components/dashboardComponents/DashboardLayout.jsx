@@ -2,17 +2,30 @@ import { dashboardNavItems } from "@/constants/dashboardNavItems";
 import { Sidebar } from "lucide-react";
 import { useState } from "react";
 import ABgDark from "../commonComponents/ABgDark";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
+import { UserCircle } from "lucide-react";
+import InputStartIcon from "../shadcn-studio/input/InputStartIcon";
+import { InputSearch } from "../shadcn-studio/input/InputSearch";
+import UserAvatar from "./UserAvatar";
+import { BellDot } from "lucide-react";
+import { Bell } from "lucide-react";
 
 const DashboardLayout = ({ Children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [ collapsed, setCollapsed ] = useState( false );
+  const [notification, setNotification] = useState(false)
   const location = useLocation();
   const sidebarNavItems = dashboardNavItems;
+  const userName = "Acme Inc."
+
+  // from backend use "read" and "unread" to toggle notification icon. 
+  // And make a function to make the notification "read" or "unread". 
+  // From backend update search result
+
   return (
     <div>
       <ABgDark />
-      <div className="bg-zinc-900/70 text-platinum-500 z-10 backdrop-blur-xl w-full h-screen flex">
+      <div className="bg-zinc-900/70 text-platinum-500 font-host_grotesk z-10 backdrop-blur-xl w-full h-screen flex ">
         {collapsed ?
           <nav className="h-full w-[5vw]">
             <div className="h-[10vh] flex justify-center items-center">
@@ -35,9 +48,7 @@ const DashboardLayout = ({ Children }) => {
                           key={id}
                           className={`h-[4vh] w-[4vh] flex justify-center items-center hover:bg-flag_red-500/50 rounded-sm ${isActive && "bg-flag_red-400"}`}>
                           <a href={path}>
-                            <Icon
-                              className={`size-6`}
-                            />
+                            <Icon className={`size-6`} />
                           </a>
                         </div>
                       );
@@ -60,23 +71,25 @@ const DashboardLayout = ({ Children }) => {
                 />
               </span>
             </div>
-            <div className="h-[90vh] flex flex-col p-7 gap-8">
+            <div className="h-[90vh] w-full flex flex-col p-7 gap-8">
               {sidebarNavItems.map(({ group, items }) => {
                 return (
                   <div key={group} className="">
                     <p className="text-platinum-500/50">{group}</p>
-                    {items.map( ( { id, label, path, icon: Icon } ) => {
-                      const isActive = location.pathname === path
+                    {items.map(({ id, label, path, icon: Icon }) => {
+                      const isActive = location.pathname === path;
                       return (
-                        <div className={`flex items-center w-full rounded-sm hover:bg-flag_red-500/50 cursor-pointer ${isActive && "bg-flag_red-500/80"} mt-1 border border-lavender_grey-200/50 shadow  p-1.5`}>
-                          <a
+                        <Link
+                          key={id}
+                          to={path}
+                          className={`flex items-center w-full rounded-sm hover:bg-flag_red-500/50 cursor-pointer ${isActive && "bg-flag_red-500/80"} mt-1 border border-lavender_grey-200/50 shadow  p-1.5`}>
+                          <div
                             key={id}
-                            href={path}
                             className=" flex justify-center items-center gap-2">
                             <Icon className="size-6 " />
                             <p className="">{label}</p>
-                          </a>
-                        </div>
+                          </div>
+                        </Link>
                       );
                     })}
                   </div>
@@ -85,9 +98,17 @@ const DashboardLayout = ({ Children }) => {
             </div>
           </nav>
         }
-
         <div className="m-[0.5vh] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
-          <nav className="w-full h-[9.5vh] "></nav>
+          <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
+            <span className="text-3xl">Welcome, {userName ? userName : ""}</span>
+            <div className="flex justify-center items-center gap-3">
+              <InputSearch />
+              <div className="w-13 h-9 flex justify-center items-center border rounded-md">
+                {notification ? <BellDot className="size-5" /> : <Bell className="size-5"/>}
+              </div>
+              <UserAvatar />
+            </div>
+          </nav>
           <hr className="border-zinc-700" />
           <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh]">
             {Children}
