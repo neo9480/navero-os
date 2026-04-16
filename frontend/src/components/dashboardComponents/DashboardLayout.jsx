@@ -4,19 +4,19 @@ import { useState } from "react";
 import ABgDark from "../commonComponents/ABgDark";
 import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
-import { UserCircle } from "lucide-react";
-import InputStartIcon from "../shadcn-studio/input/InputStartIcon";
 import { InputSearch } from "../shadcn-studio/input/InputSearch";
 import UserAvatar from "./UserAvatar";
-import { BellDot } from "lucide-react";
-import { Bell } from "lucide-react";
+import { Separator } from "../ui/separator";
+import Notifications from "./Notifications";
+import { ACTIVITIES } from "@/constants/dashboard";
 
-const DashboardLayout = ({ Children }) => {
+const DashboardLayout = ({ children }) => {
   const [ collapsed, setCollapsed ] = useState( false );
-  const [notification, setNotification] = useState(false)
   const location = useLocation();
   const sidebarNavItems = dashboardNavItems;
   const userName = "Acme Inc."
+  const [notificationArray, setNotificationArray] = useState(ACTIVITIES);
+
 
   // from backend use "read" and "unread" to toggle notification icon. 
   // And make a function to make the notification "read" or "unread". 
@@ -100,18 +100,17 @@ const DashboardLayout = ({ Children }) => {
         }
         <div className="m-[0.5vh] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
           <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
-            <span className="text-3xl">Welcome, {userName ? userName : ""}</span>
-            <div className="flex justify-center items-center gap-3">
+            <span className="text-3xl">Welcome, {userName ? userName : "j"}</span>
+            <div className="flex h-[5vh] justify-center items-center gap-3">
               <InputSearch />
-              <div className="w-13 h-9 flex justify-center items-center border rounded-md">
-                {notification ? <BellDot className="size-5" /> : <Bell className="size-5"/>}
-              </div>
-              <UserAvatar />
+              <Notifications notificationArray={notificationArray} setNotificationArray={setNotificationArray}/>
+              <Separator orientation="vertical" />
+              <UserAvatar userName={"Acme Inc."} userEmail={"example@email.com"}/>
             </div>
           </nav>
           <hr className="border-zinc-700" />
-          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh]">
-            {Children}
+          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh] p-6">
+            {children}
           </ScrollArea>
         </div>
       </div>

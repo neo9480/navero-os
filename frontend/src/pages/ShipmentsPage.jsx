@@ -1,9 +1,12 @@
-import React from 'react'
+import DashboardLayout from "@/components/dashboardComponents/DashboardLayout";
+import React from "react";
 
 const ShipmentsPage = () => {
   return (
-    <div>ShipmentsPage</div>
-  )
-}
+    <DashboardLayout>
+      <div>ShipmentsPage</div>
+    </DashboardLayout>
+  );
+};
 
-export default ShipmentsPage
+export default ShipmentsPage;

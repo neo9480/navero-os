@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ABgLight from "@/components/commonComponents/ABgLight";
 import { toast, Toaster } from "sonner";
-import Stepper, { Step } from "@/components/shadcnComponents/Stepper";
+import Stepper, { Step } from "@/components/reactBitsComponents/Stepper";
 import {
   Eye,
   EyeClosed,

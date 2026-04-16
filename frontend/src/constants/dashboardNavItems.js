@@ -30,8 +30,8 @@ export const dashboardNavItems = [
   {
     group: "Billing",
     items: [
-      { id: 5, label: "Subscriptions", path: "/subscription", icon: CreditCard },
-      { id: 6, label: "Invoices", path: "/invoice", icon: Receipt },
+      { id: 5, label: "Subscriptions", path: "/subscriptions", icon: CreditCard },
+      { id: 6, label: "Invoices", path: "/invoices", icon: Receipt },
     ],
   },
   {

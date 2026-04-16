@@ -1,12 +1,12 @@
 import DashboardLayout from "@/components/dashboardComponents/DashboardLayout";
 import React from "react";
 
-const Dashboard = () => {
+const Subscriptions = () => {
   return (
     <DashboardLayout>
-      <div>Dashboard</div>
+      <div>Subscriptions</div>
     </DashboardLayout>
   );
 };
 
-export default Dashboard;
+export default Subscriptions;

@@ -13,6 +13,8 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
+import Subscriptions from "./pages/Subscriptions";
+import Invoices from "./pages/Invoices";
 
 const App = () => {
   useEffect(() => {
@@ -85,6 +87,8 @@ const App = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/shipments" element={<ShipmentsPage />} />
+            <Route path="/subscriptions" element={<Subscriptions />} />
+            <Route path="/invoices" element={<Invoices />} />
           </Routes>
         </>
       )}

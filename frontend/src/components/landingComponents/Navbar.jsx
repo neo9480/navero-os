@@ -14,7 +14,7 @@ function Navbar() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const location = useLocation();
   return (
-    <div className="navbar fixed text-platinum-500 h-[12vh] w-full flex items-center justify-center z-998 backdrop-blur-xs">
+    <div className="navbar mt-2 ml-2 fixed text-platinum-500 h-[12vh] rounded-2xl w-[98.5vw] flex items-center justify-center z-998 backdrop-blur-xs">
       <div className="flex items-center justify-between w-full">
         <img
           className="pl-[6.6vw] h-[4vh]"

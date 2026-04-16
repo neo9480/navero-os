@@ -1,9 +1,12 @@
+import DashboardLayout from '@/components/dashboardComponents/DashboardLayout'
 import React from 'react'
 
 function ProfilePage() {
   return (
-    <div>ProfilePage</div>
-  )
+    <DashboardLayout>
+      <div>ProfilePage</div>
+    </DashboardLayout>
+  );
 }
 
 export default ProfilePage

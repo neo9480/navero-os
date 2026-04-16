@@ -1,9 +1,12 @@
+import DashboardLayout from '@/components/dashboardComponents/DashboardLayout'
 import React from 'react'
 
 const MarketplacePage = () => {
   return (
-    <div>MarketplacePage</div>
-  )
+    <DashboardLayout>
+      <div>MarketplacePage</div>
+    </DashboardLayout>
+  );
 }
 
 export default MarketplacePage

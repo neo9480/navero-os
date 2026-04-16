@@ -93,34 +93,49 @@ export const SHIPMENTS = [
 
 export const ACTIVITIES = [
   {
+    id: 0,
+    type: "Document update",
     text: "Commercial Invoice uploaded for SHP-2024-001",
     time: "2 hours ago",
     icon: FileText,
     color: "text-blue-400",
+    status: "unread",
   },
   {
+    id: 1,
+    type: "Shipment update",
     text: "Shipment SHP-2024-003 delivered to São Paulo",
     time: "5 hours ago",
     icon: Ship,
     color: "text-green-400",
+    status: "unread",
   },
   {
+    id: 2,
+    type: "Customs update",
     text: "Compliance check passed for SHP-2024-004",
     time: "8 hours ago",
     icon: ShieldCheck,
     color: "text-emerald-400",
+    status: "unread",
   },
   {
+    id: 3,
+    type: "Document update",
     text: "Bill of Lading generated for SHP-2024-006",
     time: "12 hours ago",
     icon: FileCheck,
     color: "text-purple-400",
+    status: "unread",
   },
   {
+    id: 4,
+    type: "Customs",
     text: "Customs hold alert for SHP-2024-002",
     time: "1 day ago",
     icon: ShieldAlert,
     color: "text-red-400",
+    status: "unread",
   },
 ];
 
