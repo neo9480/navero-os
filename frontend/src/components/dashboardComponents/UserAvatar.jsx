@@ -32,17 +32,17 @@ function UserAvatar({userName, userEmail}) {
           <ChevronsUpDown className="size-5" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-32 bg-space_indigo-200/80 text-platinum-500">
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
+      <DropdownMenuContent className="w-32  bg-space_indigo-200/80 text-platinum-500">
+        <DropdownMenuGroup >
+          <DropdownMenuItem className="focus:bg-platinum-500/10 focus:text-platinum-500">
             <User />
             Account
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="focus:bg-platinum-500/10 focus:text-platinum-500">
             <CreditCard />
             Billing
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="focus:bg-platinum-500/10 focus:text-platinum-500">
             <Settings />
             Settings
           </DropdownMenuItem>
