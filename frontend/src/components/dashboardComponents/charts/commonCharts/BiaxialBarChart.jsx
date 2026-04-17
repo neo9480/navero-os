@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
@@ -8,9 +8,9 @@ import { MONTHLY_DATA, MONTHLY_DATA_CONFIG } from "@/constants/analytics";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-const BiaxialLineChart = ({ className }) => {
+const BiaxialBarChart = ({ className }) => {
   const monthlyData = MONTHLY_DATA;
   const monthlyDataConfig = MONTHLY_DATA_CONFIG;
   return (
@@ -33,25 +33,25 @@ const BiaxialLineChart = ({ className }) => {
           </div>
         </div>
         <ChartContainer config={monthlyDataConfig}>
-          <LineChart
+          <BarChart
             margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
             style={{ height: "50vh", aspectRatio: "1.618" }}
             responsive
             data={monthlyData}>
-            <CartesianGrid strokeLinecap stroke="#edf2f46b" horizontal={false} />
+            <CartesianGrid
+              strokeLinecap={"3 3"}
+              stroke="#edf2f46b"
+              horizontal={true}
+              vertical={false}
+              strokeOpacity={1}
+            />
             <XAxis dataKey={"month"} />
             <YAxis
-              yAxisId={"right"}
-              orientation="right"
-              width={"auto"}
-              height={"auto"}
+              width="100"
+              domain={[0, 220]}
+              ticks={[0, 55, 110, 165, 220]}
             />
-            <YAxis
-              yAxisId={"left"}
-              orientation="left"
-              width={"auto"}
-              height={"auto"}
-            />
+            {/* <YAxis dataKey={"revenue"} orientation='' width="auto" height="auto"/> */}
             <ChartTooltip
               cursor={false}
               content={
@@ -62,25 +62,18 @@ const BiaxialLineChart = ({ className }) => {
                 />
               }
             />
-            <Line
-              yAxisId={"right"}
-              type={"monotone"}
-              dataKey={"shipments"}
-              stroke="#edf2f4"
-            />
-            <Line
-              yAxisId={"left"}
-              type={"monotone"}
+            <Bar
               dataKey={"revenue"}
-              stroke="#759bab"
-              dot={{ fill: "#759bab" }}
-              activeDot={{ stroke: "#759bab" }}
+              className="rounded-2xl"
+              fill="#edf2f4"
+              radius={[10, 10, 0, 0]}
             />
-          </LineChart>
+            {/* <Bar /> */}
+          </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
   );
 };
 
-export default BiaxialLineChart;
+export default BiaxialBarChart;

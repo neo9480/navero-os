@@ -2,32 +2,32 @@ import { Clock, DollarSign, Ship, TrendingUp } from "lucide-react";
 
 export const KPI = [
   {
-    label: "Total Shipments",
-    value: "156",
-    icon: Ship,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
+    id: 0,
+    label: "Gross Revenue",
+    value: "$1,820,000.00",
+    prevValue: "$1,560,000.00",
+    icon: DollarSign,
   },
   {
+    id: 1,
+    label: "Total Shipments",
+    value: "156 MT",
+    prevValue: "140 MT",
+    icon: Ship,
+  },
+  {
+    id: 2,
     label: "On-Time Delivery",
     value: "94.2%",
+    prevValue: "95.7%",
     icon: TrendingUp,
-    color: "text-green-400",
-    bg: "bg-green-500/10",
   },
   {
+    id: 3,
     label: "Avg Transit Time",
     value: "12.4 days",
+    prevValue: "11.8 days",
     icon: Clock,
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
-  },
-  {
-    label: "Total Revenue",
-    value: "$1.82M",
-    icon: DollarSign,
-    color: "text-purple-400",
-    bg: "bg-purple-500/10",
   },
 ];
 
@@ -39,6 +39,35 @@ export const MONTHLY_DATA = [
   { month: "Feb", shipments: 26, revenue: 175 },
   { month: "Mar", shipments: 30, revenue: 192 },
 ];
+
+export const MONTHLY_DATA_CONFIG = {
+  Sales: {
+    label: "Sales",
+    color: "#759bab",
+  },
+  Shipments: {
+    label: "Shipments",
+    color: "#edf2f4",
+  },
+  October: {
+    label: "October"
+  },
+  November: {
+    label: "November"
+  },
+  December: {
+    label: "December"
+  },
+  January: {
+    label: "January"
+  },
+  February: {
+    label: "February"
+  },
+  March: {
+    label: "March"
+  },
+};
 
 export const TOP_ROUTES = [
   { route: "Mumbai → Rotterdam", shipments: 28, pct: 82 },
