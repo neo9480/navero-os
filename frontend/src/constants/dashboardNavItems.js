@@ -44,3 +44,11 @@ export const dashboardNavItems = [
     ],
   },
 ];
+
+export const dataTablefilterParams = [
+  {id: 0, label: "Today", type: "Today"},
+  {id: 1, label: "Yesterday", type: "Yesterday"},
+  {id: 2, label: "Last 7 days", type: "Last 7 days"},
+  {id: 3, label: "Last 30 days", type: "Last 30 days"},
+  {id: 4, label: "Last year", type: "Last year"},
+]

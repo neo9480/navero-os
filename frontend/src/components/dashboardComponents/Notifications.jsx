@@ -23,7 +23,6 @@ const Notifications = ({ notificationArray, setNotificationArray }) => {
 
   return (
     <DropdownMenu>
-      {console.log(unreadCount)}
       <DropdownMenuTrigger className="rounded-md" asChild>
         <div className="w-[4vw] h-9 flex justify-center items-center border cursor-pointer rounded-md">
           {unreadCount > 0 ?
@@ -32,7 +31,7 @@ const Notifications = ({ notificationArray, setNotificationArray }) => {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="bg-space_indigo-200/80 p-2 text-platinum-500 font-neue_montreal">
+      <DropdownMenuContent className="bg-space_indigo-200/95 p-2 text-platinum-500 font-neue_montreal">
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <Separator orientation="horizontal" />
         <ScrollArea>
