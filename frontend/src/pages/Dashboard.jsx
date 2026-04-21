@@ -3,6 +3,7 @@ import BiaxialLineChart from "@/components/dashboardComponents/charts/exporterCh
 import DashboardLayout from "@/components/dashboardComponents/DashboardLayout";
 import DataTable from "@/components/dashboardComponents/DataTable";
 import Kpi from "@/components/dashboardComponents/Kpi";
+import { SHIPMENTS } from "@/constants/shipments";
 import React from "react";
 
 const Dashboard = () => {
@@ -14,7 +15,7 @@ const Dashboard = () => {
           <BarChart />
         </div>
         <Kpi />
-        <DataTable />
+        <DataTable tableData={SHIPMENTS} />
       </div>
     </DashboardLayout>
   );

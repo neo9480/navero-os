@@ -21,7 +21,7 @@ const FilterIconStart = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-md" asChild>
-        <div className="flex justify-between w-[6vw] bg-space_indigo-100 p-2 text-sm font-extralight border rounded-md items-center">
+        <div className="flex justify-between w-[6vw] bg-zinc-900 p-2 text-sm font-extralight border rounded-md items-center cursor-pointer">
           <Icon className="size-5" />
           <p>{filterTriggerText}</p>
         </div>

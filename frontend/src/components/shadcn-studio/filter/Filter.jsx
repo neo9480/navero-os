@@ -13,7 +13,7 @@ const Filter = ({ filterValuesArr }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-md" asChild>
-        <div className="flex justify-between w-[9vw] bg-space_indigo-100 p-2 text-sm font-extralight border rounded-md items-center">
+        <div className="flex justify-between w-[9vw] bg-zinc-900 p-2 text-sm font-extralight border rounded-md items-center cursor-pointer">
           <p>{selected}</p>
           <ChevronDown className="size-4" />
         </div>
