@@ -335,21 +335,10 @@ export type ShipmentStatus = (typeof ShipmentStatus)[keyof typeof ShipmentStatus
 
 
 export const ShipmentEventType: {
-  BOOKED: 'BOOKED',
-  CARGO_RECEIVED: 'CARGO_RECEIVED',
-  LOADED: 'LOADED',
-  DEPARTED: 'DEPARTED',
   IN_TRANSIT: 'IN_TRANSIT',
-  ARRIVED_PORT: 'ARRIVED_PORT',
-  DISCHARGED: 'DISCHARGED',
-  AT_CFS: 'AT_CFS',
   CUSTOMS_HOLD: 'CUSTOMS_HOLD',
-  DOCUMENT_VERIFIED: 'DOCUMENT_VERIFIED',
-  CUSTOMS_CLEARED: 'CUSTOMS_CLEARED',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
   DELIVERED: 'DELIVERED',
-  DELAYED: 'DELAYED',
-  EXCEPTION: 'EXCEPTION'
+  DELAYED: 'DELAYED'
 };
 
 export type ShipmentEventType = (typeof ShipmentEventType)[keyof typeof ShipmentEventType]
@@ -474,13 +463,15 @@ export const SubscriptionStatus: typeof $Enums.SubscriptionStatus
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
- * const prisma = new PrismaClient()
+ * const prisma = new PrismaClient({
+ *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+ * })
  * // Fetch zero or more Users
  * const users = await prisma.user.findMany()
  * ```
  *
  *
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 export class PrismaClient<
   ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
@@ -495,13 +486,15 @@ export class PrismaClient<
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
-   * const prisma = new PrismaClient()
+   * const prisma = new PrismaClient({
+   *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * })
    * // Fetch zero or more Users
    * const users = await prisma.user.findMany()
    * ```
    *
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
@@ -524,7 +517,7 @@ export class PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -536,7 +529,7 @@ export class PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -547,7 +540,7 @@ export class PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -559,7 +552,7 @@ export class PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -575,7 +568,7 @@ export class PrismaClient<
    * ])
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
+   * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
   $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
@@ -784,8 +777,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.0.1
-   * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+   * Prisma Client JS version: 7.7.0
+   * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
    */
   export type PrismaVersion = {
     client: string
@@ -2366,7 +2359,7 @@ export namespace Prisma {
      *  { emit: 'stdout', level: 'error' }
      * 
      * ```
-     * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+     * Read more in our [docs](https://pris.ly/d/logging).
      */
     log?: (LogLevel | LogDefinition)[]
     /**
@@ -2402,6 +2395,22 @@ export namespace Prisma {
      * ```
      */
     omit?: Prisma.GlobalOmitConfig
+    /**
+     * SQL commenter plugins that add metadata to SQL queries as comments.
+     * Comments follow the sqlcommenter format: https://google.github.io/sqlcommenter/
+     * 
+     * @example
+     * ```
+     * const prisma = new PrismaClient({
+     *   adapter,
+     *   comments: [
+     *     traceContext(),
+     *     queryInsights(),
+     *   ],
+     * })
+     * ```
+     */
+    comments?: runtime.SqlCommenterPlugin[]
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
@@ -3797,6 +3806,11 @@ export namespace Prisma {
      * Skip the first `n` Users.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Users.
+     */
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
@@ -5331,6 +5345,11 @@ export namespace Prisma {
      * Skip the first `n` Services.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Services.
+     */
     distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
   }
 
@@ -6529,6 +6548,11 @@ export namespace Prisma {
      * Skip the first `n` QuoteRequests.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of QuoteRequests.
+     */
     distinct?: QuoteRequestScalarFieldEnum | QuoteRequestScalarFieldEnum[]
   }
 
@@ -7683,6 +7707,11 @@ export namespace Prisma {
      * Skip the first `n` QuoteResponses.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of QuoteResponses.
+     */
     distinct?: QuoteResponseScalarFieldEnum | QuoteResponseScalarFieldEnum[]
   }
 
@@ -8849,6 +8878,11 @@ export namespace Prisma {
      * Skip the first `n` LCS.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LCS.
+     */
     distinct?: LCScalarFieldEnum | LCScalarFieldEnum[]
   }
 
@@ -9104,10 +9138,11 @@ export namespace Prisma {
   export type ShipmentMinAggregateOutputType = {
     id: string | null
     status: $Enums.ShipmentStatus | null
-    vesselName: string | null
-    airwayBill: string | null
+    carrier: string | null
     etd: Date | null
     eta: Date | null
+    origin: string | null
+    destination: string | null
     createdAt: Date | null
     importerId: string | null
     exporterId: string | null
@@ -9118,10 +9153,11 @@ export namespace Prisma {
   export type ShipmentMaxAggregateOutputType = {
     id: string | null
     status: $Enums.ShipmentStatus | null
-    vesselName: string | null
-    airwayBill: string | null
+    carrier: string | null
     etd: Date | null
     eta: Date | null
+    origin: string | null
+    destination: string | null
     createdAt: Date | null
     importerId: string | null
     exporterId: string | null
@@ -9132,10 +9168,11 @@ export namespace Prisma {
   export type ShipmentCountAggregateOutputType = {
     id: number
     status: number
-    vesselName: number
-    airwayBill: number
+    carrier: number
     etd: number
     eta: number
+    origin: number
+    destination: number
     createdAt: number
     importerId: number
     exporterId: number
@@ -9148,10 +9185,11 @@ export namespace Prisma {
   export type ShipmentMinAggregateInputType = {
     id?: true
     status?: true
-    vesselName?: true
-    airwayBill?: true
+    carrier?: true
     etd?: true
     eta?: true
+    origin?: true
+    destination?: true
     createdAt?: true
     importerId?: true
     exporterId?: true
@@ -9162,10 +9200,11 @@ export namespace Prisma {
   export type ShipmentMaxAggregateInputType = {
     id?: true
     status?: true
-    vesselName?: true
-    airwayBill?: true
+    carrier?: true
     etd?: true
     eta?: true
+    origin?: true
+    destination?: true
     createdAt?: true
     importerId?: true
     exporterId?: true
@@ -9176,10 +9215,11 @@ export namespace Prisma {
   export type ShipmentCountAggregateInputType = {
     id?: true
     status?: true
-    vesselName?: true
-    airwayBill?: true
+    carrier?: true
     etd?: true
     eta?: true
+    origin?: true
+    destination?: true
     createdAt?: true
     importerId?: true
     exporterId?: true
@@ -9263,10 +9303,11 @@ export namespace Prisma {
   export type ShipmentGroupByOutputType = {
     id: string
     status: $Enums.ShipmentStatus
-    vesselName: string | null
-    airwayBill: string | null
-    etd: Date | null
-    eta: Date | null
+    carrier: string
+    etd: Date
+    eta: Date
+    origin: string
+    destination: string
     createdAt: Date
     importerId: string
     exporterId: string
@@ -9294,10 +9335,11 @@ export namespace Prisma {
   export type ShipmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     status?: boolean
-    vesselName?: boolean
-    airwayBill?: boolean
+    carrier?: boolean
     etd?: boolean
     eta?: boolean
+    origin?: boolean
+    destination?: boolean
     createdAt?: boolean
     importerId?: boolean
     exporterId?: boolean
@@ -9315,10 +9357,11 @@ export namespace Prisma {
   export type ShipmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     status?: boolean
-    vesselName?: boolean
-    airwayBill?: boolean
+    carrier?: boolean
     etd?: boolean
     eta?: boolean
+    origin?: boolean
+    destination?: boolean
     createdAt?: boolean
     importerId?: boolean
     exporterId?: boolean
@@ -9333,10 +9376,11 @@ export namespace Prisma {
   export type ShipmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     status?: boolean
-    vesselName?: boolean
-    airwayBill?: boolean
+    carrier?: boolean
     etd?: boolean
     eta?: boolean
+    origin?: boolean
+    destination?: boolean
     createdAt?: boolean
     importerId?: boolean
     exporterId?: boolean
@@ -9351,10 +9395,11 @@ export namespace Prisma {
   export type ShipmentSelectScalar = {
     id?: boolean
     status?: boolean
-    vesselName?: boolean
-    airwayBill?: boolean
+    carrier?: boolean
     etd?: boolean
     eta?: boolean
+    origin?: boolean
+    destination?: boolean
     createdAt?: boolean
     importerId?: boolean
     exporterId?: boolean
@@ -9362,7 +9407,7 @@ export namespace Prisma {
     serviceId?: boolean
   }
 
-  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "vesselName" | "airwayBill" | "etd" | "eta" | "createdAt" | "importerId" | "exporterId" | "brokerId" | "serviceId", ExtArgs["result"]["shipment"]>
+  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "carrier" | "etd" | "eta" | "origin" | "destination" | "createdAt" | "importerId" | "exporterId" | "brokerId" | "serviceId", ExtArgs["result"]["shipment"]>
   export type ShipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
@@ -9398,10 +9443,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       status: $Enums.ShipmentStatus
-      vesselName: string | null
-      airwayBill: string | null
-      etd: Date | null
-      eta: Date | null
+      carrier: string
+      etd: Date
+      eta: Date
+      origin: string
+      destination: string
       createdAt: Date
       importerId: string
       exporterId: string
@@ -9838,10 +9884,11 @@ export namespace Prisma {
   interface ShipmentFieldRefs {
     readonly id: FieldRef<"Shipment", 'String'>
     readonly status: FieldRef<"Shipment", 'ShipmentStatus'>
-    readonly vesselName: FieldRef<"Shipment", 'String'>
-    readonly airwayBill: FieldRef<"Shipment", 'String'>
+    readonly carrier: FieldRef<"Shipment", 'String'>
     readonly etd: FieldRef<"Shipment", 'DateTime'>
     readonly eta: FieldRef<"Shipment", 'DateTime'>
+    readonly origin: FieldRef<"Shipment", 'String'>
+    readonly destination: FieldRef<"Shipment", 'String'>
     readonly createdAt: FieldRef<"Shipment", 'DateTime'>
     readonly importerId: FieldRef<"Shipment", 'String'>
     readonly exporterId: FieldRef<"Shipment", 'String'>
@@ -10043,6 +10090,11 @@ export namespace Prisma {
      * Skip the first `n` Shipments.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Shipments.
+     */
     distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
   }
 
@@ -11208,6 +11260,11 @@ export namespace Prisma {
      * Skip the first `n` ShipmentEvents.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShipmentEvents.
+     */
     distinct?: ShipmentEventScalarFieldEnum | ShipmentEventScalarFieldEnum[]
   }
 
@@ -12387,6 +12444,11 @@ export namespace Prisma {
      * Skip the first `n` Documents.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Documents.
+     */
     distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
   }
 
@@ -13515,6 +13577,11 @@ export namespace Prisma {
      * Skip the first `n` Notifications.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
     distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
   }
 
@@ -14612,6 +14679,11 @@ export namespace Prisma {
      * Skip the first `n` Sessions.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sessions.
+     */
     distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
   }
 
@@ -15769,6 +15841,11 @@ export namespace Prisma {
      * Skip the first `n` Transactions.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transactions.
+     */
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
   }
 
@@ -16848,6 +16925,11 @@ export namespace Prisma {
      * Skip the first `n` Bookings.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Bookings.
+     */
     distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
   }
 
@@ -18079,6 +18161,11 @@ export namespace Prisma {
      * Skip the first `n` DailyStats.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DailyStats.
+     */
     distinct?: DailyStatsScalarFieldEnum | DailyStatsScalarFieldEnum[]
   }
 
@@ -19187,6 +19274,11 @@ export namespace Prisma {
      * Skip the first `n` Subscriptions.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Subscriptions.
+     */
     distinct?: SubscriptionScalarFieldEnum | SubscriptionScalarFieldEnum[]
   }
 
@@ -20305,6 +20397,11 @@ export namespace Prisma {
      * Skip the first `n` OTPS.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OTPS.
+     */
     distinct?: OTPScalarFieldEnum | OTPScalarFieldEnum[]
   }
 
@@ -20612,10 +20709,11 @@ export namespace Prisma {
   export const ShipmentScalarFieldEnum: {
     id: 'id',
     status: 'status',
-    vesselName: 'vesselName',
-    airwayBill: 'airwayBill',
+    carrier: 'carrier',
     etd: 'etd',
     eta: 'eta',
+    origin: 'origin',
+    destination: 'destination',
     createdAt: 'createdAt',
     importerId: 'importerId',
     exporterId: 'exporterId',
@@ -21469,10 +21567,11 @@ export namespace Prisma {
     NOT?: ShipmentWhereInput | ShipmentWhereInput[]
     id?: StringFilter<"Shipment"> | string
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
-    vesselName?: StringNullableFilter<"Shipment"> | string | null
-    airwayBill?: StringNullableFilter<"Shipment"> | string | null
-    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    carrier?: StringFilter<"Shipment"> | string
+    etd?: DateTimeFilter<"Shipment"> | Date | string
+    eta?: DateTimeFilter<"Shipment"> | Date | string
+    origin?: StringFilter<"Shipment"> | string
+    destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
@@ -21489,10 +21588,11 @@ export namespace Prisma {
   export type ShipmentOrderByWithRelationInput = {
     id?: SortOrder
     status?: SortOrder
-    vesselName?: SortOrderInput | SortOrder
-    airwayBill?: SortOrderInput | SortOrder
-    etd?: SortOrderInput | SortOrder
-    eta?: SortOrderInput | SortOrder
+    carrier?: SortOrder
+    etd?: SortOrder
+    eta?: SortOrder
+    origin?: SortOrder
+    destination?: SortOrder
     createdAt?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
@@ -21512,10 +21612,11 @@ export namespace Prisma {
     OR?: ShipmentWhereInput[]
     NOT?: ShipmentWhereInput | ShipmentWhereInput[]
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
-    vesselName?: StringNullableFilter<"Shipment"> | string | null
-    airwayBill?: StringNullableFilter<"Shipment"> | string | null
-    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    carrier?: StringFilter<"Shipment"> | string
+    etd?: DateTimeFilter<"Shipment"> | Date | string
+    eta?: DateTimeFilter<"Shipment"> | Date | string
+    origin?: StringFilter<"Shipment"> | string
+    destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
@@ -21532,10 +21633,11 @@ export namespace Prisma {
   export type ShipmentOrderByWithAggregationInput = {
     id?: SortOrder
     status?: SortOrder
-    vesselName?: SortOrderInput | SortOrder
-    airwayBill?: SortOrderInput | SortOrder
-    etd?: SortOrderInput | SortOrder
-    eta?: SortOrderInput | SortOrder
+    carrier?: SortOrder
+    etd?: SortOrder
+    eta?: SortOrder
+    origin?: SortOrder
+    destination?: SortOrder
     createdAt?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
@@ -21552,10 +21654,11 @@ export namespace Prisma {
     NOT?: ShipmentScalarWhereWithAggregatesInput | ShipmentScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Shipment"> | string
     status?: EnumShipmentStatusWithAggregatesFilter<"Shipment"> | $Enums.ShipmentStatus
-    vesselName?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
-    airwayBill?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
-    etd?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
-    eta?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
+    carrier?: StringWithAggregatesFilter<"Shipment"> | string
+    etd?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
+    eta?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
+    origin?: StringWithAggregatesFilter<"Shipment"> | string
+    destination?: StringWithAggregatesFilter<"Shipment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
     importerId?: StringWithAggregatesFilter<"Shipment"> | string
     exporterId?: StringWithAggregatesFilter<"Shipment"> | string
@@ -22734,10 +22837,11 @@ export namespace Prisma {
   export type ShipmentCreateInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
@@ -22750,10 +22854,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -22766,10 +22871,11 @@ export namespace Prisma {
   export type ShipmentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
@@ -22782,10 +22888,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -22798,10 +22905,11 @@ export namespace Prisma {
   export type ShipmentCreateManyInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -22812,20 +22920,22 @@ export namespace Prisma {
   export type ShipmentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ShipmentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -24140,17 +24250,6 @@ export namespace Prisma {
     not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -24164,10 +24263,11 @@ export namespace Prisma {
   export type ShipmentCountOrderByAggregateInput = {
     id?: SortOrder
     status?: SortOrder
-    vesselName?: SortOrder
-    airwayBill?: SortOrder
+    carrier?: SortOrder
     etd?: SortOrder
     eta?: SortOrder
+    origin?: SortOrder
+    destination?: SortOrder
     createdAt?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
@@ -24178,10 +24278,11 @@ export namespace Prisma {
   export type ShipmentMaxOrderByAggregateInput = {
     id?: SortOrder
     status?: SortOrder
-    vesselName?: SortOrder
-    airwayBill?: SortOrder
+    carrier?: SortOrder
     etd?: SortOrder
     eta?: SortOrder
+    origin?: SortOrder
+    destination?: SortOrder
     createdAt?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
@@ -24192,10 +24293,11 @@ export namespace Prisma {
   export type ShipmentMinOrderByAggregateInput = {
     id?: SortOrder
     status?: SortOrder
-    vesselName?: SortOrder
-    airwayBill?: SortOrder
+    carrier?: SortOrder
     etd?: SortOrder
     eta?: SortOrder
+    origin?: SortOrder
+    destination?: SortOrder
     createdAt?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
@@ -24211,20 +24313,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumShipmentStatusFilter<$PrismaModel>
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumShipmentEventTypeFilter<$PrismaModel = never> = {
@@ -24677,6 +24765,17 @@ export namespace Prisma {
     not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type SubscriptionCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -24727,6 +24826,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type OTPCountOrderByAggregateInput = {
@@ -25883,10 +25996,6 @@ export namespace Prisma {
     set?: $Enums.ShipmentStatus
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput = {
     create?: XOR<UserCreateWithoutShipmentsAsImporterInput, UserUncheckedCreateWithoutShipmentsAsImporterInput>
     connectOrCreate?: UserCreateOrConnectWithoutShipmentsAsImporterInput
@@ -26183,6 +26292,10 @@ export namespace Prisma {
     set?: $Enums.SubscriptionStatus
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneRequiredWithoutSubscriptionNestedInput = {
     create?: XOR<UserCreateWithoutSubscriptionInput, UserUncheckedCreateWithoutSubscriptionInput>
     connectOrCreate?: UserCreateOrConnectWithoutSubscriptionInput
@@ -26438,17 +26551,6 @@ export namespace Prisma {
     not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedEnumShipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
@@ -26457,20 +26559,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumShipmentStatusFilter<$PrismaModel>
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumShipmentEventTypeFilter<$PrismaModel = never> = {
@@ -26616,6 +26704,17 @@ export namespace Prisma {
     not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
@@ -26624,6 +26723,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DocumentCreateWithoutUploadedByInput = {
@@ -26895,10 +27008,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutImporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -26910,10 +27024,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutImporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     exporterId: string
     brokerId?: string | null
@@ -26935,10 +27050,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutExporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -26950,10 +27066,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutExporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     brokerId?: string | null
@@ -26975,10 +27092,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutBrokerInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
@@ -26990,10 +27108,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutBrokerInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -27435,10 +27554,11 @@ export namespace Prisma {
     NOT?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
     id?: StringFilter<"Shipment"> | string
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
-    vesselName?: StringNullableFilter<"Shipment"> | string | null
-    airwayBill?: StringNullableFilter<"Shipment"> | string | null
-    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    carrier?: StringFilter<"Shipment"> | string
+    etd?: DateTimeFilter<"Shipment"> | Date | string
+    eta?: DateTimeFilter<"Shipment"> | Date | string
+    origin?: StringFilter<"Shipment"> | string
+    destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
@@ -27760,10 +27880,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutServiceInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
@@ -27775,10 +27896,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutServiceInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -29361,10 +29483,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutEventsInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
@@ -29376,10 +29499,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutEventsInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -29474,10 +29598,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
@@ -29489,10 +29614,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -29711,10 +29837,11 @@ export namespace Prisma {
   export type ShipmentCreateWithoutDocumentsInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
@@ -29726,10 +29853,11 @@ export namespace Prisma {
   export type ShipmentUncheckedCreateWithoutDocumentsInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -29932,10 +30060,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
@@ -29947,10 +30076,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -30980,10 +31110,11 @@ export namespace Prisma {
   export type ShipmentCreateManyImporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     exporterId: string
     brokerId?: string | null
@@ -30993,10 +31124,11 @@ export namespace Prisma {
   export type ShipmentCreateManyExporterInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     brokerId?: string | null
@@ -31006,10 +31138,11 @@ export namespace Prisma {
   export type ShipmentCreateManyBrokerInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -31347,10 +31480,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutImporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -31362,10 +31496,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutImporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31377,10 +31512,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateManyWithoutImporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31390,10 +31526,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutExporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -31405,10 +31542,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutExporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31420,10 +31558,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateManyWithoutExporterInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31433,10 +31572,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutBrokerInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
@@ -31448,10 +31588,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutBrokerInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -31463,10 +31604,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateManyWithoutBrokerInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -31641,10 +31783,11 @@ export namespace Prisma {
   export type ShipmentCreateManyServiceInput = {
     id?: string
     status?: $Enums.ShipmentStatus
-    vesselName?: string | null
-    airwayBill?: string | null
-    etd?: Date | string | null
-    eta?: Date | string | null
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
     createdAt?: Date | string
     importerId: string
     exporterId: string
@@ -31662,10 +31805,11 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
@@ -31677,10 +31821,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
@@ -31692,10 +31837,11 @@ export namespace Prisma {
   export type ShipmentUncheckedUpdateManyWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    airwayBill?: NullableStringFieldUpdateOperationsInput | string | null
-    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string

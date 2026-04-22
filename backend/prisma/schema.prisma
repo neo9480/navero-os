@@ -309,21 +309,10 @@ enum ShipmentStatus {
 }
 
 enum ShipmentEventType {
-  BOOKED // Freight booking confirmed with carrier
-  CARGO_RECEIVED // Cargo received at origin CFS / terminal
-  LOADED // Container loaded onto vessel / aircraft
-  DEPARTED // Vessel / aircraft departed origin port
   IN_TRANSIT // Active ocean / air transit in progress
-  ARRIVED_PORT // Vessel arrived at destination port
-  DISCHARGED // Container discharged from vessel to terminal
-  AT_CFS // Container moved to Container Freight Station
   CUSTOMS_HOLD // Held for customs examination or query
-  DOCUMENT_VERIFIED // Customs verified the docs
-  CUSTOMS_CLEARED // Out-of-Charge order issued — free to collect
-  OUT_FOR_DELIVERY // On last-mile truck for delivery to warehouse
   DELIVERED // Goods delivered and GRN signed at warehouse
   DELAYED
-  EXCEPTION // Damage, loss, delay, or other exception event
 }
 
 enum TransactionType {
@@ -480,10 +469,11 @@ model LC {
 model Shipment {
   id         String         @id @default(cuid())
   status     ShipmentStatus @default(CREATED)
-  vesselName String?
-  airwayBill String?
-  etd        DateTime?
-  eta        DateTime?
+  carrier String
+  etd        DateTime
+  eta        DateTime
+  origin String
+  destination String
   createdAt  DateTime       @default(now())
 
   importerId String

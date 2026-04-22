@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.0.1
- * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+ * Prisma Client JS version: 7.7.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 Prisma.prismaVersion = {
-  client: "7.0.1",
-  engine: "f09f2815f091dbba658cdcd2264306d88bb5bda6"
+  client: "7.7.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -180,10 +180,11 @@ exports.Prisma.LCScalarFieldEnum = {
 exports.Prisma.ShipmentScalarFieldEnum = {
   id: 'id',
   status: 'status',
-  vesselName: 'vesselName',
-  airwayBill: 'airwayBill',
+  carrier: 'carrier',
   etd: 'etd',
   eta: 'eta',
+  origin: 'origin',
+  destination: 'destination',
   createdAt: 'createdAt',
   importerId: 'importerId',
   exporterId: 'exporterId',
@@ -344,21 +345,10 @@ exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
 };
 
 exports.ShipmentEventType = exports.$Enums.ShipmentEventType = {
-  BOOKED: 'BOOKED',
-  CARGO_RECEIVED: 'CARGO_RECEIVED',
-  LOADED: 'LOADED',
-  DEPARTED: 'DEPARTED',
   IN_TRANSIT: 'IN_TRANSIT',
-  ARRIVED_PORT: 'ARRIVED_PORT',
-  DISCHARGED: 'DISCHARGED',
-  AT_CFS: 'AT_CFS',
   CUSTOMS_HOLD: 'CUSTOMS_HOLD',
-  DOCUMENT_VERIFIED: 'DOCUMENT_VERIFIED',
-  CUSTOMS_CLEARED: 'CUSTOMS_CLEARED',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
   DELIVERED: 'DELIVERED',
-  DELAYED: 'DELAYED',
-  EXCEPTION: 'EXCEPTION'
+  DELAYED: 'DELAYED'
 };
 
 exports.DocumentType = exports.$Enums.DocumentType = {

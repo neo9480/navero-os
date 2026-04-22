@@ -98,7 +98,7 @@ const DataTable = ({ tableData }) => {
         </div>
       </div>
       <ScrollArea >
-        <div className="text-platinum-500 font-neue_montreal max-h-[60vh]">
+        <div className="text-platinum-500 font-neue_montreal max-h-60vh]">
           <Table>
             <TableHeader className={"bg-zinc-900"}>
               <TableRow className="">

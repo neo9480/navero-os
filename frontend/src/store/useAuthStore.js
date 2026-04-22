@@ -103,6 +103,9 @@ const useAuthStore = create((set) => ({
       set({ error: error.response?.data?.message || "error downloading file" });
       throw error;
     }
+  },
+  getShipments: async () => {
+    
   }
 }));
 

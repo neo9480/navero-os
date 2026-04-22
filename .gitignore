@@ -148,3 +148,5 @@ combine.js
 test_creds.txt
 
 .agents
+generateData.js
+backend/importSeed.js

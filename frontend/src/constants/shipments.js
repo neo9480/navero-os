@@ -546,21 +546,10 @@ export const SHIPMENTS = [
   },
 ];
 export const shipmentStatusFilterParams = [
-  { id: 0, label: "Booked", value: "BOOKED" },
-  { id: 1, label: "Cargo Recieved", value: "CARGO_RECEIVED" },
-  { id: 2, label: "Loaded", value: "LOADED" },
-  { id: 3, label: "Departed", value: "DEPARTED" },
   { id: 4, label: "In Transit", value: "IN_TRANSIT" },
-  { id: 5, label: "Arrived at Port", value: "ARRIVED_PORT" },
-  { id: 6, label: "Discharged", value: "DISCHARGED" },
-  { id: 7, label: "At CFS", value: "AT_CFS" },
   { id: 8, label: "Customs Hold", value: "CUSTOMS_HOLD" },
-  { id: 9, label: "Docs Verified", value: "DOCUMENT_VERIFIED" },
-  { id: 10, label: "Customs CLeared", value: "CUSTOMS_CLEARED" },
-  { id: 11, label: "Out For Delivery", value: "OUT_FOR_DELIVERY" },
   { id: 12, label: "Delivered", value: "DELIVERED" },
   { id: 13, label: "Delayed", value: "DELAYED" },
-  { id: 14, label: "Exception", value: "EXCEPTION" },
 ];
 
 export const shipmentOriginFilterParams = [
