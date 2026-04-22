@@ -19,6 +19,7 @@ const useAuthStore = create((set) => ({
   userId: null,
   fileUrl: null,
   error: null,
+  isAuthReady: false,
 
   signUp: async (
     email,
@@ -51,7 +52,6 @@ const useAuthStore = create((set) => ({
       throw error;
     }
   },
-
   login: async (email, password) => {
     try {
       const res = await axios.post(
@@ -67,7 +67,38 @@ const useAuthStore = create((set) => ({
       throw error;
     }
   },
-
+  refresh: async () => {
+    try {
+      const res = await axios.post( `${ BASE_AUTH_URL }/refresh`,{}, { withCredentials: true } )
+      const accessToken = res.data.accessToken
+      set({ accessToken: accessToken, isAuthReady: true });
+      
+      const userRes = await axios.get(`${BASE_AUTH_URL}/me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
+      });
+      set({ user: userRes.data.user });
+    } catch ( error ) {
+      set({ error: error.response?.data?.message || "error fetching user", accessToken: null, user: null });
+      throw error;
+    }
+    
+  },
+  getUser: async () => {
+    try {
+      const accessToken = useAuthStore.getState().accessToken;
+      const res = await axios.get(`${BASE_AUTH_URL}/me`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
+      set({ user: res.data.user });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "error fetching user" });
+      throw error;
+    }
+  },
   sendCode: async (email) => {
     try {
       const res = await axios.post(`${BASE_AUTH_URL}/send-code`, { email });
@@ -95,18 +126,17 @@ const useAuthStore = create((set) => ({
   },
   downloadDoc: async (fileId) => {
     try {
-      const res = await axios.get( `${ BASE_DOCUMENT_URL }/download/${ fileId }` )
+      const res = await axios.get(`${BASE_DOCUMENT_URL}/download/${fileId}`);
       const fileUrl = res.data.downloadUrl;
-      set( { message: res.data.message, fileUrl: fileUrl } )
-      return fileUrl
+      set({ message: res.data.message, fileUrl: fileUrl });
+      return fileUrl;
     } catch (error) {
       set({ error: error.response?.data?.message || "error downloading file" });
       throw error;
     }
   },
-  getShipments: async () => {
-    
-  }
+
+  getShipments: async () => {},
 }));
 
 export default useAuthStore;

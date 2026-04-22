@@ -98,7 +98,7 @@ const DashboardLayout = ({ children }) => {
             </div>
           </nav>
         }
-        <div className="m-[0.5vh] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
+        <div className="m-[0.5vh] max-w-[79.5vw] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
           <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
             <span className="text-3xl">Welcome, {userName ? userName : "j"}</span>
             <div className="flex h-[5vh] justify-center items-center gap-3">
@@ -109,7 +109,7 @@ const DashboardLayout = ({ children }) => {
             </div>
           </nav>
           <hr className="border-zinc-700" />
-          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh] p-6">
+          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh] p-5">
             {children}
           </ScrollArea>
         </div>

@@ -15,6 +15,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
 import Subscriptions from "./pages/Subscriptions";
 import Invoices from "./pages/Invoices";
+import useAuthStore from "./store/useAuthStore";
 
 const App = () => {
   useEffect(() => {
@@ -27,8 +28,9 @@ const App = () => {
 
   // Loader only on first load of "/"
   const [showLoader, setShowLoader] = useState(pathname === "/");
-
   const [displayLocation, setDisplayLocation] = useState(location);
+
+  const { refresh } = useAuthStore();
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDisplayLocation(location);
@@ -36,6 +38,17 @@ const App = () => {
 
     return () => clearTimeout(timeout);
   }, [location]);
+
+  useEffect( () => {
+    refresh();
+    const timeout = setTimeout(
+      async () => {
+        await refresh();
+      },
+      4 * 60 * 1000,
+    );
+    return () => clearTimeout(timeout);
+  }, [refresh]);
 
   // LocomotiveScroll: create once, destroy properly
 
