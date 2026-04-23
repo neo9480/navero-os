@@ -39,7 +39,7 @@ export const dashboardNavItems = [
     items: [
       { id: 7, label: "Notifications", path: "/notifications", icon: Bell },
       { id: 8, label: "Settings", path: "/settings", icon: Settings },
-      { id: 9, label: "Profile", path: "/Profile", icon: User },
+      { id: 9, label: "Profile", path: "/profile", icon: User },
       
     ],
   },

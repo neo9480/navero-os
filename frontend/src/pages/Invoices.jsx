@@ -1,11 +1,11 @@
 import React from "react";
-import Dashboard from "./Dashboard";
+import DashboardLayout from "@/components/dashboardComponents/DashboardLayout";
 
 const Invoices = () => {
   return (
-    <Dashboard>
+    <DashboardLayout>
       <div>Invoices</div>
-    </Dashboard>
+    </DashboardLayout>
   );
 };
 
