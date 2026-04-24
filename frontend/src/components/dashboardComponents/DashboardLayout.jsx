@@ -11,6 +11,7 @@ import Notifications from "./Notifications";
 import { ACTIVITIES } from "@/constants/dashboard";
 import useAuthStore from "@/store/useAuthStore";
 import { useEffect } from "react";
+import ShadowLoader from "../commonComponents/ShadowLoader";
 
 const DashboardLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -27,14 +28,14 @@ const DashboardLayout = ({ children }) => {
   if (!isAuthReady)
     return (
       <DashboardLayout className="flex justify-center items-center text-2xl text-platinum-500">
-        Initializing...
+        <ShadowLoader />
       </DashboardLayout>
     );
 
   if (!user)
     return (
       <DashboardLayout className="flex justify-center items-center text-2xl text-platinum-500">
-        Loading...
+        <ShadowLoader />
       </DashboardLayout>
     );
   
@@ -126,7 +127,7 @@ const DashboardLayout = ({ children }) => {
             </ScrollArea>
           </nav>
         }
-        <div className="m-[0.5vh] max-w-[79.5vw] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
+        <div className={`m-[0.5vh] ${!collapsed ? "max-w-[79.5vw]" : "w-full"} w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700`}>
           <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
             <span className="text-3xl">
               Welcome, {userName ? userName : "John Doe"}

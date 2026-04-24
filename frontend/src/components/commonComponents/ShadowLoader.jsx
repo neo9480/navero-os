@@ -5,7 +5,7 @@ const ShadowLoader = () => {
   return (
     <div className='w-full flex bg-space_indigo-100 justify-center items-center h-full'>
       <CircularText 
-        text={"WELCOME*TO*NAVERO*"}
+        text={"NAVéRO*TRADE*WITHOUT*FRICTION*"}
         spinDuration={7}
         className='pointer-events-none'
       />

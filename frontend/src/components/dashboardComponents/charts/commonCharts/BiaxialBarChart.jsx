@@ -16,7 +16,7 @@ const BiaxialBarChart = ({ className }) => {
   return (
     <Card
       className={cn(
-        "bg-space_indigo-100 text-platinum-500 h-[60vh] w-[38vw]",
+        "bg-space_indigo-100 text-platinum-500 h-[60vh] w-full",
         className,
       )}>
       <CardContent>

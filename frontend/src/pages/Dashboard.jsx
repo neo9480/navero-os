@@ -10,7 +10,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
-        <div className="flex justify-between">
+        <div className="flex gap-5">
           <BiaxialLineChart />
           <BarChart />
         </div>
