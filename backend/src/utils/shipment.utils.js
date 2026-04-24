@@ -5,8 +5,11 @@ async function createShipment(
   exporterId,
   brokerId,
   serviceId,
-  etd,
-  eta,
+  operationId,
+  carrier,
+  origin,
+  destination,
+  documents,
 ) {
   return prisma.shipment.create({
     data: {
@@ -14,8 +17,11 @@ async function createShipment(
       exporterId,
       brokerId,
       serviceId,
-      etd,
-      eta,
+      operationId,
+      carrier,
+      origin,
+      destination,
+      documents,
     },
   });
 }
@@ -35,14 +41,7 @@ async function getShipmentById(id) {
 }
 
 async function getShipments() {
-  return prisma.shipment.findMany({
-    include: {
-      importer: true,
-      exporter: true,
-      broker: true,
-      service: true,
-    },
-  });
+  return prisma.shipment.findMany({orderBy: createdAt});
 }
 
 async function getImporterShipments(userId) {
@@ -87,6 +86,12 @@ async function getBrokerShipments(userId) {
   });
 }
 
+async function getAllShipmentInOperation(id) {
+  return prisma.shipment.findMany( {
+    where: { operationId: id },
+  })
+}
+
 async function deleteShipment(id) {
   return prisma.shipment.delete({
     where: { id },
@@ -100,5 +105,6 @@ export default {
   getImporterShipments,
   getExporterShipments,
   getBrokerShipments,
+  getAllShipmentInOperation,
   deleteShipment,
 };

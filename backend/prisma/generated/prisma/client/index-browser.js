@@ -186,6 +186,7 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   origin: 'origin',
   destination: 'destination',
   createdAt: 'createdAt',
+  operationId: 'operationId',
   importerId: 'importerId',
   exporterId: 'exporterId',
   brokerId: 'brokerId',
@@ -297,6 +298,18 @@ exports.Prisma.OTPScalarFieldEnum = {
   expiresAt: 'expiresAt',
   attempts: 'attempts',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.OperationsScalarFieldEnum = {
+  id: 'id',
+  importerId: 'importerId',
+  exporterId: 'exporterId',
+  brokerId: 'brokerId',
+  serviceId: 'serviceId',
+  bankId: 'bankId',
+  logisticsId: 'logisticsId',
+  shipmentId: 'shipmentId',
+  status: 'status'
 };
 
 exports.Prisma.SortOrder = {
@@ -579,6 +592,12 @@ exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
   EXPIRED: 'EXPIRED'
 };
 
+exports.OperationStatus = exports.$Enums.OperationStatus = {
+  INITIATED: 'INITIATED',
+  ON_GOING: 'ON_GOING',
+  COMPLETED: 'COMPLETED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Service: 'Service',
@@ -594,7 +613,8 @@ exports.Prisma.ModelName = {
   Booking: 'Booking',
   DailyStats: 'DailyStats',
   Subscription: 'Subscription',
-  OTP: 'OTP'
+  OTP: 'OTP',
+  Operations: 'Operations'
 };
 
 /**

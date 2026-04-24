@@ -11,21 +11,20 @@ import Notifications from "./Notifications";
 import { ACTIVITIES } from "@/constants/dashboard";
 
 const DashboardLayout = ({ children }) => {
-  const [ collapsed, setCollapsed ] = useState( false );
+  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const sidebarNavItems = dashboardNavItems;
-  const userName = "Acme Inc."
+  const userName = "Acme Inc.";
   const [notificationArray, setNotificationArray] = useState(ACTIVITIES);
 
-
-  // from backend use "read" and "unread" to toggle notification icon. 
-  // And make a function to make the notification "read" or "unread". 
+  // from backend use "read" and "unread" to toggle notification icon.
+  // And make a function to make the notification "read" or "unread".
   // From backend update search result
 
   return (
     <div>
       <ABgDark />
-      <div className="bg-zinc-900/70 text-platinum-500 font-host_grotesk z-10 backdrop-blur-xl w-full h-screen flex ">
+      <div className="bg-zinc-900/70 text-platinum-500 font-host_grotesk z-10 backdrop-blur-xl w-full h-screen flex overflow-hidden">
         {collapsed ?
           <nav className="h-full w-[5vw]">
             <div className="h-[10vh] flex justify-center items-center">
@@ -37,25 +36,28 @@ const DashboardLayout = ({ children }) => {
                 />
               </div>
             </div>
-            <div className="h-[90vh] flex flex-col pt-10 items-center gap-8">
-              {sidebarNavItems.map(({ group, items }) => {
-                return (
-                  <div key={group} className="flex flex-col gap-2">
-                    {items.map(({ id, path, icon: Icon }) => {
-                      const isActive = location.pathname === path;
-                      return (
-                        <div
-                          key={id}
-                          className={`h-[4vh] w-[4vh] flex justify-center items-center hover:bg-flag_red-500/50 rounded-sm ${isActive && "bg-flag_red-400"}`}>
-                          <a href={path}>
-                            <Icon className={`size-6`} />
-                          </a>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+
+            <div className="max-h-[90vh] flex flex-col pt-10 items-center gap-8">
+              <ScrollArea onWheel={(e) => e.stopPropagation()}>
+                {sidebarNavItems.map(({ group, items }) => {
+                  return (
+                    <div key={group} className="flex flex-col gap-2">
+                      {items.map(({ id, path, icon: Icon }) => {
+                        const isActive = location.pathname === path;
+                        return (
+                          <div
+                            key={id}
+                            className={`h-[4vh] w-[4vh] flex justify-center items-center hover:bg-flag_red-500/50 rounded-sm ${isActive && "bg-flag_red-400"}`}>
+                            <a href={path}>
+                              <Icon className={`size-6`} />
+                            </a>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </ScrollArea>
             </div>
           </nav>
         : <nav className="h-full w-[20vw]">
@@ -71,45 +73,57 @@ const DashboardLayout = ({ children }) => {
                 />
               </span>
             </div>
-            <div className="h-[90vh] w-full flex flex-col p-7 gap-8">
-              {sidebarNavItems.map(({ group, items }) => {
-                return (
-                  <div key={group} className="">
-                    <p className="text-platinum-500/50">{group}</p>
-                    {items.map(({ id, label, path, icon: Icon }) => {
-                      const isActive = location.pathname === path;
-                      return (
-                        <Link
-                          key={id}
-                          to={path}
-                          className={`flex items-center w-full rounded-sm hover:bg-flag_red-500/50 cursor-pointer ${isActive && "bg-flag_red-500/80"} mt-1 border border-lavender_grey-200/50 shadow  p-1.5`}>
-                          <div
+            <ScrollArea onWheel={(e) => e.stopPropagation()}>
+              <div className="h-[90vh] w-full flex flex-col p-7 gap-8">
+                {sidebarNavItems.map(({ group, items }) => {
+                  return (
+                    <div key={group} className="">
+                      <p className="text-platinum-500/50">{group}</p>
+                      {items.map(({ id, label, path, icon: Icon }) => {
+                        const isActive = location.pathname === path;
+                        return (
+                          <Link
                             key={id}
-                            className=" flex justify-center items-center gap-2">
-                            <Icon className="size-6 " />
-                            <p className="">{label}</p>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
+                            to={path}
+                            className={`flex items-center w-full rounded-sm hover:bg-flag_red-500/50 cursor-pointer ${isActive && "bg-flag_red-500/80"} mt-1 border border-lavender_grey-200/50 shadow  p-1.5`}>
+                            <div
+                              key={id}
+                              className=" flex justify-center items-center gap-2">
+                              <Icon className="size-6 " />
+                              <p className="">{label}</p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </nav>
         }
         <div className="m-[0.5vh] max-w-[79.5vw] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
           <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
-            <span className="text-3xl">Welcome, {userName ? userName : "j"}</span>
+            <span className="text-3xl">
+              Welcome, {userName ? userName : "j"}
+            </span>
             <div className="flex h-[5vh] justify-center items-center gap-3">
               <InputSearch />
-              <Notifications notificationArray={notificationArray} setNotificationArray={setNotificationArray}/>
+              <Notifications
+                notificationArray={notificationArray}
+                setNotificationArray={setNotificationArray}
+              />
               <Separator orientation="vertical" />
-              <UserAvatar userName={"Acme Inc."} userEmail={"example@email.com"}/>
+              <UserAvatar
+                userName={"Acme Inc."}
+                userEmail={"example@email.com"}
+              />
             </div>
           </nav>
           <hr className="border-zinc-700" />
-          <ScrollArea onWheel={(e) => e.stopPropagation()} className="h-[88vh] p-5">
+          <ScrollArea
+            onWheel={(e) => e.stopPropagation()}
+            className="h-[88vh] p-5">
             {children}
           </ScrollArea>
         </div>

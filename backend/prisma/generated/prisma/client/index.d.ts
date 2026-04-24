@@ -88,6 +88,11 @@ export type Subscription = $Result.DefaultSelection<Prisma.$SubscriptionPayload>
  * 
  */
 export type OTP = $Result.DefaultSelection<Prisma.$OTPPayload>
+/**
+ * Model Operations
+ * 
+ */
+export type Operations = $Result.DefaultSelection<Prisma.$OperationsPayload>
 
 /**
  * Enums
@@ -403,6 +408,15 @@ export const SubscriptionStatus: {
 
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
 
+
+export const OperationStatus: {
+  INITIATED: 'INITIATED',
+  ON_GOING: 'ON_GOING',
+  COMPLETED: 'COMPLETED'
+};
+
+export type OperationStatus = (typeof OperationStatus)[keyof typeof OperationStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -456,6 +470,10 @@ export const BookingStatus: typeof $Enums.BookingStatus
 export type SubscriptionStatus = $Enums.SubscriptionStatus
 
 export const SubscriptionStatus: typeof $Enums.SubscriptionStatus
+
+export type OperationStatus = $Enums.OperationStatus
+
+export const OperationStatus: typeof $Enums.OperationStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -727,6 +745,16 @@ export class PrismaClient<
     * ```
     */
   get oTP(): Prisma.OTPDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.operations`: Exposes CRUD operations for the **Operations** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Operations
+    * const operations = await prisma.operations.findMany()
+    * ```
+    */
+  get operations(): Prisma.OperationsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1175,7 +1203,8 @@ export namespace Prisma {
     Booking: 'Booking',
     DailyStats: 'DailyStats',
     Subscription: 'Subscription',
-    OTP: 'OTP'
+    OTP: 'OTP',
+    Operations: 'Operations'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1191,7 +1220,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "service" | "quoteRequest" | "quoteResponse" | "lC" | "shipment" | "shipmentEvent" | "document" | "notification" | "session" | "transaction" | "booking" | "dailyStats" | "subscription" | "oTP"
+      modelProps: "user" | "service" | "quoteRequest" | "quoteResponse" | "lC" | "shipment" | "shipmentEvent" | "document" | "notification" | "session" | "transaction" | "booking" | "dailyStats" | "subscription" | "oTP" | "operations"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2305,6 +2334,80 @@ export namespace Prisma {
           }
         }
       }
+      Operations: {
+        payload: Prisma.$OperationsPayload<ExtArgs>
+        fields: Prisma.OperationsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OperationsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OperationsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          findFirst: {
+            args: Prisma.OperationsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OperationsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          findMany: {
+            args: Prisma.OperationsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>[]
+          }
+          create: {
+            args: Prisma.OperationsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          createMany: {
+            args: Prisma.OperationsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OperationsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>[]
+          }
+          delete: {
+            args: Prisma.OperationsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          update: {
+            args: Prisma.OperationsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          deleteMany: {
+            args: Prisma.OperationsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OperationsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OperationsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>[]
+          }
+          upsert: {
+            args: Prisma.OperationsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OperationsPayload>
+          }
+          aggregate: {
+            args: Prisma.OperationsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOperations>
+          }
+          groupBy: {
+            args: Prisma.OperationsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OperationsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OperationsCountArgs<ExtArgs>
+            result: $Utils.Optional<OperationsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2428,6 +2531,7 @@ export namespace Prisma {
     dailyStats?: DailyStatsOmit
     subscription?: SubscriptionOmit
     oTP?: OTPOmit
+    operations?: OperationsOmit
   }
 
   /* Types for Logging */
@@ -2525,6 +2629,11 @@ export namespace Prisma {
     transactions: number
     bookings: number
     otp: number
+    operationsAsImporter: number
+    operationsAsExporter: number
+    operationsAsBank: number
+    operationsAsBroker: number
+    operationsAsLogistics: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2545,6 +2654,11 @@ export namespace Prisma {
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
     bookings?: boolean | UserCountOutputTypeCountBookingsArgs
     otp?: boolean | UserCountOutputTypeCountOtpArgs
+    operationsAsImporter?: boolean | UserCountOutputTypeCountOperationsAsImporterArgs
+    operationsAsExporter?: boolean | UserCountOutputTypeCountOperationsAsExporterArgs
+    operationsAsBank?: boolean | UserCountOutputTypeCountOperationsAsBankArgs
+    operationsAsBroker?: boolean | UserCountOutputTypeCountOperationsAsBrokerArgs
+    operationsAsLogistics?: boolean | UserCountOutputTypeCountOperationsAsLogisticsArgs
   }
 
   // Custom InputTypes
@@ -2677,6 +2791,41 @@ export namespace Prisma {
     where?: OTPWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOperationsAsImporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOperationsAsExporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOperationsAsBankArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOperationsAsBrokerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOperationsAsLogisticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+  }
+
 
   /**
    * Count Type ServiceCountOutputType
@@ -2685,11 +2834,13 @@ export namespace Prisma {
   export type ServiceCountOutputType = {
     shipments: number
     bookings: number
+    operations: number
   }
 
   export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipments?: boolean | ServiceCountOutputTypeCountShipmentsArgs
     bookings?: boolean | ServiceCountOutputTypeCountBookingsArgs
+    operations?: boolean | ServiceCountOutputTypeCountOperationsArgs
   }
 
   // Custom InputTypes
@@ -2715,6 +2866,13 @@ export namespace Prisma {
    */
   export type ServiceCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BookingWhereInput
+  }
+
+  /**
+   * ServiceCountOutputType without action
+   */
+  export type ServiceCountOutputTypeCountOperationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
   }
 
 
@@ -2787,11 +2945,13 @@ export namespace Prisma {
   export type ShipmentCountOutputType = {
     documents: number
     events: number
+    shipmentsInOperation: number
   }
 
   export type ShipmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     documents?: boolean | ShipmentCountOutputTypeCountDocumentsArgs
     events?: boolean | ShipmentCountOutputTypeCountEventsArgs
+    shipmentsInOperation?: boolean | ShipmentCountOutputTypeCountShipmentsInOperationArgs
   }
 
   // Custom InputTypes
@@ -2817,6 +2977,13 @@ export namespace Prisma {
    */
   export type ShipmentCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ShipmentEventWhereInput
+  }
+
+  /**
+   * ShipmentCountOutputType without action
+   */
+  export type ShipmentCountOutputTypeCountShipmentsInOperationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
   }
 
 
@@ -3054,6 +3221,11 @@ export namespace Prisma {
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     otp?: boolean | User$otpArgs<ExtArgs>
     subscription?: boolean | User$subscriptionArgs<ExtArgs>
+    operationsAsImporter?: boolean | User$operationsAsImporterArgs<ExtArgs>
+    operationsAsExporter?: boolean | User$operationsAsExporterArgs<ExtArgs>
+    operationsAsBank?: boolean | User$operationsAsBankArgs<ExtArgs>
+    operationsAsBroker?: boolean | User$operationsAsBrokerArgs<ExtArgs>
+    operationsAsLogistics?: boolean | User$operationsAsLogisticsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3119,6 +3291,11 @@ export namespace Prisma {
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     otp?: boolean | User$otpArgs<ExtArgs>
     subscription?: boolean | User$subscriptionArgs<ExtArgs>
+    operationsAsImporter?: boolean | User$operationsAsImporterArgs<ExtArgs>
+    operationsAsExporter?: boolean | User$operationsAsExporterArgs<ExtArgs>
+    operationsAsBank?: boolean | User$operationsAsBankArgs<ExtArgs>
+    operationsAsBroker?: boolean | User$operationsAsBrokerArgs<ExtArgs>
+    operationsAsLogistics?: boolean | User$operationsAsLogisticsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3145,6 +3322,11 @@ export namespace Prisma {
       bookings: Prisma.$BookingPayload<ExtArgs>[]
       otp: Prisma.$OTPPayload<ExtArgs>[]
       subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
+      operationsAsImporter: Prisma.$OperationsPayload<ExtArgs>[]
+      operationsAsExporter: Prisma.$OperationsPayload<ExtArgs>[]
+      operationsAsBank: Prisma.$OperationsPayload<ExtArgs>[]
+      operationsAsBroker: Prisma.$OperationsPayload<ExtArgs>[]
+      operationsAsLogistics: Prisma.$OperationsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3570,6 +3752,11 @@ export namespace Prisma {
     bookings<T extends User$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     otp<T extends User$otpArgs<ExtArgs> = {}>(args?: Subset<T, User$otpArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OTPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     subscription<T extends User$subscriptionArgs<ExtArgs> = {}>(args?: Subset<T, User$subscriptionArgs<ExtArgs>>): Prisma__SubscriptionClient<$Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    operationsAsImporter<T extends User$operationsAsImporterArgs<ExtArgs> = {}>(args?: Subset<T, User$operationsAsImporterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    operationsAsExporter<T extends User$operationsAsExporterArgs<ExtArgs> = {}>(args?: Subset<T, User$operationsAsExporterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    operationsAsBank<T extends User$operationsAsBankArgs<ExtArgs> = {}>(args?: Subset<T, User$operationsAsBankArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    operationsAsBroker<T extends User$operationsAsBrokerArgs<ExtArgs> = {}>(args?: Subset<T, User$operationsAsBrokerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    operationsAsLogistics<T extends User$operationsAsLogisticsArgs<ExtArgs> = {}>(args?: Subset<T, User$operationsAsLogisticsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4430,6 +4617,126 @@ export namespace Prisma {
   }
 
   /**
+   * User.operationsAsImporter
+   */
+  export type User$operationsAsImporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * User.operationsAsExporter
+   */
+  export type User$operationsAsExporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * User.operationsAsBank
+   */
+  export type User$operationsAsBankArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * User.operationsAsBroker
+   */
+  export type User$operationsAsBrokerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * User.operationsAsLogistics
+   */
+  export type User$operationsAsLogisticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4657,6 +4964,7 @@ export namespace Prisma {
     provider?: boolean | UserDefaultArgs<ExtArgs>
     shipments?: boolean | Service$shipmentsArgs<ExtArgs>
     bookings?: boolean | Service$bookingsArgs<ExtArgs>
+    operations?: boolean | Service$operationsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
@@ -4694,6 +5002,7 @@ export namespace Prisma {
     provider?: boolean | UserDefaultArgs<ExtArgs>
     shipments?: boolean | Service$shipmentsArgs<ExtArgs>
     bookings?: boolean | Service$bookingsArgs<ExtArgs>
+    operations?: boolean | Service$operationsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4709,6 +5018,7 @@ export namespace Prisma {
       provider: Prisma.$UserPayload<ExtArgs>
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
       bookings: Prisma.$BookingPayload<ExtArgs>[]
+      operations: Prisma.$OperationsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5114,6 +5424,7 @@ export namespace Prisma {
     provider<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     shipments<T extends Service$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Service$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookings<T extends Service$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Service$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    operations<T extends Service$operationsArgs<ExtArgs> = {}>(args?: Subset<T, Service$operationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5595,6 +5906,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+  }
+
+  /**
+   * Service.operations
+   */
+  export type Service$operationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
   }
 
   /**
@@ -9144,6 +9479,7 @@ export namespace Prisma {
     origin: string | null
     destination: string | null
     createdAt: Date | null
+    operationId: string | null
     importerId: string | null
     exporterId: string | null
     brokerId: string | null
@@ -9159,6 +9495,7 @@ export namespace Prisma {
     origin: string | null
     destination: string | null
     createdAt: Date | null
+    operationId: string | null
     importerId: string | null
     exporterId: string | null
     brokerId: string | null
@@ -9174,6 +9511,7 @@ export namespace Prisma {
     origin: number
     destination: number
     createdAt: number
+    operationId: number
     importerId: number
     exporterId: number
     brokerId: number
@@ -9191,6 +9529,7 @@ export namespace Prisma {
     origin?: true
     destination?: true
     createdAt?: true
+    operationId?: true
     importerId?: true
     exporterId?: true
     brokerId?: true
@@ -9206,6 +9545,7 @@ export namespace Prisma {
     origin?: true
     destination?: true
     createdAt?: true
+    operationId?: true
     importerId?: true
     exporterId?: true
     brokerId?: true
@@ -9221,6 +9561,7 @@ export namespace Prisma {
     origin?: true
     destination?: true
     createdAt?: true
+    operationId?: true
     importerId?: true
     exporterId?: true
     brokerId?: true
@@ -9309,6 +9650,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt: Date
+    operationId: string
     importerId: string
     exporterId: string
     brokerId: string | null
@@ -9341,6 +9683,7 @@ export namespace Prisma {
     origin?: boolean
     destination?: boolean
     createdAt?: boolean
+    operationId?: boolean
     importerId?: boolean
     exporterId?: boolean
     brokerId?: boolean
@@ -9351,6 +9694,7 @@ export namespace Prisma {
     service?: boolean | Shipment$serviceArgs<ExtArgs>
     documents?: boolean | Shipment$documentsArgs<ExtArgs>
     events?: boolean | Shipment$eventsArgs<ExtArgs>
+    shipmentsInOperation?: boolean | Shipment$shipmentsInOperationArgs<ExtArgs>
     _count?: boolean | ShipmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
 
@@ -9363,6 +9707,7 @@ export namespace Prisma {
     origin?: boolean
     destination?: boolean
     createdAt?: boolean
+    operationId?: boolean
     importerId?: boolean
     exporterId?: boolean
     brokerId?: boolean
@@ -9382,6 +9727,7 @@ export namespace Prisma {
     origin?: boolean
     destination?: boolean
     createdAt?: boolean
+    operationId?: boolean
     importerId?: boolean
     exporterId?: boolean
     brokerId?: boolean
@@ -9401,13 +9747,14 @@ export namespace Prisma {
     origin?: boolean
     destination?: boolean
     createdAt?: boolean
+    operationId?: boolean
     importerId?: boolean
     exporterId?: boolean
     brokerId?: boolean
     serviceId?: boolean
   }
 
-  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "carrier" | "etd" | "eta" | "origin" | "destination" | "createdAt" | "importerId" | "exporterId" | "brokerId" | "serviceId", ExtArgs["result"]["shipment"]>
+  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "carrier" | "etd" | "eta" | "origin" | "destination" | "createdAt" | "operationId" | "importerId" | "exporterId" | "brokerId" | "serviceId", ExtArgs["result"]["shipment"]>
   export type ShipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
@@ -9415,6 +9762,7 @@ export namespace Prisma {
     service?: boolean | Shipment$serviceArgs<ExtArgs>
     documents?: boolean | Shipment$documentsArgs<ExtArgs>
     events?: boolean | Shipment$eventsArgs<ExtArgs>
+    shipmentsInOperation?: boolean | Shipment$shipmentsInOperationArgs<ExtArgs>
     _count?: boolean | ShipmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShipmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9439,6 +9787,7 @@ export namespace Prisma {
       service: Prisma.$ServicePayload<ExtArgs> | null
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       events: Prisma.$ShipmentEventPayload<ExtArgs>[]
+      shipmentsInOperation: Prisma.$OperationsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9449,6 +9798,7 @@ export namespace Prisma {
       origin: string
       destination: string
       createdAt: Date
+      operationId: string
       importerId: string
       exporterId: string
       brokerId: string | null
@@ -9853,6 +10203,7 @@ export namespace Prisma {
     service<T extends Shipment$serviceArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     documents<T extends Shipment$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     events<T extends Shipment$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    shipmentsInOperation<T extends Shipment$shipmentsInOperationArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$shipmentsInOperationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9890,6 +10241,7 @@ export namespace Prisma {
     readonly origin: FieldRef<"Shipment", 'String'>
     readonly destination: FieldRef<"Shipment", 'String'>
     readonly createdAt: FieldRef<"Shipment", 'DateTime'>
+    readonly operationId: FieldRef<"Shipment", 'String'>
     readonly importerId: FieldRef<"Shipment", 'String'>
     readonly exporterId: FieldRef<"Shipment", 'String'>
     readonly brokerId: FieldRef<"Shipment", 'String'>
@@ -10378,6 +10730,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ShipmentEventScalarFieldEnum | ShipmentEventScalarFieldEnum[]
+  }
+
+  /**
+   * Shipment.shipmentsInOperation
+   */
+  export type Shipment$shipmentsInOperationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    cursor?: OperationsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
   }
 
   /**
@@ -20621,6 +20997,1245 @@ export namespace Prisma {
 
 
   /**
+   * Model Operations
+   */
+
+  export type AggregateOperations = {
+    _count: OperationsCountAggregateOutputType | null
+    _min: OperationsMinAggregateOutputType | null
+    _max: OperationsMaxAggregateOutputType | null
+  }
+
+  export type OperationsMinAggregateOutputType = {
+    id: string | null
+    importerId: string | null
+    exporterId: string | null
+    brokerId: string | null
+    serviceId: string | null
+    bankId: string | null
+    logisticsId: string | null
+    shipmentId: string | null
+    status: $Enums.OperationStatus | null
+  }
+
+  export type OperationsMaxAggregateOutputType = {
+    id: string | null
+    importerId: string | null
+    exporterId: string | null
+    brokerId: string | null
+    serviceId: string | null
+    bankId: string | null
+    logisticsId: string | null
+    shipmentId: string | null
+    status: $Enums.OperationStatus | null
+  }
+
+  export type OperationsCountAggregateOutputType = {
+    id: number
+    importerId: number
+    exporterId: number
+    brokerId: number
+    serviceId: number
+    bankId: number
+    logisticsId: number
+    shipmentId: number
+    status: number
+    _all: number
+  }
+
+
+  export type OperationsMinAggregateInputType = {
+    id?: true
+    importerId?: true
+    exporterId?: true
+    brokerId?: true
+    serviceId?: true
+    bankId?: true
+    logisticsId?: true
+    shipmentId?: true
+    status?: true
+  }
+
+  export type OperationsMaxAggregateInputType = {
+    id?: true
+    importerId?: true
+    exporterId?: true
+    brokerId?: true
+    serviceId?: true
+    bankId?: true
+    logisticsId?: true
+    shipmentId?: true
+    status?: true
+  }
+
+  export type OperationsCountAggregateInputType = {
+    id?: true
+    importerId?: true
+    exporterId?: true
+    brokerId?: true
+    serviceId?: true
+    bankId?: true
+    logisticsId?: true
+    shipmentId?: true
+    status?: true
+    _all?: true
+  }
+
+  export type OperationsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Operations to aggregate.
+     */
+    where?: OperationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Operations to fetch.
+     */
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OperationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Operations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Operations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Operations
+    **/
+    _count?: true | OperationsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OperationsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OperationsMaxAggregateInputType
+  }
+
+  export type GetOperationsAggregateType<T extends OperationsAggregateArgs> = {
+        [P in keyof T & keyof AggregateOperations]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOperations[P]>
+      : GetScalarType<T[P], AggregateOperations[P]>
+  }
+
+
+
+
+  export type OperationsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OperationsWhereInput
+    orderBy?: OperationsOrderByWithAggregationInput | OperationsOrderByWithAggregationInput[]
+    by: OperationsScalarFieldEnum[] | OperationsScalarFieldEnum
+    having?: OperationsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OperationsCountAggregateInputType | true
+    _min?: OperationsMinAggregateInputType
+    _max?: OperationsMaxAggregateInputType
+  }
+
+  export type OperationsGroupByOutputType = {
+    id: string
+    importerId: string
+    exporterId: string
+    brokerId: string | null
+    serviceId: string | null
+    bankId: string | null
+    logisticsId: string | null
+    shipmentId: string
+    status: $Enums.OperationStatus
+    _count: OperationsCountAggregateOutputType | null
+    _min: OperationsMinAggregateOutputType | null
+    _max: OperationsMaxAggregateOutputType | null
+  }
+
+  type GetOperationsGroupByPayload<T extends OperationsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OperationsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OperationsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OperationsGroupByOutputType[P]>
+            : GetScalarType<T[P], OperationsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OperationsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    importerId?: boolean
+    exporterId?: boolean
+    brokerId?: boolean
+    serviceId?: boolean
+    bankId?: boolean
+    logisticsId?: boolean
+    shipmentId?: boolean
+    status?: boolean
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["operations"]>
+
+  export type OperationsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    importerId?: boolean
+    exporterId?: boolean
+    brokerId?: boolean
+    serviceId?: boolean
+    bankId?: boolean
+    logisticsId?: boolean
+    shipmentId?: boolean
+    status?: boolean
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["operations"]>
+
+  export type OperationsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    importerId?: boolean
+    exporterId?: boolean
+    brokerId?: boolean
+    serviceId?: boolean
+    bankId?: boolean
+    logisticsId?: boolean
+    shipmentId?: boolean
+    status?: boolean
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["operations"]>
+
+  export type OperationsSelectScalar = {
+    id?: boolean
+    importerId?: boolean
+    exporterId?: boolean
+    brokerId?: boolean
+    serviceId?: boolean
+    bankId?: boolean
+    logisticsId?: boolean
+    shipmentId?: boolean
+    status?: boolean
+  }
+
+  export type OperationsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "importerId" | "exporterId" | "brokerId" | "serviceId" | "bankId" | "logisticsId" | "shipmentId" | "status", ExtArgs["result"]["operations"]>
+  export type OperationsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }
+  export type OperationsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }
+  export type OperationsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    importer?: boolean | UserDefaultArgs<ExtArgs>
+    exporter?: boolean | UserDefaultArgs<ExtArgs>
+    bank?: boolean | Operations$bankArgs<ExtArgs>
+    broker?: boolean | Operations$brokerArgs<ExtArgs>
+    logistics?: boolean | Operations$logisticsArgs<ExtArgs>
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    service?: boolean | Operations$serviceArgs<ExtArgs>
+  }
+
+  export type $OperationsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Operations"
+    objects: {
+      importer: Prisma.$UserPayload<ExtArgs>
+      exporter: Prisma.$UserPayload<ExtArgs>
+      bank: Prisma.$UserPayload<ExtArgs> | null
+      broker: Prisma.$UserPayload<ExtArgs> | null
+      logistics: Prisma.$UserPayload<ExtArgs> | null
+      shipment: Prisma.$ShipmentPayload<ExtArgs>
+      service: Prisma.$ServicePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      importerId: string
+      exporterId: string
+      brokerId: string | null
+      serviceId: string | null
+      bankId: string | null
+      logisticsId: string | null
+      shipmentId: string
+      status: $Enums.OperationStatus
+    }, ExtArgs["result"]["operations"]>
+    composites: {}
+  }
+
+  type OperationsGetPayload<S extends boolean | null | undefined | OperationsDefaultArgs> = $Result.GetResult<Prisma.$OperationsPayload, S>
+
+  type OperationsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OperationsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OperationsCountAggregateInputType | true
+    }
+
+  export interface OperationsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Operations'], meta: { name: 'Operations' } }
+    /**
+     * Find zero or one Operations that matches the filter.
+     * @param {OperationsFindUniqueArgs} args - Arguments to find a Operations
+     * @example
+     * // Get one Operations
+     * const operations = await prisma.operations.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OperationsFindUniqueArgs>(args: SelectSubset<T, OperationsFindUniqueArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Operations that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OperationsFindUniqueOrThrowArgs} args - Arguments to find a Operations
+     * @example
+     * // Get one Operations
+     * const operations = await prisma.operations.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OperationsFindUniqueOrThrowArgs>(args: SelectSubset<T, OperationsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Operations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsFindFirstArgs} args - Arguments to find a Operations
+     * @example
+     * // Get one Operations
+     * const operations = await prisma.operations.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OperationsFindFirstArgs>(args?: SelectSubset<T, OperationsFindFirstArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Operations that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsFindFirstOrThrowArgs} args - Arguments to find a Operations
+     * @example
+     * // Get one Operations
+     * const operations = await prisma.operations.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OperationsFindFirstOrThrowArgs>(args?: SelectSubset<T, OperationsFindFirstOrThrowArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Operations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Operations
+     * const operations = await prisma.operations.findMany()
+     * 
+     * // Get first 10 Operations
+     * const operations = await prisma.operations.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const operationsWithIdOnly = await prisma.operations.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OperationsFindManyArgs>(args?: SelectSubset<T, OperationsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Operations.
+     * @param {OperationsCreateArgs} args - Arguments to create a Operations.
+     * @example
+     * // Create one Operations
+     * const Operations = await prisma.operations.create({
+     *   data: {
+     *     // ... data to create a Operations
+     *   }
+     * })
+     * 
+     */
+    create<T extends OperationsCreateArgs>(args: SelectSubset<T, OperationsCreateArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Operations.
+     * @param {OperationsCreateManyArgs} args - Arguments to create many Operations.
+     * @example
+     * // Create many Operations
+     * const operations = await prisma.operations.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OperationsCreateManyArgs>(args?: SelectSubset<T, OperationsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Operations and returns the data saved in the database.
+     * @param {OperationsCreateManyAndReturnArgs} args - Arguments to create many Operations.
+     * @example
+     * // Create many Operations
+     * const operations = await prisma.operations.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Operations and only return the `id`
+     * const operationsWithIdOnly = await prisma.operations.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OperationsCreateManyAndReturnArgs>(args?: SelectSubset<T, OperationsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Operations.
+     * @param {OperationsDeleteArgs} args - Arguments to delete one Operations.
+     * @example
+     * // Delete one Operations
+     * const Operations = await prisma.operations.delete({
+     *   where: {
+     *     // ... filter to delete one Operations
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OperationsDeleteArgs>(args: SelectSubset<T, OperationsDeleteArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Operations.
+     * @param {OperationsUpdateArgs} args - Arguments to update one Operations.
+     * @example
+     * // Update one Operations
+     * const operations = await prisma.operations.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OperationsUpdateArgs>(args: SelectSubset<T, OperationsUpdateArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Operations.
+     * @param {OperationsDeleteManyArgs} args - Arguments to filter Operations to delete.
+     * @example
+     * // Delete a few Operations
+     * const { count } = await prisma.operations.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OperationsDeleteManyArgs>(args?: SelectSubset<T, OperationsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Operations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Operations
+     * const operations = await prisma.operations.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OperationsUpdateManyArgs>(args: SelectSubset<T, OperationsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Operations and returns the data updated in the database.
+     * @param {OperationsUpdateManyAndReturnArgs} args - Arguments to update many Operations.
+     * @example
+     * // Update many Operations
+     * const operations = await prisma.operations.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Operations and only return the `id`
+     * const operationsWithIdOnly = await prisma.operations.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OperationsUpdateManyAndReturnArgs>(args: SelectSubset<T, OperationsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Operations.
+     * @param {OperationsUpsertArgs} args - Arguments to update or create a Operations.
+     * @example
+     * // Update or create a Operations
+     * const operations = await prisma.operations.upsert({
+     *   create: {
+     *     // ... data to create a Operations
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Operations we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OperationsUpsertArgs>(args: SelectSubset<T, OperationsUpsertArgs<ExtArgs>>): Prisma__OperationsClient<$Result.GetResult<Prisma.$OperationsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Operations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsCountArgs} args - Arguments to filter Operations to count.
+     * @example
+     * // Count the number of Operations
+     * const count = await prisma.operations.count({
+     *   where: {
+     *     // ... the filter for the Operations we want to count
+     *   }
+     * })
+    **/
+    count<T extends OperationsCountArgs>(
+      args?: Subset<T, OperationsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OperationsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Operations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OperationsAggregateArgs>(args: Subset<T, OperationsAggregateArgs>): Prisma.PrismaPromise<GetOperationsAggregateType<T>>
+
+    /**
+     * Group by Operations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OperationsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OperationsGroupByArgs['orderBy'] }
+        : { orderBy?: OperationsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OperationsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOperationsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Operations model
+   */
+  readonly fields: OperationsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Operations.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OperationsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    importer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    exporter<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    bank<T extends Operations$bankArgs<ExtArgs> = {}>(args?: Subset<T, Operations$bankArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    broker<T extends Operations$brokerArgs<ExtArgs> = {}>(args?: Subset<T, Operations$brokerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    logistics<T extends Operations$logisticsArgs<ExtArgs> = {}>(args?: Subset<T, Operations$logisticsArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    shipment<T extends ShipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShipmentDefaultArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    service<T extends Operations$serviceArgs<ExtArgs> = {}>(args?: Subset<T, Operations$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Operations model
+   */
+  interface OperationsFieldRefs {
+    readonly id: FieldRef<"Operations", 'String'>
+    readonly importerId: FieldRef<"Operations", 'String'>
+    readonly exporterId: FieldRef<"Operations", 'String'>
+    readonly brokerId: FieldRef<"Operations", 'String'>
+    readonly serviceId: FieldRef<"Operations", 'String'>
+    readonly bankId: FieldRef<"Operations", 'String'>
+    readonly logisticsId: FieldRef<"Operations", 'String'>
+    readonly shipmentId: FieldRef<"Operations", 'String'>
+    readonly status: FieldRef<"Operations", 'OperationStatus'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Operations findUnique
+   */
+  export type OperationsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter, which Operations to fetch.
+     */
+    where: OperationsWhereUniqueInput
+  }
+
+  /**
+   * Operations findUniqueOrThrow
+   */
+  export type OperationsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter, which Operations to fetch.
+     */
+    where: OperationsWhereUniqueInput
+  }
+
+  /**
+   * Operations findFirst
+   */
+  export type OperationsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter, which Operations to fetch.
+     */
+    where?: OperationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Operations to fetch.
+     */
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Operations.
+     */
+    cursor?: OperationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Operations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Operations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Operations.
+     */
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * Operations findFirstOrThrow
+   */
+  export type OperationsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter, which Operations to fetch.
+     */
+    where?: OperationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Operations to fetch.
+     */
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Operations.
+     */
+    cursor?: OperationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Operations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Operations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Operations.
+     */
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * Operations findMany
+   */
+  export type OperationsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter, which Operations to fetch.
+     */
+    where?: OperationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Operations to fetch.
+     */
+    orderBy?: OperationsOrderByWithRelationInput | OperationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Operations.
+     */
+    cursor?: OperationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Operations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Operations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Operations.
+     */
+    distinct?: OperationsScalarFieldEnum | OperationsScalarFieldEnum[]
+  }
+
+  /**
+   * Operations create
+   */
+  export type OperationsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Operations.
+     */
+    data: XOR<OperationsCreateInput, OperationsUncheckedCreateInput>
+  }
+
+  /**
+   * Operations createMany
+   */
+  export type OperationsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Operations.
+     */
+    data: OperationsCreateManyInput | OperationsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Operations createManyAndReturn
+   */
+  export type OperationsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * The data used to create many Operations.
+     */
+    data: OperationsCreateManyInput | OperationsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Operations update
+   */
+  export type OperationsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Operations.
+     */
+    data: XOR<OperationsUpdateInput, OperationsUncheckedUpdateInput>
+    /**
+     * Choose, which Operations to update.
+     */
+    where: OperationsWhereUniqueInput
+  }
+
+  /**
+   * Operations updateMany
+   */
+  export type OperationsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Operations.
+     */
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyInput>
+    /**
+     * Filter which Operations to update
+     */
+    where?: OperationsWhereInput
+    /**
+     * Limit how many Operations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Operations updateManyAndReturn
+   */
+  export type OperationsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * The data used to update Operations.
+     */
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyInput>
+    /**
+     * Filter which Operations to update
+     */
+    where?: OperationsWhereInput
+    /**
+     * Limit how many Operations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Operations upsert
+   */
+  export type OperationsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Operations to update in case it exists.
+     */
+    where: OperationsWhereUniqueInput
+    /**
+     * In case the Operations found by the `where` argument doesn't exist, create a new Operations with this data.
+     */
+    create: XOR<OperationsCreateInput, OperationsUncheckedCreateInput>
+    /**
+     * In case the Operations was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OperationsUpdateInput, OperationsUncheckedUpdateInput>
+  }
+
+  /**
+   * Operations delete
+   */
+  export type OperationsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+    /**
+     * Filter which Operations to delete.
+     */
+    where: OperationsWhereUniqueInput
+  }
+
+  /**
+   * Operations deleteMany
+   */
+  export type OperationsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Operations to delete
+     */
+    where?: OperationsWhereInput
+    /**
+     * Limit how many Operations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Operations.bank
+   */
+  export type Operations$bankArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Operations.broker
+   */
+  export type Operations$brokerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Operations.logistics
+   */
+  export type Operations$logisticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Operations.service
+   */
+  export type Operations$serviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Service
+     */
+    select?: ServiceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Service
+     */
+    omit?: ServiceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceInclude<ExtArgs> | null
+    where?: ServiceWhereInput
+  }
+
+  /**
+   * Operations without action
+   */
+  export type OperationsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Operations
+     */
+    select?: OperationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Operations
+     */
+    omit?: OperationsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OperationsInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -20715,6 +22330,7 @@ export namespace Prisma {
     origin: 'origin',
     destination: 'destination',
     createdAt: 'createdAt',
+    operationId: 'operationId',
     importerId: 'importerId',
     exporterId: 'exporterId',
     brokerId: 'brokerId',
@@ -20856,6 +22472,21 @@ export namespace Prisma {
   };
 
   export type OTPScalarFieldEnum = (typeof OTPScalarFieldEnum)[keyof typeof OTPScalarFieldEnum]
+
+
+  export const OperationsScalarFieldEnum: {
+    id: 'id',
+    importerId: 'importerId',
+    exporterId: 'exporterId',
+    brokerId: 'brokerId',
+    serviceId: 'serviceId',
+    bankId: 'bankId',
+    logisticsId: 'logisticsId',
+    shipmentId: 'shipmentId',
+    status: 'status'
+  };
+
+  export type OperationsScalarFieldEnum = (typeof OperationsScalarFieldEnum)[keyof typeof OperationsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -21116,6 +22747,20 @@ export namespace Prisma {
    */
   export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'OperationStatus'
+   */
+  export type EnumOperationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'OperationStatus[]'
+   */
+  export type ListEnumOperationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperationStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -21154,6 +22799,11 @@ export namespace Prisma {
     bookings?: BookingListRelationFilter
     otp?: OTPListRelationFilter
     subscription?: XOR<SubscriptionNullableScalarRelationFilter, SubscriptionWhereInput> | null
+    operationsAsImporter?: OperationsListRelationFilter
+    operationsAsExporter?: OperationsListRelationFilter
+    operationsAsBank?: OperationsListRelationFilter
+    operationsAsBroker?: OperationsListRelationFilter
+    operationsAsLogistics?: OperationsListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -21186,6 +22836,11 @@ export namespace Prisma {
     bookings?: BookingOrderByRelationAggregateInput
     otp?: OTPOrderByRelationAggregateInput
     subscription?: SubscriptionOrderByWithRelationInput
+    operationsAsImporter?: OperationsOrderByRelationAggregateInput
+    operationsAsExporter?: OperationsOrderByRelationAggregateInput
+    operationsAsBank?: OperationsOrderByRelationAggregateInput
+    operationsAsBroker?: OperationsOrderByRelationAggregateInput
+    operationsAsLogistics?: OperationsOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -21221,6 +22876,11 @@ export namespace Prisma {
     bookings?: BookingListRelationFilter
     otp?: OTPListRelationFilter
     subscription?: XOR<SubscriptionNullableScalarRelationFilter, SubscriptionWhereInput> | null
+    operationsAsImporter?: OperationsListRelationFilter
+    operationsAsExporter?: OperationsListRelationFilter
+    operationsAsBank?: OperationsListRelationFilter
+    operationsAsBroker?: OperationsListRelationFilter
+    operationsAsLogistics?: OperationsListRelationFilter
   }, "id" | "email" | "phone">
 
   export type UserOrderByWithAggregationInput = {
@@ -21270,6 +22930,7 @@ export namespace Prisma {
     provider?: XOR<UserScalarRelationFilter, UserWhereInput>
     shipments?: ShipmentListRelationFilter
     bookings?: BookingListRelationFilter
+    operations?: OperationsListRelationFilter
   }
 
   export type ServiceOrderByWithRelationInput = {
@@ -21282,6 +22943,7 @@ export namespace Prisma {
     provider?: UserOrderByWithRelationInput
     shipments?: ShipmentOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
+    operations?: OperationsOrderByRelationAggregateInput
   }
 
   export type ServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -21297,6 +22959,7 @@ export namespace Prisma {
     provider?: XOR<UserScalarRelationFilter, UserWhereInput>
     shipments?: ShipmentListRelationFilter
     bookings?: BookingListRelationFilter
+    operations?: OperationsListRelationFilter
   }, "id">
 
   export type ServiceOrderByWithAggregationInput = {
@@ -21573,6 +23236,7 @@ export namespace Prisma {
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
+    operationId?: StringFilter<"Shipment"> | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
@@ -21583,6 +23247,7 @@ export namespace Prisma {
     service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
     documents?: DocumentListRelationFilter
     events?: ShipmentEventListRelationFilter
+    shipmentsInOperation?: OperationsListRelationFilter
   }
 
   export type ShipmentOrderByWithRelationInput = {
@@ -21594,6 +23259,7 @@ export namespace Prisma {
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
+    operationId?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
     brokerId?: SortOrderInput | SortOrder
@@ -21604,6 +23270,7 @@ export namespace Prisma {
     service?: ServiceOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
     events?: ShipmentEventOrderByRelationAggregateInput
+    shipmentsInOperation?: OperationsOrderByRelationAggregateInput
   }
 
   export type ShipmentWhereUniqueInput = Prisma.AtLeast<{
@@ -21618,6 +23285,7 @@ export namespace Prisma {
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
+    operationId?: StringFilter<"Shipment"> | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
@@ -21628,6 +23296,7 @@ export namespace Prisma {
     service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
     documents?: DocumentListRelationFilter
     events?: ShipmentEventListRelationFilter
+    shipmentsInOperation?: OperationsListRelationFilter
   }, "id">
 
   export type ShipmentOrderByWithAggregationInput = {
@@ -21639,6 +23308,7 @@ export namespace Prisma {
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
+    operationId?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
     brokerId?: SortOrderInput | SortOrder
@@ -21660,6 +23330,7 @@ export namespace Prisma {
     origin?: StringWithAggregatesFilter<"Shipment"> | string
     destination?: StringWithAggregatesFilter<"Shipment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
+    operationId?: StringWithAggregatesFilter<"Shipment"> | string
     importerId?: StringWithAggregatesFilter<"Shipment"> | string
     exporterId?: StringWithAggregatesFilter<"Shipment"> | string
     brokerId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
@@ -22354,6 +24025,99 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"OTP"> | Date | string
   }
 
+  export type OperationsWhereInput = {
+    AND?: OperationsWhereInput | OperationsWhereInput[]
+    OR?: OperationsWhereInput[]
+    NOT?: OperationsWhereInput | OperationsWhereInput[]
+    id?: StringFilter<"Operations"> | string
+    importerId?: StringFilter<"Operations"> | string
+    exporterId?: StringFilter<"Operations"> | string
+    brokerId?: StringNullableFilter<"Operations"> | string | null
+    serviceId?: StringNullableFilter<"Operations"> | string | null
+    bankId?: StringNullableFilter<"Operations"> | string | null
+    logisticsId?: StringNullableFilter<"Operations"> | string | null
+    shipmentId?: StringFilter<"Operations"> | string
+    status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
+    importer?: XOR<UserScalarRelationFilter, UserWhereInput>
+    exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bank?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    logistics?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
+  }
+
+  export type OperationsOrderByWithRelationInput = {
+    id?: SortOrder
+    importerId?: SortOrder
+    exporterId?: SortOrder
+    brokerId?: SortOrderInput | SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    bankId?: SortOrderInput | SortOrder
+    logisticsId?: SortOrderInput | SortOrder
+    shipmentId?: SortOrder
+    status?: SortOrder
+    importer?: UserOrderByWithRelationInput
+    exporter?: UserOrderByWithRelationInput
+    bank?: UserOrderByWithRelationInput
+    broker?: UserOrderByWithRelationInput
+    logistics?: UserOrderByWithRelationInput
+    shipment?: ShipmentOrderByWithRelationInput
+    service?: ServiceOrderByWithRelationInput
+  }
+
+  export type OperationsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OperationsWhereInput | OperationsWhereInput[]
+    OR?: OperationsWhereInput[]
+    NOT?: OperationsWhereInput | OperationsWhereInput[]
+    importerId?: StringFilter<"Operations"> | string
+    exporterId?: StringFilter<"Operations"> | string
+    brokerId?: StringNullableFilter<"Operations"> | string | null
+    serviceId?: StringNullableFilter<"Operations"> | string | null
+    bankId?: StringNullableFilter<"Operations"> | string | null
+    logisticsId?: StringNullableFilter<"Operations"> | string | null
+    shipmentId?: StringFilter<"Operations"> | string
+    status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
+    importer?: XOR<UserScalarRelationFilter, UserWhereInput>
+    exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bank?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    logistics?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
+  }, "id">
+
+  export type OperationsOrderByWithAggregationInput = {
+    id?: SortOrder
+    importerId?: SortOrder
+    exporterId?: SortOrder
+    brokerId?: SortOrderInput | SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    bankId?: SortOrderInput | SortOrder
+    logisticsId?: SortOrderInput | SortOrder
+    shipmentId?: SortOrder
+    status?: SortOrder
+    _count?: OperationsCountOrderByAggregateInput
+    _max?: OperationsMaxOrderByAggregateInput
+    _min?: OperationsMinOrderByAggregateInput
+  }
+
+  export type OperationsScalarWhereWithAggregatesInput = {
+    AND?: OperationsScalarWhereWithAggregatesInput | OperationsScalarWhereWithAggregatesInput[]
+    OR?: OperationsScalarWhereWithAggregatesInput[]
+    NOT?: OperationsScalarWhereWithAggregatesInput | OperationsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Operations"> | string
+    importerId?: StringWithAggregatesFilter<"Operations"> | string
+    exporterId?: StringWithAggregatesFilter<"Operations"> | string
+    brokerId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
+    serviceId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
+    bankId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
+    logisticsId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
+    shipmentId?: StringWithAggregatesFilter<"Operations"> | string
+    status?: EnumOperationStatusWithAggregatesFilter<"Operations"> | $Enums.OperationStatus
+  }
+
   export type UserCreateInput = {
     id?: string
     role: $Enums.UserRole
@@ -22384,6 +24148,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -22416,6 +24185,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUpdateInput = {
@@ -22448,6 +24222,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -22480,6 +24259,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -22533,6 +24317,7 @@ export namespace Prisma {
     provider: UserCreateNestedOneWithoutServicesInput
     shipments?: ShipmentCreateNestedManyWithoutServiceInput
     bookings?: BookingCreateNestedManyWithoutServiceInput
+    operations?: OperationsCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateInput = {
@@ -22544,6 +24329,7 @@ export namespace Prisma {
     createdAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutServiceInput
     bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+    operations?: OperationsUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUpdateInput = {
@@ -22555,6 +24341,7 @@ export namespace Prisma {
     provider?: UserUpdateOneRequiredWithoutServicesNestedInput
     shipments?: ShipmentUpdateManyWithoutServiceNestedInput
     bookings?: BookingUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateInput = {
@@ -22566,6 +24353,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutServiceNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceCreateManyInput = {
@@ -22843,12 +24631,14 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateInput = {
@@ -22860,12 +24650,14 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUpdateInput = {
@@ -22877,12 +24669,14 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateInput = {
@@ -22894,12 +24688,14 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentCreateManyInput = {
@@ -22911,6 +24707,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
@@ -22926,6 +24723,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ShipmentUncheckedUpdateManyInput = {
@@ -22937,6 +24735,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23679,6 +25478,83 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OperationsCreateInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsCreateManyInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23809,6 +25685,12 @@ export namespace Prisma {
     isNot?: SubscriptionWhereInput | null
   }
 
+  export type OperationsListRelationFilter = {
+    every?: OperationsWhereInput
+    some?: OperationsWhereInput
+    none?: OperationsWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -23859,6 +25741,10 @@ export namespace Prisma {
   }
 
   export type OTPOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OperationsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24269,6 +26155,7 @@ export namespace Prisma {
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
+    operationId?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
     brokerId?: SortOrder
@@ -24284,6 +26171,7 @@ export namespace Prisma {
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
+    operationId?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
     brokerId?: SortOrder
@@ -24299,6 +26187,7 @@ export namespace Prisma {
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
+    operationId?: SortOrder
     importerId?: SortOrder
     exporterId?: SortOrder
     brokerId?: SortOrder
@@ -24880,6 +26769,59 @@ export namespace Prisma {
     attempts?: SortOrder
   }
 
+  export type EnumOperationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OperationStatus | EnumOperationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOperationStatusFilter<$PrismaModel> | $Enums.OperationStatus
+  }
+
+  export type OperationsCountOrderByAggregateInput = {
+    id?: SortOrder
+    importerId?: SortOrder
+    exporterId?: SortOrder
+    brokerId?: SortOrder
+    serviceId?: SortOrder
+    bankId?: SortOrder
+    logisticsId?: SortOrder
+    shipmentId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type OperationsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    importerId?: SortOrder
+    exporterId?: SortOrder
+    brokerId?: SortOrder
+    serviceId?: SortOrder
+    bankId?: SortOrder
+    logisticsId?: SortOrder
+    shipmentId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type OperationsMinOrderByAggregateInput = {
+    id?: SortOrder
+    importerId?: SortOrder
+    exporterId?: SortOrder
+    brokerId?: SortOrder
+    serviceId?: SortOrder
+    bankId?: SortOrder
+    logisticsId?: SortOrder
+    shipmentId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type EnumOperationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OperationStatus | EnumOperationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOperationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOperationStatusFilter<$PrismaModel>
+    _max?: NestedEnumOperationStatusFilter<$PrismaModel>
+  }
+
   export type DocumentCreateNestedManyWithoutUploadedByInput = {
     create?: XOR<DocumentCreateWithoutUploadedByInput, DocumentUncheckedCreateWithoutUploadedByInput> | DocumentCreateWithoutUploadedByInput[] | DocumentUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutUploadedByInput | DocumentCreateOrConnectWithoutUploadedByInput[]
@@ -25005,6 +26947,41 @@ export namespace Prisma {
     connect?: SubscriptionWhereUniqueInput
   }
 
+  export type OperationsCreateNestedManyWithoutImporterInput = {
+    create?: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput> | OperationsCreateWithoutImporterInput[] | OperationsUncheckedCreateWithoutImporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutImporterInput | OperationsCreateOrConnectWithoutImporterInput[]
+    createMany?: OperationsCreateManyImporterInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsCreateNestedManyWithoutExporterInput = {
+    create?: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput> | OperationsCreateWithoutExporterInput[] | OperationsUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutExporterInput | OperationsCreateOrConnectWithoutExporterInput[]
+    createMany?: OperationsCreateManyExporterInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsCreateNestedManyWithoutBankInput = {
+    create?: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput> | OperationsCreateWithoutBankInput[] | OperationsUncheckedCreateWithoutBankInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBankInput | OperationsCreateOrConnectWithoutBankInput[]
+    createMany?: OperationsCreateManyBankInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsCreateNestedManyWithoutBrokerInput = {
+    create?: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput> | OperationsCreateWithoutBrokerInput[] | OperationsUncheckedCreateWithoutBrokerInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBrokerInput | OperationsCreateOrConnectWithoutBrokerInput[]
+    createMany?: OperationsCreateManyBrokerInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsCreateNestedManyWithoutLogisticsInput = {
+    create?: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput> | OperationsCreateWithoutLogisticsInput[] | OperationsUncheckedCreateWithoutLogisticsInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutLogisticsInput | OperationsCreateOrConnectWithoutLogisticsInput[]
+    createMany?: OperationsCreateManyLogisticsInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutUploadedByInput = {
     create?: XOR<DocumentCreateWithoutUploadedByInput, DocumentUncheckedCreateWithoutUploadedByInput> | DocumentCreateWithoutUploadedByInput[] | DocumentUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutUploadedByInput | DocumentCreateOrConnectWithoutUploadedByInput[]
@@ -25128,6 +27105,41 @@ export namespace Prisma {
     create?: XOR<SubscriptionCreateWithoutUserInput, SubscriptionUncheckedCreateWithoutUserInput>
     connectOrCreate?: SubscriptionCreateOrConnectWithoutUserInput
     connect?: SubscriptionWhereUniqueInput
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutImporterInput = {
+    create?: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput> | OperationsCreateWithoutImporterInput[] | OperationsUncheckedCreateWithoutImporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutImporterInput | OperationsCreateOrConnectWithoutImporterInput[]
+    createMany?: OperationsCreateManyImporterInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutExporterInput = {
+    create?: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput> | OperationsCreateWithoutExporterInput[] | OperationsUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutExporterInput | OperationsCreateOrConnectWithoutExporterInput[]
+    createMany?: OperationsCreateManyExporterInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutBankInput = {
+    create?: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput> | OperationsCreateWithoutBankInput[] | OperationsUncheckedCreateWithoutBankInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBankInput | OperationsCreateOrConnectWithoutBankInput[]
+    createMany?: OperationsCreateManyBankInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutBrokerInput = {
+    create?: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput> | OperationsCreateWithoutBrokerInput[] | OperationsUncheckedCreateWithoutBrokerInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBrokerInput | OperationsCreateOrConnectWithoutBrokerInput[]
+    createMany?: OperationsCreateManyBrokerInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutLogisticsInput = {
+    create?: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput> | OperationsCreateWithoutLogisticsInput[] | OperationsUncheckedCreateWithoutLogisticsInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutLogisticsInput | OperationsCreateOrConnectWithoutLogisticsInput[]
+    createMany?: OperationsCreateManyLogisticsInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -25398,6 +27410,76 @@ export namespace Prisma {
     update?: XOR<XOR<SubscriptionUpdateToOneWithWhereWithoutUserInput, SubscriptionUpdateWithoutUserInput>, SubscriptionUncheckedUpdateWithoutUserInput>
   }
 
+  export type OperationsUpdateManyWithoutImporterNestedInput = {
+    create?: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput> | OperationsCreateWithoutImporterInput[] | OperationsUncheckedCreateWithoutImporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutImporterInput | OperationsCreateOrConnectWithoutImporterInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutImporterInput | OperationsUpsertWithWhereUniqueWithoutImporterInput[]
+    createMany?: OperationsCreateManyImporterInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutImporterInput | OperationsUpdateWithWhereUniqueWithoutImporterInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutImporterInput | OperationsUpdateManyWithWhereWithoutImporterInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUpdateManyWithoutExporterNestedInput = {
+    create?: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput> | OperationsCreateWithoutExporterInput[] | OperationsUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutExporterInput | OperationsCreateOrConnectWithoutExporterInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutExporterInput | OperationsUpsertWithWhereUniqueWithoutExporterInput[]
+    createMany?: OperationsCreateManyExporterInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutExporterInput | OperationsUpdateWithWhereUniqueWithoutExporterInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutExporterInput | OperationsUpdateManyWithWhereWithoutExporterInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUpdateManyWithoutBankNestedInput = {
+    create?: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput> | OperationsCreateWithoutBankInput[] | OperationsUncheckedCreateWithoutBankInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBankInput | OperationsCreateOrConnectWithoutBankInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutBankInput | OperationsUpsertWithWhereUniqueWithoutBankInput[]
+    createMany?: OperationsCreateManyBankInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutBankInput | OperationsUpdateWithWhereUniqueWithoutBankInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutBankInput | OperationsUpdateManyWithWhereWithoutBankInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUpdateManyWithoutBrokerNestedInput = {
+    create?: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput> | OperationsCreateWithoutBrokerInput[] | OperationsUncheckedCreateWithoutBrokerInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBrokerInput | OperationsCreateOrConnectWithoutBrokerInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutBrokerInput | OperationsUpsertWithWhereUniqueWithoutBrokerInput[]
+    createMany?: OperationsCreateManyBrokerInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutBrokerInput | OperationsUpdateWithWhereUniqueWithoutBrokerInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutBrokerInput | OperationsUpdateManyWithWhereWithoutBrokerInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUpdateManyWithoutLogisticsNestedInput = {
+    create?: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput> | OperationsCreateWithoutLogisticsInput[] | OperationsUncheckedCreateWithoutLogisticsInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutLogisticsInput | OperationsCreateOrConnectWithoutLogisticsInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutLogisticsInput | OperationsUpsertWithWhereUniqueWithoutLogisticsInput[]
+    createMany?: OperationsCreateManyLogisticsInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutLogisticsInput | OperationsUpdateWithWhereUniqueWithoutLogisticsInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutLogisticsInput | OperationsUpdateManyWithWhereWithoutLogisticsInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutUploadedByNestedInput = {
     create?: XOR<DocumentCreateWithoutUploadedByInput, DocumentUncheckedCreateWithoutUploadedByInput> | DocumentCreateWithoutUploadedByInput[] | DocumentUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutUploadedByInput | DocumentCreateOrConnectWithoutUploadedByInput[]
@@ -25646,6 +27728,76 @@ export namespace Prisma {
     update?: XOR<XOR<SubscriptionUpdateToOneWithWhereWithoutUserInput, SubscriptionUpdateWithoutUserInput>, SubscriptionUncheckedUpdateWithoutUserInput>
   }
 
+  export type OperationsUncheckedUpdateManyWithoutImporterNestedInput = {
+    create?: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput> | OperationsCreateWithoutImporterInput[] | OperationsUncheckedCreateWithoutImporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutImporterInput | OperationsCreateOrConnectWithoutImporterInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutImporterInput | OperationsUpsertWithWhereUniqueWithoutImporterInput[]
+    createMany?: OperationsCreateManyImporterInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutImporterInput | OperationsUpdateWithWhereUniqueWithoutImporterInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutImporterInput | OperationsUpdateManyWithWhereWithoutImporterInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutExporterNestedInput = {
+    create?: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput> | OperationsCreateWithoutExporterInput[] | OperationsUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutExporterInput | OperationsCreateOrConnectWithoutExporterInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutExporterInput | OperationsUpsertWithWhereUniqueWithoutExporterInput[]
+    createMany?: OperationsCreateManyExporterInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutExporterInput | OperationsUpdateWithWhereUniqueWithoutExporterInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutExporterInput | OperationsUpdateManyWithWhereWithoutExporterInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutBankNestedInput = {
+    create?: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput> | OperationsCreateWithoutBankInput[] | OperationsUncheckedCreateWithoutBankInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBankInput | OperationsCreateOrConnectWithoutBankInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutBankInput | OperationsUpsertWithWhereUniqueWithoutBankInput[]
+    createMany?: OperationsCreateManyBankInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutBankInput | OperationsUpdateWithWhereUniqueWithoutBankInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutBankInput | OperationsUpdateManyWithWhereWithoutBankInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutBrokerNestedInput = {
+    create?: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput> | OperationsCreateWithoutBrokerInput[] | OperationsUncheckedCreateWithoutBrokerInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutBrokerInput | OperationsCreateOrConnectWithoutBrokerInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutBrokerInput | OperationsUpsertWithWhereUniqueWithoutBrokerInput[]
+    createMany?: OperationsCreateManyBrokerInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutBrokerInput | OperationsUpdateWithWhereUniqueWithoutBrokerInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutBrokerInput | OperationsUpdateManyWithWhereWithoutBrokerInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutLogisticsNestedInput = {
+    create?: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput> | OperationsCreateWithoutLogisticsInput[] | OperationsUncheckedCreateWithoutLogisticsInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutLogisticsInput | OperationsCreateOrConnectWithoutLogisticsInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutLogisticsInput | OperationsUpsertWithWhereUniqueWithoutLogisticsInput[]
+    createMany?: OperationsCreateManyLogisticsInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutLogisticsInput | OperationsUpdateWithWhereUniqueWithoutLogisticsInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutLogisticsInput | OperationsUpdateManyWithWhereWithoutLogisticsInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutServicesInput = {
     create?: XOR<UserCreateWithoutServicesInput, UserUncheckedCreateWithoutServicesInput>
     connectOrCreate?: UserCreateOrConnectWithoutServicesInput
@@ -25666,6 +27818,13 @@ export namespace Prisma {
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
+  export type OperationsCreateNestedManyWithoutServiceInput = {
+    create?: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput> | OperationsCreateWithoutServiceInput[] | OperationsUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutServiceInput | OperationsCreateOrConnectWithoutServiceInput[]
+    createMany?: OperationsCreateManyServiceInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
   export type ShipmentUncheckedCreateNestedManyWithoutServiceInput = {
     create?: XOR<ShipmentCreateWithoutServiceInput, ShipmentUncheckedCreateWithoutServiceInput> | ShipmentCreateWithoutServiceInput[] | ShipmentUncheckedCreateWithoutServiceInput[]
     connectOrCreate?: ShipmentCreateOrConnectWithoutServiceInput | ShipmentCreateOrConnectWithoutServiceInput[]
@@ -25678,6 +27837,13 @@ export namespace Prisma {
     connectOrCreate?: BookingCreateOrConnectWithoutServiceInput | BookingCreateOrConnectWithoutServiceInput[]
     createMany?: BookingCreateManyServiceInputEnvelope
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutServiceInput = {
+    create?: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput> | OperationsCreateWithoutServiceInput[] | OperationsUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutServiceInput | OperationsCreateOrConnectWithoutServiceInput[]
+    createMany?: OperationsCreateManyServiceInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -25724,6 +27890,20 @@ export namespace Prisma {
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
   }
 
+  export type OperationsUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput> | OperationsCreateWithoutServiceInput[] | OperationsUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutServiceInput | OperationsCreateOrConnectWithoutServiceInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutServiceInput | OperationsUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: OperationsCreateManyServiceInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutServiceInput | OperationsUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutServiceInput | OperationsUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
   export type ShipmentUncheckedUpdateManyWithoutServiceNestedInput = {
     create?: XOR<ShipmentCreateWithoutServiceInput, ShipmentUncheckedCreateWithoutServiceInput> | ShipmentCreateWithoutServiceInput[] | ShipmentUncheckedCreateWithoutServiceInput[]
     connectOrCreate?: ShipmentCreateOrConnectWithoutServiceInput | ShipmentCreateOrConnectWithoutServiceInput[]
@@ -25750,6 +27930,20 @@ export namespace Prisma {
     update?: BookingUpdateWithWhereUniqueWithoutServiceInput | BookingUpdateWithWhereUniqueWithoutServiceInput[]
     updateMany?: BookingUpdateManyWithWhereWithoutServiceInput | BookingUpdateManyWithWhereWithoutServiceInput[]
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput> | OperationsCreateWithoutServiceInput[] | OperationsUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutServiceInput | OperationsCreateOrConnectWithoutServiceInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutServiceInput | OperationsUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: OperationsCreateManyServiceInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutServiceInput | OperationsUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutServiceInput | OperationsUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutQuoteRequestsInput = {
@@ -25978,6 +28172,13 @@ export namespace Prisma {
     connect?: ShipmentEventWhereUniqueInput | ShipmentEventWhereUniqueInput[]
   }
 
+  export type OperationsCreateNestedManyWithoutShipmentInput = {
+    create?: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput> | OperationsCreateWithoutShipmentInput[] | OperationsUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutShipmentInput | OperationsCreateOrConnectWithoutShipmentInput[]
+    createMany?: OperationsCreateManyShipmentInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutShipmentInput = {
     create?: XOR<DocumentCreateWithoutShipmentInput, DocumentUncheckedCreateWithoutShipmentInput> | DocumentCreateWithoutShipmentInput[] | DocumentUncheckedCreateWithoutShipmentInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutShipmentInput | DocumentCreateOrConnectWithoutShipmentInput[]
@@ -25990,6 +28191,13 @@ export namespace Prisma {
     connectOrCreate?: ShipmentEventCreateOrConnectWithoutShipmentInput | ShipmentEventCreateOrConnectWithoutShipmentInput[]
     createMany?: ShipmentEventCreateManyShipmentInputEnvelope
     connect?: ShipmentEventWhereUniqueInput | ShipmentEventWhereUniqueInput[]
+  }
+
+  export type OperationsUncheckedCreateNestedManyWithoutShipmentInput = {
+    create?: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput> | OperationsCreateWithoutShipmentInput[] | OperationsUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutShipmentInput | OperationsCreateOrConnectWithoutShipmentInput[]
+    createMany?: OperationsCreateManyShipmentInputEnvelope
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
   }
 
   export type EnumShipmentStatusFieldUpdateOperationsInput = {
@@ -26060,6 +28268,20 @@ export namespace Prisma {
     deleteMany?: ShipmentEventScalarWhereInput | ShipmentEventScalarWhereInput[]
   }
 
+  export type OperationsUpdateManyWithoutShipmentNestedInput = {
+    create?: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput> | OperationsCreateWithoutShipmentInput[] | OperationsUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutShipmentInput | OperationsCreateOrConnectWithoutShipmentInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutShipmentInput | OperationsUpsertWithWhereUniqueWithoutShipmentInput[]
+    createMany?: OperationsCreateManyShipmentInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutShipmentInput | OperationsUpdateWithWhereUniqueWithoutShipmentInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutShipmentInput | OperationsUpdateManyWithWhereWithoutShipmentInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutShipmentNestedInput = {
     create?: XOR<DocumentCreateWithoutShipmentInput, DocumentUncheckedCreateWithoutShipmentInput> | DocumentCreateWithoutShipmentInput[] | DocumentUncheckedCreateWithoutShipmentInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutShipmentInput | DocumentCreateOrConnectWithoutShipmentInput[]
@@ -26086,6 +28308,20 @@ export namespace Prisma {
     update?: ShipmentEventUpdateWithWhereUniqueWithoutShipmentInput | ShipmentEventUpdateWithWhereUniqueWithoutShipmentInput[]
     updateMany?: ShipmentEventUpdateManyWithWhereWithoutShipmentInput | ShipmentEventUpdateManyWithWhereWithoutShipmentInput[]
     deleteMany?: ShipmentEventScalarWhereInput | ShipmentEventScalarWhereInput[]
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutShipmentNestedInput = {
+    create?: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput> | OperationsCreateWithoutShipmentInput[] | OperationsUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: OperationsCreateOrConnectWithoutShipmentInput | OperationsCreateOrConnectWithoutShipmentInput[]
+    upsert?: OperationsUpsertWithWhereUniqueWithoutShipmentInput | OperationsUpsertWithWhereUniqueWithoutShipmentInput[]
+    createMany?: OperationsCreateManyShipmentInputEnvelope
+    set?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    disconnect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    delete?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    connect?: OperationsWhereUniqueInput | OperationsWhereUniqueInput[]
+    update?: OperationsUpdateWithWhereUniqueWithoutShipmentInput | OperationsUpdateWithWhereUniqueWithoutShipmentInput[]
+    updateMany?: OperationsUpdateManyWithWhereWithoutShipmentInput | OperationsUpdateManyWithWhereWithoutShipmentInput[]
+    deleteMany?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
   }
 
   export type ShipmentCreateNestedOneWithoutEventsInput = {
@@ -26316,6 +28552,116 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutOtpInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOtpInput, UserUpdateWithoutOtpInput>, UserUncheckedUpdateWithoutOtpInput>
+  }
+
+  export type UserCreateNestedOneWithoutOperationsAsImporterInput = {
+    create?: XOR<UserCreateWithoutOperationsAsImporterInput, UserUncheckedCreateWithoutOperationsAsImporterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsImporterInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOperationsAsExporterInput = {
+    create?: XOR<UserCreateWithoutOperationsAsExporterInput, UserUncheckedCreateWithoutOperationsAsExporterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsExporterInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOperationsAsBankInput = {
+    create?: XOR<UserCreateWithoutOperationsAsBankInput, UserUncheckedCreateWithoutOperationsAsBankInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsBankInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOperationsAsBrokerInput = {
+    create?: XOR<UserCreateWithoutOperationsAsBrokerInput, UserUncheckedCreateWithoutOperationsAsBrokerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsBrokerInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOperationsAsLogisticsInput = {
+    create?: XOR<UserCreateWithoutOperationsAsLogisticsInput, UserUncheckedCreateWithoutOperationsAsLogisticsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsLogisticsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ShipmentCreateNestedOneWithoutShipmentsInOperationInput = {
+    create?: XOR<ShipmentCreateWithoutShipmentsInOperationInput, ShipmentUncheckedCreateWithoutShipmentsInOperationInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutShipmentsInOperationInput
+    connect?: ShipmentWhereUniqueInput
+  }
+
+  export type ServiceCreateNestedOneWithoutOperationsInput = {
+    create?: XOR<ServiceCreateWithoutOperationsInput, ServiceUncheckedCreateWithoutOperationsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutOperationsInput
+    connect?: ServiceWhereUniqueInput
+  }
+
+  export type EnumOperationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OperationStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput = {
+    create?: XOR<UserCreateWithoutOperationsAsImporterInput, UserUncheckedCreateWithoutOperationsAsImporterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsImporterInput
+    upsert?: UserUpsertWithoutOperationsAsImporterInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsImporterInput, UserUpdateWithoutOperationsAsImporterInput>, UserUncheckedUpdateWithoutOperationsAsImporterInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput = {
+    create?: XOR<UserCreateWithoutOperationsAsExporterInput, UserUncheckedCreateWithoutOperationsAsExporterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsExporterInput
+    upsert?: UserUpsertWithoutOperationsAsExporterInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsExporterInput, UserUpdateWithoutOperationsAsExporterInput>, UserUncheckedUpdateWithoutOperationsAsExporterInput>
+  }
+
+  export type UserUpdateOneWithoutOperationsAsBankNestedInput = {
+    create?: XOR<UserCreateWithoutOperationsAsBankInput, UserUncheckedCreateWithoutOperationsAsBankInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsBankInput
+    upsert?: UserUpsertWithoutOperationsAsBankInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsBankInput, UserUpdateWithoutOperationsAsBankInput>, UserUncheckedUpdateWithoutOperationsAsBankInput>
+  }
+
+  export type UserUpdateOneWithoutOperationsAsBrokerNestedInput = {
+    create?: XOR<UserCreateWithoutOperationsAsBrokerInput, UserUncheckedCreateWithoutOperationsAsBrokerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsBrokerInput
+    upsert?: UserUpsertWithoutOperationsAsBrokerInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsBrokerInput, UserUpdateWithoutOperationsAsBrokerInput>, UserUncheckedUpdateWithoutOperationsAsBrokerInput>
+  }
+
+  export type UserUpdateOneWithoutOperationsAsLogisticsNestedInput = {
+    create?: XOR<UserCreateWithoutOperationsAsLogisticsInput, UserUncheckedCreateWithoutOperationsAsLogisticsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOperationsAsLogisticsInput
+    upsert?: UserUpsertWithoutOperationsAsLogisticsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsLogisticsInput, UserUpdateWithoutOperationsAsLogisticsInput>, UserUncheckedUpdateWithoutOperationsAsLogisticsInput>
+  }
+
+  export type ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput = {
+    create?: XOR<ShipmentCreateWithoutShipmentsInOperationInput, ShipmentUncheckedCreateWithoutShipmentsInOperationInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutShipmentsInOperationInput
+    upsert?: ShipmentUpsertWithoutShipmentsInOperationInput
+    connect?: ShipmentWhereUniqueInput
+    update?: XOR<XOR<ShipmentUpdateToOneWithWhereWithoutShipmentsInOperationInput, ShipmentUpdateWithoutShipmentsInOperationInput>, ShipmentUncheckedUpdateWithoutShipmentsInOperationInput>
+  }
+
+  export type ServiceUpdateOneWithoutOperationsNestedInput = {
+    create?: XOR<ServiceCreateWithoutOperationsInput, ServiceUncheckedCreateWithoutOperationsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutOperationsInput
+    upsert?: ServiceUpsertWithoutOperationsInput
+    disconnect?: ServiceWhereInput | boolean
+    delete?: ServiceWhereInput | boolean
+    connect?: ServiceWhereUniqueInput
+    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutOperationsInput, ServiceUpdateWithoutOperationsInput>, ServiceUncheckedUpdateWithoutOperationsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -26739,6 +29085,23 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumOperationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OperationStatus | EnumOperationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOperationStatusFilter<$PrismaModel> | $Enums.OperationStatus
+  }
+
+  export type NestedEnumOperationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OperationStatus | EnumOperationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OperationStatus[] | ListEnumOperationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOperationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOperationStatusFilter<$PrismaModel>
+    _max?: NestedEnumOperationStatusFilter<$PrismaModel>
+  }
+
   export type DocumentCreateWithoutUploadedByInput = {
     id?: string
     type: $Enums.DocumentType
@@ -26819,6 +29182,7 @@ export namespace Prisma {
     createdAt?: Date | string
     shipments?: ShipmentCreateNestedManyWithoutServiceInput
     bookings?: BookingCreateNestedManyWithoutServiceInput
+    operations?: OperationsCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutProviderInput = {
@@ -26829,6 +29193,7 @@ export namespace Prisma {
     createdAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutServiceInput
     bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+    operations?: OperationsUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutProviderInput = {
@@ -27014,11 +29379,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutImporterInput = {
@@ -27030,11 +29397,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutImporterInput = {
@@ -27056,11 +29425,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutExporterInput = {
@@ -27072,11 +29443,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     brokerId?: string | null
     serviceId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutExporterInput = {
@@ -27098,11 +29471,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutBrokerInput = {
@@ -27114,11 +29489,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     serviceId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutBrokerInput = {
@@ -27330,6 +29707,166 @@ export namespace Prisma {
   export type SubscriptionCreateOrConnectWithoutUserInput = {
     where: SubscriptionWhereUniqueInput
     create: XOR<SubscriptionCreateWithoutUserInput, SubscriptionUncheckedCreateWithoutUserInput>
+  }
+
+  export type OperationsCreateWithoutImporterInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutImporterInput = {
+    id?: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutImporterInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput>
+  }
+
+  export type OperationsCreateManyImporterInputEnvelope = {
+    data: OperationsCreateManyImporterInput | OperationsCreateManyImporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OperationsCreateWithoutExporterInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutExporterInput = {
+    id?: string
+    importerId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutExporterInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput>
+  }
+
+  export type OperationsCreateManyExporterInputEnvelope = {
+    data: OperationsCreateManyExporterInput | OperationsCreateManyExporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OperationsCreateWithoutBankInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutBankInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutBankInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput>
+  }
+
+  export type OperationsCreateManyBankInputEnvelope = {
+    data: OperationsCreateManyBankInput | OperationsCreateManyBankInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OperationsCreateWithoutBrokerInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutBrokerInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutBrokerInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput>
+  }
+
+  export type OperationsCreateManyBrokerInputEnvelope = {
+    data: OperationsCreateManyBrokerInput | OperationsCreateManyBrokerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OperationsCreateWithoutLogisticsInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutLogisticsInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutLogisticsInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput>
+  }
+
+  export type OperationsCreateManyLogisticsInputEnvelope = {
+    data: OperationsCreateManyLogisticsInput | OperationsCreateManyLogisticsInput[]
+    skipDuplicates?: boolean
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutUploadedByInput = {
@@ -27560,6 +30097,7 @@ export namespace Prisma {
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
+    operationId?: StringFilter<"Shipment"> | string
     importerId?: StringFilter<"Shipment"> | string
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
@@ -27810,6 +30348,101 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OperationsUpsertWithWhereUniqueWithoutImporterInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutImporterInput, OperationsUncheckedUpdateWithoutImporterInput>
+    create: XOR<OperationsCreateWithoutImporterInput, OperationsUncheckedCreateWithoutImporterInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutImporterInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutImporterInput, OperationsUncheckedUpdateWithoutImporterInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutImporterInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutImporterInput>
+  }
+
+  export type OperationsScalarWhereInput = {
+    AND?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+    OR?: OperationsScalarWhereInput[]
+    NOT?: OperationsScalarWhereInput | OperationsScalarWhereInput[]
+    id?: StringFilter<"Operations"> | string
+    importerId?: StringFilter<"Operations"> | string
+    exporterId?: StringFilter<"Operations"> | string
+    brokerId?: StringNullableFilter<"Operations"> | string | null
+    serviceId?: StringNullableFilter<"Operations"> | string | null
+    bankId?: StringNullableFilter<"Operations"> | string | null
+    logisticsId?: StringNullableFilter<"Operations"> | string | null
+    shipmentId?: StringFilter<"Operations"> | string
+    status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
+  }
+
+  export type OperationsUpsertWithWhereUniqueWithoutExporterInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutExporterInput, OperationsUncheckedUpdateWithoutExporterInput>
+    create: XOR<OperationsCreateWithoutExporterInput, OperationsUncheckedCreateWithoutExporterInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutExporterInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutExporterInput, OperationsUncheckedUpdateWithoutExporterInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutExporterInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutExporterInput>
+  }
+
+  export type OperationsUpsertWithWhereUniqueWithoutBankInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutBankInput, OperationsUncheckedUpdateWithoutBankInput>
+    create: XOR<OperationsCreateWithoutBankInput, OperationsUncheckedCreateWithoutBankInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutBankInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutBankInput, OperationsUncheckedUpdateWithoutBankInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutBankInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutBankInput>
+  }
+
+  export type OperationsUpsertWithWhereUniqueWithoutBrokerInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutBrokerInput, OperationsUncheckedUpdateWithoutBrokerInput>
+    create: XOR<OperationsCreateWithoutBrokerInput, OperationsUncheckedCreateWithoutBrokerInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutBrokerInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutBrokerInput, OperationsUncheckedUpdateWithoutBrokerInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutBrokerInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutBrokerInput>
+  }
+
+  export type OperationsUpsertWithWhereUniqueWithoutLogisticsInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutLogisticsInput, OperationsUncheckedUpdateWithoutLogisticsInput>
+    create: XOR<OperationsCreateWithoutLogisticsInput, OperationsUncheckedCreateWithoutLogisticsInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutLogisticsInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutLogisticsInput, OperationsUncheckedUpdateWithoutLogisticsInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutLogisticsInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutLogisticsInput>
+  }
+
   export type UserCreateWithoutServicesInput = {
     id?: string
     role: $Enums.UserRole
@@ -27839,6 +30472,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutServicesInput = {
@@ -27870,6 +30508,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutServicesInput = {
@@ -27886,11 +30529,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutServiceInput = {
@@ -27902,11 +30547,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutServiceInput = {
@@ -27942,6 +30589,38 @@ export namespace Prisma {
 
   export type BookingCreateManyServiceInputEnvelope = {
     data: BookingCreateManyServiceInput | BookingCreateManyServiceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OperationsCreateWithoutServiceInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+  }
+
+  export type OperationsUncheckedCreateWithoutServiceInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutServiceInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput>
+  }
+
+  export type OperationsCreateManyServiceInputEnvelope = {
+    data: OperationsCreateManyServiceInput | OperationsCreateManyServiceInput[]
     skipDuplicates?: boolean
   }
 
@@ -27985,6 +30664,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutServicesInput = {
@@ -28016,6 +30700,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type ShipmentUpsertWithWhereUniqueWithoutServiceInput = {
@@ -28050,6 +30739,22 @@ export namespace Prisma {
     data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutServiceInput>
   }
 
+  export type OperationsUpsertWithWhereUniqueWithoutServiceInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutServiceInput, OperationsUncheckedUpdateWithoutServiceInput>
+    create: XOR<OperationsCreateWithoutServiceInput, OperationsUncheckedCreateWithoutServiceInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutServiceInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutServiceInput, OperationsUncheckedUpdateWithoutServiceInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutServiceInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutServiceInput>
+  }
+
   export type UserCreateWithoutQuoteRequestsInput = {
     id?: string
     role: $Enums.UserRole
@@ -28079,6 +30784,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutQuoteRequestsInput = {
@@ -28110,6 +30820,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutQuoteRequestsInput = {
@@ -28185,6 +30900,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteRequestsInput = {
@@ -28216,6 +30936,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type QuoteResponseUpsertWithWhereUniqueWithoutQuoteRequestInput = {
@@ -28292,6 +31017,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutQuoteResponsesInput = {
@@ -28323,6 +31053,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutQuoteResponsesInput = {
@@ -28405,6 +31140,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteResponsesInput = {
@@ -28436,6 +31176,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutLettersOfCreditAsImporterInput = {
@@ -28467,6 +31212,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutLettersOfCreditAsImporterInput = {
@@ -28498,6 +31248,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutLettersOfCreditAsImporterInput = {
@@ -28534,6 +31289,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutLettersOfCreditAsExporterInput = {
@@ -28565,6 +31325,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutLettersOfCreditAsExporterInput = {
@@ -28601,6 +31366,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutLettersOfCreditAsBankInput = {
@@ -28632,6 +31402,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutLettersOfCreditAsBankInput = {
@@ -28715,6 +31490,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLettersOfCreditAsImporterInput = {
@@ -28746,6 +31526,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUpsertWithoutLettersOfCreditAsExporterInput = {
@@ -28788,6 +31573,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLettersOfCreditAsExporterInput = {
@@ -28819,6 +31609,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUpsertWithoutLettersOfCreditAsBankInput = {
@@ -28861,6 +31656,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLettersOfCreditAsBankInput = {
@@ -28892,6 +31692,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutLcInput = {
@@ -28939,6 +31744,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutShipmentsAsImporterInput = {
@@ -28970,6 +31780,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutShipmentsAsImporterInput = {
@@ -29006,6 +31821,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutShipmentsAsExporterInput = {
@@ -29037,6 +31857,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutShipmentsAsExporterInput = {
@@ -29073,6 +31898,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutShipmentsAsBrokerInput = {
@@ -29104,6 +31934,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutShipmentsAsBrokerInput = {
@@ -29119,6 +31954,7 @@ export namespace Prisma {
     createdAt?: Date | string
     provider: UserCreateNestedOneWithoutServicesInput
     bookings?: BookingCreateNestedManyWithoutServiceInput
+    operations?: OperationsCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutShipmentsInput = {
@@ -29129,6 +31965,7 @@ export namespace Prisma {
     providerId: string
     createdAt?: Date | string
     bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+    operations?: OperationsUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutShipmentsInput = {
@@ -29198,6 +32035,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OperationsCreateWithoutShipmentInput = {
+    id?: string
+    status?: $Enums.OperationStatus
+    importer: UserCreateNestedOneWithoutOperationsAsImporterInput
+    exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
+    bank?: UserCreateNestedOneWithoutOperationsAsBankInput
+    broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
+    logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
+    service?: ServiceCreateNestedOneWithoutOperationsInput
+  }
+
+  export type OperationsUncheckedCreateWithoutShipmentInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateOrConnectWithoutShipmentInput = {
+    where: OperationsWhereUniqueInput
+    create: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput>
+  }
+
+  export type OperationsCreateManyShipmentInputEnvelope = {
+    data: OperationsCreateManyShipmentInput | OperationsCreateManyShipmentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutShipmentsAsImporterInput = {
     update: XOR<UserUpdateWithoutShipmentsAsImporterInput, UserUncheckedUpdateWithoutShipmentsAsImporterInput>
     create: XOR<UserCreateWithoutShipmentsAsImporterInput, UserUncheckedCreateWithoutShipmentsAsImporterInput>
@@ -29238,6 +32107,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShipmentsAsImporterInput = {
@@ -29269,6 +32143,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUpsertWithoutShipmentsAsExporterInput = {
@@ -29311,6 +32190,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShipmentsAsExporterInput = {
@@ -29342,6 +32226,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUpsertWithoutShipmentsAsBrokerInput = {
@@ -29384,6 +32273,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShipmentsAsBrokerInput = {
@@ -29415,6 +32309,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type ServiceUpsertWithoutShipmentsInput = {
@@ -29436,6 +32335,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     provider?: UserUpdateOneRequiredWithoutServicesNestedInput
     bookings?: BookingUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutShipmentsInput = {
@@ -29446,6 +32346,7 @@ export namespace Prisma {
     providerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutShipmentInput = {
@@ -29480,6 +32381,22 @@ export namespace Prisma {
     data: XOR<ShipmentEventUpdateManyMutationInput, ShipmentEventUncheckedUpdateManyWithoutShipmentInput>
   }
 
+  export type OperationsUpsertWithWhereUniqueWithoutShipmentInput = {
+    where: OperationsWhereUniqueInput
+    update: XOR<OperationsUpdateWithoutShipmentInput, OperationsUncheckedUpdateWithoutShipmentInput>
+    create: XOR<OperationsCreateWithoutShipmentInput, OperationsUncheckedCreateWithoutShipmentInput>
+  }
+
+  export type OperationsUpdateWithWhereUniqueWithoutShipmentInput = {
+    where: OperationsWhereUniqueInput
+    data: XOR<OperationsUpdateWithoutShipmentInput, OperationsUncheckedUpdateWithoutShipmentInput>
+  }
+
+  export type OperationsUpdateManyWithWhereWithoutShipmentInput = {
+    where: OperationsScalarWhereInput
+    data: XOR<OperationsUpdateManyMutationInput, OperationsUncheckedUpdateManyWithoutShipmentInput>
+  }
+
   export type ShipmentCreateWithoutEventsInput = {
     id?: string
     status?: $Enums.ShipmentStatus
@@ -29489,11 +32406,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutEventsInput = {
@@ -29505,11 +32424,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutEventsInput = {
@@ -29546,6 +32467,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutShipmentEventsInput = {
@@ -29577,6 +32503,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutShipmentEventsInput = {
@@ -29604,11 +32535,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutEventsInput = {
@@ -29620,11 +32553,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type UserUpsertWithoutShipmentEventsInput = {
@@ -29667,6 +32602,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShipmentEventsInput = {
@@ -29698,6 +32638,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutUploadedDocumentsInput = {
@@ -29729,6 +32674,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutUploadedDocumentsInput = {
@@ -29760,6 +32710,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutUploadedDocumentsInput = {
@@ -29796,6 +32751,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutVerifiedDocumentsInput = {
@@ -29827,6 +32787,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutVerifiedDocumentsInput = {
@@ -29843,11 +32808,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
     events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutDocumentsInput = {
@@ -29859,11 +32826,13 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+    shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutDocumentsInput = {
@@ -29940,6 +32909,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUploadedDocumentsInput = {
@@ -29971,6 +32945,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUpsertWithoutVerifiedDocumentsInput = {
@@ -30013,6 +32992,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVerifiedDocumentsInput = {
@@ -30044,6 +33028,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type ShipmentUpsertWithoutDocumentsInput = {
@@ -30066,11 +33055,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutDocumentsInput = {
@@ -30082,11 +33073,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type LCUpsertWithoutDocumentsInput = {
@@ -30153,6 +33146,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -30184,6 +33182,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -30231,6 +33234,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -30262,6 +33270,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutSessionInput = {
@@ -30293,6 +33306,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutSessionInput = {
@@ -30324,6 +33342,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutSessionInput = {
@@ -30371,6 +33394,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionInput = {
@@ -30402,6 +33430,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutTransactionsInput = {
@@ -30433,6 +33466,11 @@ export namespace Prisma {
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -30464,6 +33502,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -30511,6 +33554,11 @@ export namespace Prisma {
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -30542,6 +33590,11 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutBookingsInput = {
@@ -30573,6 +33626,11 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutBookingsInput = {
@@ -30604,6 +33662,11 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutBookingsInput = {
@@ -30619,6 +33682,7 @@ export namespace Prisma {
     createdAt?: Date | string
     provider: UserCreateNestedOneWithoutServicesInput
     shipments?: ShipmentCreateNestedManyWithoutServiceInput
+    operations?: OperationsCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutBookingsInput = {
@@ -30629,6 +33693,7 @@ export namespace Prisma {
     providerId: string
     createdAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutServiceInput
+    operations?: OperationsUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutBookingsInput = {
@@ -30676,6 +33741,11 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookingsInput = {
@@ -30707,6 +33777,11 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type ServiceUpsertWithoutBookingsInput = {
@@ -30728,6 +33803,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     provider?: UserUpdateOneRequiredWithoutServicesNestedInput
     shipments?: ShipmentUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutBookingsInput = {
@@ -30738,6 +33814,7 @@ export namespace Prisma {
     providerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type UserCreateWithoutSubscriptionInput = {
@@ -30769,6 +33846,11 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     bookings?: BookingCreateNestedManyWithoutUserInput
     otp?: OTPCreateNestedManyWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutSubscriptionInput = {
@@ -30800,6 +33882,11 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutSubscriptionInput = {
@@ -30847,6 +33934,11 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     bookings?: BookingUpdateManyWithoutUserNestedInput
     otp?: OTPUpdateManyWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubscriptionInput = {
@@ -30878,6 +33970,11 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserCreateWithoutOtpInput = {
@@ -30909,6 +34006,11 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     bookings?: BookingCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserUncheckedCreateWithoutOtpInput = {
@@ -30940,6 +34042,11 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
   }
 
   export type UserCreateOrConnectWithoutOtpInput = {
@@ -30987,6 +34094,11 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     bookings?: BookingUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOtpInput = {
@@ -31018,6 +34130,959 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserCreateWithoutOperationsAsImporterInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    session?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutUserInput
+    otp?: OTPCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserUncheckedCreateWithoutOperationsAsImporterInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceUncheckedCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestUncheckedCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCUncheckedCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCUncheckedCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentUncheckedCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentUncheckedCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    session?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserCreateOrConnectWithoutOperationsAsImporterInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOperationsAsImporterInput, UserUncheckedCreateWithoutOperationsAsImporterInput>
+  }
+
+  export type UserCreateWithoutOperationsAsExporterInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    session?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutUserInput
+    otp?: OTPCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserUncheckedCreateWithoutOperationsAsExporterInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceUncheckedCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestUncheckedCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCUncheckedCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCUncheckedCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentUncheckedCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentUncheckedCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    session?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserCreateOrConnectWithoutOperationsAsExporterInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOperationsAsExporterInput, UserUncheckedCreateWithoutOperationsAsExporterInput>
+  }
+
+  export type UserCreateWithoutOperationsAsBankInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    session?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutUserInput
+    otp?: OTPCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserUncheckedCreateWithoutOperationsAsBankInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceUncheckedCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestUncheckedCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCUncheckedCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCUncheckedCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentUncheckedCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentUncheckedCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    session?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserCreateOrConnectWithoutOperationsAsBankInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOperationsAsBankInput, UserUncheckedCreateWithoutOperationsAsBankInput>
+  }
+
+  export type UserCreateWithoutOperationsAsBrokerInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    session?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutUserInput
+    otp?: OTPCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsLogistics?: OperationsCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserUncheckedCreateWithoutOperationsAsBrokerInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceUncheckedCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestUncheckedCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCUncheckedCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCUncheckedCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentUncheckedCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentUncheckedCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    session?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsLogistics?: OperationsUncheckedCreateNestedManyWithoutLogisticsInput
+  }
+
+  export type UserCreateOrConnectWithoutOperationsAsBrokerInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOperationsAsBrokerInput, UserUncheckedCreateWithoutOperationsAsBrokerInput>
+  }
+
+  export type UserCreateWithoutOperationsAsLogisticsInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    session?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutUserInput
+    otp?: OTPCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsCreateNestedManyWithoutBrokerInput
+  }
+
+  export type UserUncheckedCreateWithoutOperationsAsLogisticsInput = {
+    id?: string
+    role: $Enums.UserRole
+    email: string
+    passwordHash: string
+    companyName?: string | null
+    phone?: string | null
+    address?: string | null
+    country?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedDocuments?: DocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    verifiedDocuments?: DocumentUncheckedCreateNestedManyWithoutVerifiedByInput
+    services?: ServiceUncheckedCreateNestedManyWithoutProviderInput
+    quoteRequests?: QuoteRequestUncheckedCreateNestedManyWithoutImporterInput
+    quoteResponses?: QuoteResponseUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsImporter?: LCUncheckedCreateNestedManyWithoutImporterInput
+    lettersOfCreditAsExporter?: LCUncheckedCreateNestedManyWithoutExporterInput
+    lettersOfCreditAsBank?: LCUncheckedCreateNestedManyWithoutBankInput
+    shipmentsAsImporter?: ShipmentUncheckedCreateNestedManyWithoutImporterInput
+    shipmentsAsExporter?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+    shipmentsAsBroker?: ShipmentUncheckedCreateNestedManyWithoutBrokerInput
+    shipmentEvents?: ShipmentEventUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    session?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
+    otp?: OTPUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    operationsAsImporter?: OperationsUncheckedCreateNestedManyWithoutImporterInput
+    operationsAsExporter?: OperationsUncheckedCreateNestedManyWithoutExporterInput
+    operationsAsBank?: OperationsUncheckedCreateNestedManyWithoutBankInput
+    operationsAsBroker?: OperationsUncheckedCreateNestedManyWithoutBrokerInput
+  }
+
+  export type UserCreateOrConnectWithoutOperationsAsLogisticsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOperationsAsLogisticsInput, UserUncheckedCreateWithoutOperationsAsLogisticsInput>
+  }
+
+  export type ShipmentCreateWithoutShipmentsInOperationInput = {
+    id?: string
+    status?: $Enums.ShipmentStatus
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
+    createdAt?: Date | string
+    operationId: string
+    importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
+    exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
+    broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
+    service?: ServiceCreateNestedOneWithoutShipmentsInput
+    documents?: DocumentCreateNestedManyWithoutShipmentInput
+    events?: ShipmentEventCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutShipmentsInOperationInput = {
+    id?: string
+    status?: $Enums.ShipmentStatus
+    carrier: string
+    etd: Date | string
+    eta: Date | string
+    origin: string
+    destination: string
+    createdAt?: Date | string
+    operationId: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
+    events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutShipmentsInOperationInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutShipmentsInOperationInput, ShipmentUncheckedCreateWithoutShipmentsInOperationInput>
+  }
+
+  export type ServiceCreateWithoutOperationsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    price: number
+    createdAt?: Date | string
+    provider: UserCreateNestedOneWithoutServicesInput
+    shipments?: ShipmentCreateNestedManyWithoutServiceInput
+    bookings?: BookingCreateNestedManyWithoutServiceInput
+  }
+
+  export type ServiceUncheckedCreateWithoutOperationsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    price: number
+    providerId: string
+    createdAt?: Date | string
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutServiceInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutServiceInput
+  }
+
+  export type ServiceCreateOrConnectWithoutOperationsInput = {
+    where: ServiceWhereUniqueInput
+    create: XOR<ServiceCreateWithoutOperationsInput, ServiceUncheckedCreateWithoutOperationsInput>
+  }
+
+  export type UserUpsertWithoutOperationsAsImporterInput = {
+    update: XOR<UserUpdateWithoutOperationsAsImporterInput, UserUncheckedUpdateWithoutOperationsAsImporterInput>
+    create: XOR<UserCreateWithoutOperationsAsImporterInput, UserUncheckedCreateWithoutOperationsAsImporterInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOperationsAsImporterInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOperationsAsImporterInput, UserUncheckedUpdateWithoutOperationsAsImporterInput>
+  }
+
+  export type UserUpdateWithoutOperationsAsImporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    session?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutUserNestedInput
+    otp?: OTPUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOperationsAsImporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUncheckedUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUncheckedUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUncheckedUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUncheckedUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUncheckedUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    session?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUpsertWithoutOperationsAsExporterInput = {
+    update: XOR<UserUpdateWithoutOperationsAsExporterInput, UserUncheckedUpdateWithoutOperationsAsExporterInput>
+    create: XOR<UserCreateWithoutOperationsAsExporterInput, UserUncheckedCreateWithoutOperationsAsExporterInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOperationsAsExporterInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOperationsAsExporterInput, UserUncheckedUpdateWithoutOperationsAsExporterInput>
+  }
+
+  export type UserUpdateWithoutOperationsAsExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    session?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutUserNestedInput
+    otp?: OTPUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOperationsAsExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUncheckedUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUncheckedUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUncheckedUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUncheckedUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUncheckedUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    session?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUpsertWithoutOperationsAsBankInput = {
+    update: XOR<UserUpdateWithoutOperationsAsBankInput, UserUncheckedUpdateWithoutOperationsAsBankInput>
+    create: XOR<UserCreateWithoutOperationsAsBankInput, UserUncheckedCreateWithoutOperationsAsBankInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOperationsAsBankInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOperationsAsBankInput, UserUncheckedUpdateWithoutOperationsAsBankInput>
+  }
+
+  export type UserUpdateWithoutOperationsAsBankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    session?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutUserNestedInput
+    otp?: OTPUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOperationsAsBankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUncheckedUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUncheckedUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUncheckedUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUncheckedUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUncheckedUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    session?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUpsertWithoutOperationsAsBrokerInput = {
+    update: XOR<UserUpdateWithoutOperationsAsBrokerInput, UserUncheckedUpdateWithoutOperationsAsBrokerInput>
+    create: XOR<UserCreateWithoutOperationsAsBrokerInput, UserUncheckedCreateWithoutOperationsAsBrokerInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOperationsAsBrokerInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOperationsAsBrokerInput, UserUncheckedUpdateWithoutOperationsAsBrokerInput>
+  }
+
+  export type UserUpdateWithoutOperationsAsBrokerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    session?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutUserNestedInput
+    otp?: OTPUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsLogistics?: OperationsUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOperationsAsBrokerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUncheckedUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUncheckedUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUncheckedUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUncheckedUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUncheckedUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    session?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsLogistics?: OperationsUncheckedUpdateManyWithoutLogisticsNestedInput
+  }
+
+  export type UserUpsertWithoutOperationsAsLogisticsInput = {
+    update: XOR<UserUpdateWithoutOperationsAsLogisticsInput, UserUncheckedUpdateWithoutOperationsAsLogisticsInput>
+    create: XOR<UserCreateWithoutOperationsAsLogisticsInput, UserUncheckedCreateWithoutOperationsAsLogisticsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOperationsAsLogisticsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOperationsAsLogisticsInput, UserUncheckedUpdateWithoutOperationsAsLogisticsInput>
+  }
+
+  export type UserUpdateWithoutOperationsAsLogisticsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    session?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutUserNestedInput
+    otp?: OTPUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUpdateManyWithoutBrokerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOperationsAsLogisticsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedDocuments?: DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    verifiedDocuments?: DocumentUncheckedUpdateManyWithoutVerifiedByNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutProviderNestedInput
+    quoteRequests?: QuoteRequestUncheckedUpdateManyWithoutImporterNestedInput
+    quoteResponses?: QuoteResponseUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsImporter?: LCUncheckedUpdateManyWithoutImporterNestedInput
+    lettersOfCreditAsExporter?: LCUncheckedUpdateManyWithoutExporterNestedInput
+    lettersOfCreditAsBank?: LCUncheckedUpdateManyWithoutBankNestedInput
+    shipmentsAsImporter?: ShipmentUncheckedUpdateManyWithoutImporterNestedInput
+    shipmentsAsExporter?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+    shipmentsAsBroker?: ShipmentUncheckedUpdateManyWithoutBrokerNestedInput
+    shipmentEvents?: ShipmentEventUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    session?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    otp?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    operationsAsImporter?: OperationsUncheckedUpdateManyWithoutImporterNestedInput
+    operationsAsExporter?: OperationsUncheckedUpdateManyWithoutExporterNestedInput
+    operationsAsBank?: OperationsUncheckedUpdateManyWithoutBankNestedInput
+    operationsAsBroker?: OperationsUncheckedUpdateManyWithoutBrokerNestedInput
+  }
+
+  export type ShipmentUpsertWithoutShipmentsInOperationInput = {
+    update: XOR<ShipmentUpdateWithoutShipmentsInOperationInput, ShipmentUncheckedUpdateWithoutShipmentsInOperationInput>
+    create: XOR<ShipmentCreateWithoutShipmentsInOperationInput, ShipmentUncheckedCreateWithoutShipmentsInOperationInput>
+    where?: ShipmentWhereInput
+  }
+
+  export type ShipmentUpdateToOneWithWhereWithoutShipmentsInOperationInput = {
+    where?: ShipmentWhereInput
+    data: XOR<ShipmentUpdateWithoutShipmentsInOperationInput, ShipmentUncheckedUpdateWithoutShipmentsInOperationInput>
+  }
+
+  export type ShipmentUpdateWithoutShipmentsInOperationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
+    importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
+    broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
+    service?: ServiceUpdateOneWithoutShipmentsNestedInput
+    documents?: DocumentUpdateManyWithoutShipmentNestedInput
+    events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutShipmentsInOperationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    carrier?: StringFieldUpdateOperationsInput | string
+    etd?: DateTimeFieldUpdateOperationsInput | Date | string
+    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
+    events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ServiceUpsertWithoutOperationsInput = {
+    update: XOR<ServiceUpdateWithoutOperationsInput, ServiceUncheckedUpdateWithoutOperationsInput>
+    create: XOR<ServiceCreateWithoutOperationsInput, ServiceUncheckedCreateWithoutOperationsInput>
+    where?: ServiceWhereInput
+  }
+
+  export type ServiceUpdateToOneWithWhereWithoutOperationsInput = {
+    where?: ServiceWhereInput
+    data: XOR<ServiceUpdateWithoutOperationsInput, ServiceUncheckedUpdateWithoutOperationsInput>
+  }
+
+  export type ServiceUpdateWithoutOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    provider?: UserUpdateOneRequiredWithoutServicesNestedInput
+    shipments?: ShipmentUpdateManyWithoutServiceNestedInput
+    bookings?: BookingUpdateManyWithoutServiceNestedInput
+  }
+
+  export type ServiceUncheckedUpdateWithoutOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
+    providerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUncheckedUpdateManyWithoutServiceNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type DocumentCreateManyUploadedByInput = {
@@ -31116,6 +35181,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
@@ -31130,6 +35196,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     brokerId?: string | null
     serviceId?: string | null
@@ -31144,6 +35211,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     serviceId?: string | null
@@ -31202,6 +35270,61 @@ export namespace Prisma {
     expiresAt?: Date | string
     attempts?: number
     createdAt?: Date | string
+  }
+
+  export type OperationsCreateManyImporterInput = {
+    id?: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateManyExporterInput = {
+    id?: string
+    importerId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateManyBankInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateManyBrokerInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
+  export type OperationsCreateManyLogisticsInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
   }
 
   export type DocumentUpdateWithoutUploadedByInput = {
@@ -31290,6 +35413,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUpdateManyWithoutServiceNestedInput
     bookings?: BookingUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutProviderInput = {
@@ -31300,6 +35424,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutServiceNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutServiceNestedInput
+    operations?: OperationsUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateManyWithoutProviderInput = {
@@ -31486,11 +35611,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutImporterInput = {
@@ -31502,11 +35629,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateManyWithoutImporterInput = {
@@ -31518,6 +35647,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31532,11 +35662,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutExporterInput = {
@@ -31548,11 +35680,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateManyWithoutExporterInput = {
@@ -31564,6 +35698,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31578,11 +35713,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutBrokerInput = {
@@ -31594,11 +35731,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateManyWithoutBrokerInput = {
@@ -31610,6 +35749,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31780,6 +35920,171 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OperationsUpdateWithoutImporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutImporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutImporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateWithoutBankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutBankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutBankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateWithoutBrokerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutBrokerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutBrokerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUpdateWithoutLogisticsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutLogisticsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutLogisticsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
   export type ShipmentCreateManyServiceInput = {
     id?: string
     status?: $Enums.ShipmentStatus
@@ -31789,6 +36094,7 @@ export namespace Prisma {
     origin: string
     destination: string
     createdAt?: Date | string
+    operationId: string
     importerId: string
     exporterId: string
     brokerId?: string | null
@@ -31802,6 +36108,17 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type OperationsCreateManyServiceInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    shipmentId: string
+    status?: $Enums.OperationStatus
+  }
+
   export type ShipmentUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
@@ -31811,11 +36128,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutServiceInput = {
@@ -31827,11 +36146,13 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
+    shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateManyWithoutServiceInput = {
@@ -31843,6 +36164,7 @@ export namespace Prisma {
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    operationId?: StringFieldUpdateOperationsInput | string
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31870,6 +36192,39 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OperationsUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
   export type QuoteResponseCreateManyQuoteRequestInput = {
@@ -31981,6 +36336,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type OperationsCreateManyShipmentInput = {
+    id?: string
+    importerId: string
+    exporterId: string
+    brokerId?: string | null
+    serviceId?: string | null
+    bankId?: string | null
+    logisticsId?: string | null
+    status?: $Enums.OperationStatus
+  }
+
   export type DocumentUpdateWithoutShipmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
@@ -32042,6 +36408,39 @@ export namespace Prisma {
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OperationsUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+    importer?: UserUpdateOneRequiredWithoutOperationsAsImporterNestedInput
+    exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
+    bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
+    broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
+    logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
+    service?: ServiceUpdateOneWithoutOperationsNestedInput
+  }
+
+  export type OperationsUncheckedUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  }
+
+  export type OperationsUncheckedUpdateManyWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importerId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankId?: NullableStringFieldUpdateOperationsInput | string | null
+    logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
 

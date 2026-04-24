@@ -1,4 +1,5 @@
 import { Receipt } from "lucide-react";
+import { CogIcon } from "lucide-react";
 import { User } from "lucide-react";
 import { CreditCard } from "lucide-react";
 import {
@@ -25,21 +26,22 @@ export const dashboardNavItems = [
     items: [
       { id: 3, label: "Documents", path: "/documents", icon: FileArchive },
       { id: 4, label: "Marketplace", path: "/marketplace", icon: Store },
+      {id: 5, label: "Operations", path: "/operations", icon: CogIcon}
     ],
   },
   {
     group: "Billing",
     items: [
-      { id: 5, label: "Subscriptions", path: "/subscriptions", icon: CreditCard },
-      { id: 6, label: "Invoices", path: "/invoices", icon: Receipt },
+      { id: 6, label: "Subscriptions", path: "/subscriptions", icon: CreditCard },
+      { id: 7, label: "Invoices", path: "/invoices", icon: Receipt },
     ],
   },
   {
     group: "Account",
     items: [
-      { id: 7, label: "Notifications", path: "/notifications", icon: Bell },
-      { id: 8, label: "Settings", path: "/settings", icon: Settings },
-      { id: 9, label: "Profile", path: "/profile", icon: User },
+      { id: 8, label: "Notifications", path: "/notifications", icon: Bell },
+      { id: 9, label: "Settings", path: "/settings", icon: Settings },
+      { id: 10, label: "Profile", path: "/profile", icon: User },
       
     ],
   },
