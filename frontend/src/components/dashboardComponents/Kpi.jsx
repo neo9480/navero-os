@@ -13,7 +13,7 @@ const Kpi = () => {
     return percentage.toFixed(1);
   };
   return (
-    <div className="bg-space_indigo-200 border text-platinum-500 p-4 rounded-xl w-full h-[30vh]">
+    <div className="bg-space_indigo-100 border text-platinum-500 p-4 rounded-xl w-full h-[30vh]">
       <div className=" w-full h-full flex gap-2 justify-center items-center">
         {kpiData.map(({ id, label, icon: Icon, value, prevValue }) => (
           <>

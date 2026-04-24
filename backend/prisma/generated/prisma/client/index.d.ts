@@ -9645,8 +9645,8 @@ export namespace Prisma {
     id: string
     status: $Enums.ShipmentStatus
     carrier: string
-    etd: Date
-    eta: Date
+    etd: Date | null
+    eta: Date | null
     origin: string
     destination: string
     createdAt: Date
@@ -9793,8 +9793,8 @@ export namespace Prisma {
       id: string
       status: $Enums.ShipmentStatus
       carrier: string
-      etd: Date
-      eta: Date
+      etd: Date | null
+      eta: Date | null
       origin: string
       destination: string
       createdAt: Date
@@ -21161,7 +21161,7 @@ export namespace Prisma {
     serviceId: string | null
     bankId: string | null
     logisticsId: string | null
-    shipmentId: string
+    shipmentId: string | null
     status: $Enums.OperationStatus
     _count: OperationsCountAggregateOutputType | null
     _min: OperationsMinAggregateOutputType | null
@@ -21197,7 +21197,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }, ExtArgs["result"]["operations"]>
 
@@ -21216,7 +21216,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }, ExtArgs["result"]["operations"]>
 
@@ -21235,7 +21235,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }, ExtArgs["result"]["operations"]>
 
@@ -21258,7 +21258,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }
   export type OperationsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21267,7 +21267,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }
   export type OperationsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21276,7 +21276,7 @@ export namespace Prisma {
     bank?: boolean | Operations$bankArgs<ExtArgs>
     broker?: boolean | Operations$brokerArgs<ExtArgs>
     logistics?: boolean | Operations$logisticsArgs<ExtArgs>
-    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    shipment?: boolean | Operations$shipmentArgs<ExtArgs>
     service?: boolean | Operations$serviceArgs<ExtArgs>
   }
 
@@ -21288,7 +21288,7 @@ export namespace Prisma {
       bank: Prisma.$UserPayload<ExtArgs> | null
       broker: Prisma.$UserPayload<ExtArgs> | null
       logistics: Prisma.$UserPayload<ExtArgs> | null
-      shipment: Prisma.$ShipmentPayload<ExtArgs>
+      shipment: Prisma.$ShipmentPayload<ExtArgs> | null
       service: Prisma.$ServicePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -21299,7 +21299,7 @@ export namespace Prisma {
       serviceId: string | null
       bankId: string | null
       logisticsId: string | null
-      shipmentId: string
+      shipmentId: string | null
       status: $Enums.OperationStatus
     }, ExtArgs["result"]["operations"]>
     composites: {}
@@ -21700,7 +21700,7 @@ export namespace Prisma {
     bank<T extends Operations$bankArgs<ExtArgs> = {}>(args?: Subset<T, Operations$bankArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     broker<T extends Operations$brokerArgs<ExtArgs> = {}>(args?: Subset<T, Operations$brokerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     logistics<T extends Operations$logisticsArgs<ExtArgs> = {}>(args?: Subset<T, Operations$logisticsArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    shipment<T extends ShipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShipmentDefaultArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    shipment<T extends Operations$shipmentArgs<ExtArgs> = {}>(args?: Subset<T, Operations$shipmentArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     service<T extends Operations$serviceArgs<ExtArgs> = {}>(args?: Subset<T, Operations$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -22195,6 +22195,25 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * Operations.shipment
+   */
+  export type Operations$shipmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
   }
 
   /**
@@ -23231,8 +23250,8 @@ export namespace Prisma {
     id?: StringFilter<"Shipment"> | string
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
     carrier?: StringFilter<"Shipment"> | string
-    etd?: DateTimeFilter<"Shipment"> | Date | string
-    eta?: DateTimeFilter<"Shipment"> | Date | string
+    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
@@ -23254,8 +23273,8 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     carrier?: SortOrder
-    etd?: SortOrder
-    eta?: SortOrder
+    etd?: SortOrderInput | SortOrder
+    eta?: SortOrderInput | SortOrder
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
@@ -23280,8 +23299,8 @@ export namespace Prisma {
     NOT?: ShipmentWhereInput | ShipmentWhereInput[]
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
     carrier?: StringFilter<"Shipment"> | string
-    etd?: DateTimeFilter<"Shipment"> | Date | string
-    eta?: DateTimeFilter<"Shipment"> | Date | string
+    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
@@ -23303,8 +23322,8 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     carrier?: SortOrder
-    etd?: SortOrder
-    eta?: SortOrder
+    etd?: SortOrderInput | SortOrder
+    eta?: SortOrderInput | SortOrder
     origin?: SortOrder
     destination?: SortOrder
     createdAt?: SortOrder
@@ -23325,8 +23344,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Shipment"> | string
     status?: EnumShipmentStatusWithAggregatesFilter<"Shipment"> | $Enums.ShipmentStatus
     carrier?: StringWithAggregatesFilter<"Shipment"> | string
-    etd?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
-    eta?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
+    etd?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
+    eta?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
     origin?: StringWithAggregatesFilter<"Shipment"> | string
     destination?: StringWithAggregatesFilter<"Shipment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
@@ -24036,14 +24055,14 @@ export namespace Prisma {
     serviceId?: StringNullableFilter<"Operations"> | string | null
     bankId?: StringNullableFilter<"Operations"> | string | null
     logisticsId?: StringNullableFilter<"Operations"> | string | null
-    shipmentId?: StringFilter<"Operations"> | string
+    shipmentId?: StringNullableFilter<"Operations"> | string | null
     status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
     importer?: XOR<UserScalarRelationFilter, UserWhereInput>
     exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
     bank?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     logistics?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
     service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
   }
 
@@ -24055,7 +24074,7 @@ export namespace Prisma {
     serviceId?: SortOrderInput | SortOrder
     bankId?: SortOrderInput | SortOrder
     logisticsId?: SortOrderInput | SortOrder
-    shipmentId?: SortOrder
+    shipmentId?: SortOrderInput | SortOrder
     status?: SortOrder
     importer?: UserOrderByWithRelationInput
     exporter?: UserOrderByWithRelationInput
@@ -24077,14 +24096,14 @@ export namespace Prisma {
     serviceId?: StringNullableFilter<"Operations"> | string | null
     bankId?: StringNullableFilter<"Operations"> | string | null
     logisticsId?: StringNullableFilter<"Operations"> | string | null
-    shipmentId?: StringFilter<"Operations"> | string
+    shipmentId?: StringNullableFilter<"Operations"> | string | null
     status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
     importer?: XOR<UserScalarRelationFilter, UserWhereInput>
     exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
     bank?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     logistics?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
     service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
   }, "id">
 
@@ -24096,7 +24115,7 @@ export namespace Prisma {
     serviceId?: SortOrderInput | SortOrder
     bankId?: SortOrderInput | SortOrder
     logisticsId?: SortOrderInput | SortOrder
-    shipmentId?: SortOrder
+    shipmentId?: SortOrderInput | SortOrder
     status?: SortOrder
     _count?: OperationsCountOrderByAggregateInput
     _max?: OperationsMaxOrderByAggregateInput
@@ -24114,7 +24133,7 @@ export namespace Prisma {
     serviceId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
     bankId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
     logisticsId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
-    shipmentId?: StringWithAggregatesFilter<"Operations"> | string
+    shipmentId?: StringNullableWithAggregatesFilter<"Operations"> | string | null
     status?: EnumOperationStatusWithAggregatesFilter<"Operations"> | $Enums.OperationStatus
   }
 
@@ -24626,8 +24645,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -24645,8 +24664,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -24664,8 +24683,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24683,8 +24702,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24702,8 +24721,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -24718,8 +24737,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24730,8 +24749,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25486,7 +25505,7 @@ export namespace Prisma {
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -25498,7 +25517,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -25510,7 +25529,7 @@ export namespace Prisma {
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -25522,7 +25541,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -25534,7 +25553,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -25551,7 +25570,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -26136,6 +26155,17 @@ export namespace Prisma {
     not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -26202,6 +26232,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumShipmentStatusFilter<$PrismaModel>
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumShipmentEventTypeFilter<$PrismaModel = never> = {
@@ -26654,17 +26698,6 @@ export namespace Prisma {
     not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type SubscriptionCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -26715,20 +26748,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type OTPCountOrderByAggregateInput = {
@@ -28204,6 +28223,10 @@ export namespace Prisma {
     set?: $Enums.ShipmentStatus
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput = {
     create?: XOR<UserCreateWithoutShipmentsAsImporterInput, UserUncheckedCreateWithoutShipmentsAsImporterInput>
     connectOrCreate?: UserCreateOrConnectWithoutShipmentsAsImporterInput
@@ -28528,10 +28551,6 @@ export namespace Prisma {
     set?: $Enums.SubscriptionStatus
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type UserUpdateOneRequiredWithoutSubscriptionNestedInput = {
     create?: XOR<UserCreateWithoutSubscriptionInput, UserUncheckedCreateWithoutSubscriptionInput>
     connectOrCreate?: UserCreateOrConnectWithoutSubscriptionInput
@@ -28646,10 +28665,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOperationsAsLogisticsInput, UserUpdateWithoutOperationsAsLogisticsInput>, UserUncheckedUpdateWithoutOperationsAsLogisticsInput>
   }
 
-  export type ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput = {
+  export type ShipmentUpdateOneWithoutShipmentsInOperationNestedInput = {
     create?: XOR<ShipmentCreateWithoutShipmentsInOperationInput, ShipmentUncheckedCreateWithoutShipmentsInOperationInput>
     connectOrCreate?: ShipmentCreateOrConnectWithoutShipmentsInOperationInput
     upsert?: ShipmentUpsertWithoutShipmentsInOperationInput
+    disconnect?: ShipmentWhereInput | boolean
+    delete?: ShipmentWhereInput | boolean
     connect?: ShipmentWhereUniqueInput
     update?: XOR<XOR<ShipmentUpdateToOneWithWhereWithoutShipmentsInOperationInput, ShipmentUpdateWithoutShipmentsInOperationInput>, ShipmentUncheckedUpdateWithoutShipmentsInOperationInput>
   }
@@ -28897,6 +28918,17 @@ export namespace Prisma {
     not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedEnumShipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
@@ -28905,6 +28937,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumShipmentStatusFilter<$PrismaModel>
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumShipmentEventTypeFilter<$PrismaModel = never> = {
@@ -29050,17 +29096,6 @@ export namespace Prisma {
     not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
@@ -29069,20 +29104,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumOperationStatusFilter<$PrismaModel = never> = {
@@ -29374,8 +29395,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29392,8 +29413,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29420,8 +29441,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29438,8 +29459,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29466,8 +29487,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29484,8 +29505,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -29716,7 +29737,7 @@ export namespace Prisma {
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -29727,7 +29748,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -29748,7 +29769,7 @@ export namespace Prisma {
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -29759,7 +29780,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -29780,7 +29801,7 @@ export namespace Prisma {
     exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -29791,7 +29812,7 @@ export namespace Prisma {
     brokerId?: string | null
     serviceId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -29812,7 +29833,7 @@ export namespace Prisma {
     exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -29823,7 +29844,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -29844,7 +29865,7 @@ export namespace Prisma {
     exporter: UserCreateNestedOneWithoutOperationsAsExporterInput
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
     service?: ServiceCreateNestedOneWithoutOperationsInput
   }
 
@@ -29855,7 +29876,7 @@ export namespace Prisma {
     brokerId?: string | null
     serviceId?: string | null
     bankId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -30092,8 +30113,8 @@ export namespace Prisma {
     id?: StringFilter<"Shipment"> | string
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
     carrier?: StringFilter<"Shipment"> | string
-    etd?: DateTimeFilter<"Shipment"> | Date | string
-    eta?: DateTimeFilter<"Shipment"> | Date | string
+    etd?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    eta?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
@@ -30375,7 +30396,7 @@ export namespace Prisma {
     serviceId?: StringNullableFilter<"Operations"> | string | null
     bankId?: StringNullableFilter<"Operations"> | string | null
     logisticsId?: StringNullableFilter<"Operations"> | string | null
-    shipmentId?: StringFilter<"Operations"> | string
+    shipmentId?: StringNullableFilter<"Operations"> | string | null
     status?: EnumOperationStatusFilter<"Operations"> | $Enums.OperationStatus
   }
 
@@ -30524,8 +30545,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -30542,8 +30563,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -30600,7 +30621,7 @@ export namespace Prisma {
     bank?: UserCreateNestedOneWithoutOperationsAsBankInput
     broker?: UserCreateNestedOneWithoutOperationsAsBrokerInput
     logistics?: UserCreateNestedOneWithoutOperationsAsLogisticsInput
-    shipment: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
+    shipment?: ShipmentCreateNestedOneWithoutShipmentsInOperationInput
   }
 
   export type OperationsUncheckedCreateWithoutServiceInput = {
@@ -30610,7 +30631,7 @@ export namespace Prisma {
     brokerId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -32401,8 +32422,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -32419,8 +32440,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -32530,8 +32551,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32548,8 +32569,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32803,8 +32824,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -32821,8 +32842,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -33050,8 +33071,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33068,8 +33089,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34526,8 +34547,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -34544,8 +34565,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -35020,8 +35041,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35038,8 +35059,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35176,8 +35197,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -35191,8 +35212,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -35206,8 +35227,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -35279,7 +35300,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -35290,7 +35311,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -35301,7 +35322,7 @@ export namespace Prisma {
     brokerId?: string | null
     serviceId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -35312,7 +35333,7 @@ export namespace Prisma {
     serviceId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -35323,7 +35344,7 @@ export namespace Prisma {
     brokerId?: string | null
     serviceId?: string | null
     bankId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -35606,8 +35627,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35624,8 +35645,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35642,8 +35663,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35657,8 +35678,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35675,8 +35696,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35693,8 +35714,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35708,8 +35729,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35726,8 +35747,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35744,8 +35765,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35927,7 +35948,7 @@ export namespace Prisma {
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -35938,7 +35959,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -35949,7 +35970,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -35960,7 +35981,7 @@ export namespace Prisma {
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -35971,7 +35992,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -35982,7 +36003,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -35993,7 +36014,7 @@ export namespace Prisma {
     exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -36004,7 +36025,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36015,7 +36036,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36026,7 +36047,7 @@ export namespace Prisma {
     exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -36037,7 +36058,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36048,7 +36069,7 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36059,7 +36080,7 @@ export namespace Prisma {
     exporter?: UserUpdateOneRequiredWithoutOperationsAsExporterNestedInput
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
     service?: ServiceUpdateOneWithoutOperationsNestedInput
   }
 
@@ -36070,7 +36091,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36081,7 +36102,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36089,8 +36110,8 @@ export namespace Prisma {
     id?: string
     status?: $Enums.ShipmentStatus
     carrier: string
-    etd: Date | string
-    eta: Date | string
+    etd?: Date | string | null
+    eta?: Date | string | null
     origin: string
     destination: string
     createdAt?: Date | string
@@ -36115,7 +36136,7 @@ export namespace Prisma {
     brokerId?: string | null
     bankId?: string | null
     logisticsId?: string | null
-    shipmentId: string
+    shipmentId?: string | null
     status?: $Enums.OperationStatus
   }
 
@@ -36123,8 +36144,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36141,8 +36162,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36159,8 +36180,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     carrier?: StringFieldUpdateOperationsInput | string
-    etd?: DateTimeFieldUpdateOperationsInput | Date | string
-    eta?: DateTimeFieldUpdateOperationsInput | Date | string
+    etd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eta?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36202,7 +36223,7 @@ export namespace Prisma {
     bank?: UserUpdateOneWithoutOperationsAsBankNestedInput
     broker?: UserUpdateOneWithoutOperationsAsBrokerNestedInput
     logistics?: UserUpdateOneWithoutOperationsAsLogisticsNestedInput
-    shipment?: ShipmentUpdateOneRequiredWithoutShipmentsInOperationNestedInput
+    shipment?: ShipmentUpdateOneWithoutShipmentsInOperationNestedInput
   }
 
   export type OperationsUncheckedUpdateWithoutServiceInput = {
@@ -36212,7 +36233,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 
@@ -36223,7 +36244,7 @@ export namespace Prisma {
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     bankId?: NullableStringFieldUpdateOperationsInput | string | null
     logisticsId?: NullableStringFieldUpdateOperationsInput | string | null
-    shipmentId?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
   }
 

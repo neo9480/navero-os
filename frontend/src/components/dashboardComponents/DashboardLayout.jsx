@@ -9,13 +9,37 @@ import UserAvatar from "./UserAvatar";
 import { Separator } from "../ui/separator";
 import Notifications from "./Notifications";
 import { ACTIVITIES } from "@/constants/dashboard";
+import useAuthStore from "@/store/useAuthStore";
+import { useEffect } from "react";
 
 const DashboardLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const sidebarNavItems = dashboardNavItems;
-  const userName = "Acme Inc.";
-  const [notificationArray, setNotificationArray] = useState(ACTIVITIES);
+  const [ notificationArray, setNotificationArray ] = useState( ACTIVITIES );
+  
+  const { getUser, user, isAuthReady } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthReady) getUser();
+  }, [isAuthReady, getUser]);
+
+  if (!isAuthReady)
+    return (
+      <DashboardLayout className="flex justify-center items-center text-2xl text-platinum-500">
+        Initializing...
+      </DashboardLayout>
+    );
+
+  if (!user)
+    return (
+      <DashboardLayout className="flex justify-center items-center text-2xl text-platinum-500">
+        Loading...
+      </DashboardLayout>
+    );
+  
+  const userName = user.companyName
+  const userEmail = user.email
 
   // from backend use "read" and "unread" to toggle notification icon.
   // And make a function to make the notification "read" or "unread".
@@ -105,7 +129,7 @@ const DashboardLayout = ({ children }) => {
         <div className="m-[0.5vh] max-w-[79.5vw] w-full rounded-xl bg-space_indigo-100/70 border overflow-hidden border-zinc-700">
           <nav className="w-full px-6 h-[9.5vh] flex justify-between items-center ">
             <span className="text-3xl">
-              Welcome, {userName ? userName : "j"}
+              Welcome, {userName ? userName : "John Doe"}
             </span>
             <div className="flex h-[5vh] justify-center items-center gap-3">
               <InputSearch />
@@ -115,8 +139,9 @@ const DashboardLayout = ({ children }) => {
               />
               <Separator orientation="vertical" />
               <UserAvatar
-                userName={"Acme Inc."}
-                userEmail={"example@email.com"}
+                userName={userName}
+                userEmail={userEmail}
+                imgSrc={user.logo ? user.logo : "https://github.com/shadcn.png"}
               />
             </div>
           </nav>

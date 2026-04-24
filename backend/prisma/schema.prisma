@@ -482,8 +482,8 @@ model Shipment {
   id         String         @id @default(cuid())
   status     ShipmentStatus @default(CREATED)
   carrier String
-  etd        DateTime
-  eta        DateTime
+  etd        DateTime?
+  eta        DateTime?
   origin String
   destination String
   createdAt  DateTime       @default(now())
@@ -648,7 +648,7 @@ model Operations {
   serviceId String?
   bankId String?
   logisticsId String?
-  shipmentId String
+  shipmentId String?
 
   status OperationStatus @default(INITIATED)
 
@@ -657,7 +657,7 @@ model Operations {
   bank User? @relation("BankOperations", fields: [bankId], references: [id])
   broker User? @relation("BrokerOperations", fields: [brokerId], references: [id])
   logistics User? @relation("LogisticsOperations", fields: [logisticsId], references: [id])
-  shipment Shipment @relation("ShipmentsInOperations", fields: [shipmentId], references: [id])
+  shipment Shipment? @relation("ShipmentsInOperations", fields: [shipmentId], references: [id])
   service Service? @relation("ServiceOperations", fields: [serviceId], references: [id])
 
 }

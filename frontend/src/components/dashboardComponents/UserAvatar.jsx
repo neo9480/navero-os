@@ -14,14 +14,15 @@ import { LogOut } from "lucide-react";
 import { CreditCard } from "lucide-react";
 import { User } from "lucide-react";
 
-function UserAvatar({userName, userEmail}) {
+function UserAvatar( { userName, userEmail, imgSrc } ) {
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex justify-center items-center gap-1 cursor-pointer">
           <Button size="icon" className="rounded-full">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
+              <AvatarImage src={imgSrc} alt="shadcn" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </Button>
