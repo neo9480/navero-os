@@ -27,16 +27,12 @@ app.use(
     credentials: true,
   }),
 );
-
 // Parse cookies for session / auth tokens
 app.use(cookieParser());
-
 // Parse incoming JSON payloads
 app.use(express.json());
-
 // Global error handler (kept last among middleware but before routes)
-app.use(errorMiddleware.errorHandler);
-
+app.use( errorMiddleware.errorHandler );
 app.use(morgan("dev"));
 
 // Health check / root route
@@ -47,14 +43,12 @@ app.get("/", async (req, res) => {
     console.error("CANNOT GET /:", err);
   }
 });
-
 /*  
   Route groups
   Each category is logically separated:
   - /api/admin        Super admin actions (manage users, shipments, stats, etc.)
   - /api/auth         Authentication for all roles
 */
-
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", documentsRoutes);
@@ -64,7 +58,6 @@ app.use("/api/operations", operationRoutes);
 // app.use("/api/user", userRoutes);
 app.use("/api/shipment", shipmentRoutes);
 // app.use("/api/service", serviceRoutes);
-
 if (config.NODE_ENV === "Production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 

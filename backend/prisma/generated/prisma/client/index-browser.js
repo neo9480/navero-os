@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.7.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-  client: "7.7.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -190,7 +190,12 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   importerId: 'importerId',
   exporterId: 'exporterId',
   brokerId: 'brokerId',
-  serviceId: 'serviceId'
+  serviceId: 'serviceId',
+  carrierTrackingId: 'carrierTrackingId',
+  originLat: 'originLat',
+  originLng: 'originLng',
+  destLat: 'destLat',
+  destLng: 'destLng'
 };
 
 exports.Prisma.ShipmentEventScalarFieldEnum = {
@@ -199,6 +204,9 @@ exports.Prisma.ShipmentEventScalarFieldEnum = {
   userId: 'userId',
   type: 'type',
   message: 'message',
+  lat: 'lat',
+  lng: 'lng',
+  location: 'location',
   createdAt: 'createdAt'
 };
 
@@ -361,7 +369,10 @@ exports.ShipmentEventType = exports.$Enums.ShipmentEventType = {
   IN_TRANSIT: 'IN_TRANSIT',
   CUSTOMS_HOLD: 'CUSTOMS_HOLD',
   DELIVERED: 'DELIVERED',
-  DELAYED: 'DELAYED'
+  DELAYED: 'DELAYED',
+  LOCATION_UPDATE: 'LOCATION_UPDATE',
+  PICKED_UP: 'PICKED_UP',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY'
 };
 
 exports.DocumentType = exports.$Enums.DocumentType = {

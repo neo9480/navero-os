@@ -101,7 +101,7 @@ const App = () => {
             </div>
           : <Routes location={displayLocation}>
               <Route path="/*" element={<LandingPage />} />
-              <Route path="/load" element={<ProtectedRoute />}/>
+              <Route path="/load" element={<ProtectedRoute />} />
               <Route
                 path="/dashboard"
                 element={

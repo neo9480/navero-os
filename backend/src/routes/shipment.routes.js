@@ -1,52 +1,65 @@
+// src/routes/shipment.routes.js — full replacement
+
 import express from "express";
 import shipmentController from "../controllers/shipment.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-//  all the shipments routes, include shipment tracking.
+// ─── SHIPMENT CRUD ───────────────────────────────────────────────────────────
 router.get(
   "/user/:userId",
   authMiddleware,
   shipmentController.getAllUserShipment,
-); // - fetch all user shipments
+);
 router.post(
   "/operations/:operationId",
   authMiddleware,
   shipmentController.createShipment,
-); // - create shipment for an operation
+);
 router.get(
   "/operations/:operationId",
   authMiddleware,
   shipmentController.getAllShipmentInOperation,
-); // - fetch all shipments in an operation
-router.get("/:id", authMiddleware, shipmentController.getShipment); // - fetch shipments by id
-router.patch("/:id", authMiddleware, shipmentController.updateShipment); // - update a shipment
+);
+router.get("/:id", authMiddleware, shipmentController.getShipment);
+router.patch("/:id", authMiddleware, shipmentController.updateShipment);
 router.post(
   "/:id/status",
   authMiddleware,
   shipmentController.updateShipmentStatus,
-); // - update status + tracking event
+);
 router.post(
   "/:id/insurance",
   authMiddleware,
   shipmentController.createShipmentInsurance,
-); // - create shipment insurance
+);
 router.post(
   "/:id/insurance/claim",
   authMiddleware,
   shipmentController.fileShipmentInsuranceClaim,
-); // - file insurance claim
+);
 
+// ─── TRACKING EVENTS (REST) ──────────────────────────────────────────────────
 router.post(
   "/tracking/:shipmentId/events",
   authMiddleware,
   shipmentController.addTrackingEvent,
-); // - manually add tracking event
+);
 router.get(
   "/tracking/:shipmentId/events",
   authMiddleware,
   shipmentController.getAllTrackingEvent,
-); // - fetch all tracking events
+);
+
+// ─── LIVE STREAM (SSE) ───────────────────────────────────────────────────────
+// The browser opens this and keeps it alive. Server pushes JSON events.
+// Auth token should be passed as ?token=<accessToken> since EventSource
+// doesn't support custom headers natively.
+router.get(
+  "/tracking/:shipmentId/stream",
+  authMiddleware,
+  shipmentController.streamTracking,
+);
 
 export default router;

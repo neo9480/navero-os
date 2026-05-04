@@ -404,11 +404,11 @@ model User {
   bookings                  Booking[]
   otp                       OTP[]
   subscription              Subscription?
-  operationsAsImporter Operations[] @relation("ImporterOperations")
-  operationsAsExporter Operations[] @relation("ExporterOperations")
-  operationsAsBank Operations[] @relation("BankOperations")
-  operationsAsBroker Operations[] @relation("BrokerOperations")
-  operationsAsLogistics Operations[] @relation("LogisticsOperations")
+  operationsAsImporter      Operations[]    @relation("ImporterOperations")
+  operationsAsExporter      Operations[]    @relation("ExporterOperations")
+  operationsAsBank          Operations[]    @relation("BankOperations")
+  operationsAsBroker        Operations[]    @relation("BrokerOperations")
+  operationsAsLogistics     Operations[]    @relation("LogisticsOperations")
 }
 
 // Services created by brokers or freight providers
@@ -482,35 +482,35 @@ model LC {
 
 // Shipments (Exporter → Importer, handled by broker and services)
 model Shipment {
-  id         String         @id @default(cuid())
-  status     ShipmentStatus @default(CREATED)
-  carrier String
-  etd        DateTime?
-  eta        DateTime?
-  origin String
+  id          String         @id @default(cuid())
+  status      ShipmentStatus @default(CREATED)
+  carrier     String
+  etd         DateTime?
+  eta         DateTime?
+  origin      String
   destination String
-  createdAt  DateTime       @default(now())
+  createdAt   DateTime       @default(now())
 
   operationId String
-  importerId String
-  exporterId String
-  brokerId   String?
-  serviceId  String?
+  importerId  String
+  exporterId  String
+  brokerId    String?
+  serviceId   String?
 
   carrierTrackingId String?
-  originLat Float?
-  originLng Float?
-  destLat Float?
-  destLng Float?
+  originLat         Float?
+  originLng         Float?
+  destLat           Float?
+  destLng           Float?
 
   importer User     @relation("ImporterShipments", fields: [importerId], references: [id])
   exporter User     @relation("ExporterShipments", fields: [exporterId], references: [id])
   broker   User?    @relation("BrokerShipments", fields: [brokerId], references: [id])
   service  Service? @relation(fields: [serviceId], references: [id])
 
-  documents Document[]
-  events    ShipmentEvent[]
-  shipmentsInOperation Operations[] @relation("ShipmentsInOperations")
+  documents            Document[]
+  events               ShipmentEvent[]
+  shipmentsInOperation Operations[]    @relation("ShipmentsInOperations")
 }
 
 // Events emitted by customs or system for tracking
@@ -520,9 +520,9 @@ model ShipmentEvent {
   userId     String?
   type       ShipmentEventType
   message    String?
-  lat Float?
-  lng Float?
-  location String?
+  lat        Float?
+  lng        Float?
+  location   String?
   createdAt  DateTime          @default(now())
 
   shipment Shipment @relation(fields: [shipmentId], references: [id])
@@ -653,23 +653,22 @@ model OTP {
 }
 
 model Operations {
-  id String @id @default(cuid())
-  importerId String
-  exporterId String
-  brokerId String?
-  serviceId String?
-  bankId String?
+  id          String  @id @default(cuid())
+  importerId  String
+  exporterId  String
+  brokerId    String?
+  serviceId   String?
+  bankId      String?
   logisticsId String?
-  shipmentId String?
+  shipmentId  String?
 
   status OperationStatus @default(INITIATED)
 
-  importer User @relation("ImporterOperations", fields: [importerId], references: [id])
-  exporter User @relation("ExporterOperations", fields: [exporterId], references: [id])
-  bank User? @relation("BankOperations", fields: [bankId], references: [id])
-  broker User? @relation("BrokerOperations", fields: [brokerId], references: [id])
-  logistics User? @relation("LogisticsOperations", fields: [logisticsId], references: [id])
-  shipment Shipment? @relation("ShipmentsInOperations", fields: [shipmentId], references: [id])
-  service Service? @relation("ServiceOperations", fields: [serviceId], references: [id])
-
+  importer  User      @relation("ImporterOperations", fields: [importerId], references: [id])
+  exporter  User      @relation("ExporterOperations", fields: [exporterId], references: [id])
+  bank      User?     @relation("BankOperations", fields: [bankId], references: [id])
+  broker    User?     @relation("BrokerOperations", fields: [brokerId], references: [id])
+  logistics User?     @relation("LogisticsOperations", fields: [logisticsId], references: [id])
+  shipment  Shipment? @relation("ShipmentsInOperations", fields: [shipmentId], references: [id])
+  service   Service?  @relation("ServiceOperations", fields: [serviceId], references: [id])
 }

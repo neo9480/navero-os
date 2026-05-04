@@ -23,15 +23,15 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import TablePagination from "../shadcn-studio/pagination/Pagination";
-import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 
-const DataTable = ({ tableData }) => {
+const DataTable = ({ tableData, onRowClick, selectedId }) => {
   const [filter1, setFilter1] = useState(new Set());
   const [filter2, setFilter2] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  // const [ dataForTable, setDataForTable ] = useState( [] );
+  const [ pageSize, setPageSize ] = useState( 10 );
+  
+  const Icon = statusIcon
 
   const totalDataForTable = tableData.length;
   const pageLength = Math.ceil(totalDataForTable / pageSize);
@@ -65,9 +65,10 @@ const DataTable = ({ tableData }) => {
       return next;
     });
   };
+
+  
   return (
     <div className="w-full bg-zinc-950 border gap-5 flex flex-col  rounded-xl p-5">
-      {console.log({ currentPage, pageSize, dataStart, dataEnd })}
       <div className="flex justify-between items-center">
         <div className="flex gap-3 items-center">
           <Ship />
@@ -97,7 +98,7 @@ const DataTable = ({ tableData }) => {
           />
         </div>
       </div>
-      <ScrollArea >
+      <ScrollArea>
         <div className="text-platinum-500 font-neue_montreal max-h-60vh]">
           <Table>
             <TableHeader className={"bg-zinc-900"}>
@@ -113,29 +114,50 @@ const DataTable = ({ tableData }) => {
               {tableData
                 .slice(dataStart, dataEnd)
                 .map(
-                  ({ id, origin, destination, status, carrier, eta, docs }) => (
-                    <TableRow key={id} className={"hover:bg-zinc-900"}>
-                      <TableCell>{id}</TableCell>
-                      <TableCell>{origin}</TableCell>
-                      <TableCell>{destination}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={`flex gap-1 items-center ${status === "In Transit" && statusColor.inTransit} ${status === "Customs Hold" && statusColor.customsHold} ${status === "Pending" && statusColor.pending} ${status === "Delivered" && statusColor.delivered}`}>
-                          {status === "In Transit" ?
-                            <statusIcon.inTransit />
-                          : status === "Customs Hold" ?
-                            <statusIcon.customsHold />
-                          : status === "Pending" ?
-                            <statusIcon.pending />
-                          : status === "Delivered" && <statusIcon.delivered />}
-                          {status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{carrier}</TableCell>
-                      <TableCell>{eta}</TableCell>
-                      <TableCell>{docs}</TableCell>
-                    </TableRow>
-                  ),
+                  ({ id, origin, destination, status, carrier, eta, docs }) => {
+                    const isSelected = selectedId === id;
+                    return (
+                      <TableRow
+                        key={id}
+                        onClick={() =>
+                          onRowClick?.({
+                            id,
+                            origin,
+                            destination,
+                            status,
+                            carrier,
+                            eta,
+                            docs,
+                          })
+                        }
+                        className={`cursor-pointer transition-colors ${
+                          isSelected ?
+                            "bg-blue-500/10 border-l-2 border-blue-500"
+                          : "hover:bg-zinc-900"
+                        }`}>
+                        <TableCell>{id}</TableCell>
+                        <TableCell>{origin}</TableCell> 
+                        <TableCell>{destination}</TableCell>
+                        <TableCell>
+                          <Badge
+                            className={`flex gap-1 items-center ${status === "In Transit" && statusColor.inTransit} ${status === "Customs Hold" && statusColor.customsHold} ${status === "Pending" && statusColor.pending} ${status === "Delivered" && statusColor.delivered}`}>
+                            {status === "In Transit" ?
+                              <Icon.inTransit />
+                            : status === "Customs Hold" ?
+                              <Icon.customsHold />
+                            : status === "Pending" ?
+                              <Icon.pending />
+                            : status === "Delivered" && <Icon.delivered />
+                            }
+                            {status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{carrier}</TableCell>
+                        <TableCell>{eta}</TableCell>
+                        <TableCell>{docs}</TableCell>
+                      </TableRow>
+                    );
+                  },
                 )}
             </TableBody>
           </Table>

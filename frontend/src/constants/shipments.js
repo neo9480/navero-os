@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+import { ArrowLeftRight, Bell, Check, CheckCircle2, Clock, MapPin, Package, TriangleAlert, Truck } from "lucide-react";
 import { ClockIcon } from "lucide-react";
 import { ArrowRightCircle } from "lucide-react";
 import { PauseCircle } from "lucide-react";
@@ -580,3 +580,63 @@ export const statusIcon = {
   delivered: CheckCircle2,
   pending: ClockIcon,
 };
+
+export const EVENT_CONFIG = {
+  PICKED_UP: {
+    label: "Picked Up",
+    icon: Package,
+    dot: "bg-violet-400/15 border-violet-400",
+    text: "text-violet-400",
+    glow: "shadow-violet-400/30",
+  },
+  IN_TRANSIT: {
+    label: "In Transit",
+    icon: ArrowLeftRight,
+    dot: "bg-sky-400/15 border-sky-400",
+    text: "text-sky-400",
+    glow: "shadow-sky-400/30",
+  },
+  LOCATION_UPDATE: {
+    label: "Location Update",
+    icon: MapPin,
+    dot: "bg-blue-400/10 border-blue-400",
+    text: "text-blue-400",
+    glow: "shadow-blue-400/30",
+  },
+  CUSTOMS_HOLD: {
+    label: "Customs Hold",
+    icon: TriangleAlert,
+    dot: "bg-amber-400/15 border-amber-400",
+    text: "text-amber-400",
+    glow: "shadow-amber-400/30",
+  },
+  DELAYED: {
+    label: "Delayed",
+    icon: Clock,
+    dot: "bg-red-400/15 border-red-400",
+    text: "text-red-400",
+    glow: "shadow-red-400/30",
+  },
+  OUT_FOR_DELIVERY: {
+    label: "Out for Delivery",
+    icon: Truck,
+    dot: "bg-emerald-400/15 border-emerald-400",
+    text: "text-emerald-400",
+    glow: "shadow-emerald-400/30",
+  },
+  DELIVERED: {
+    label: "Delivered",
+    icon: Check,
+    dot: "bg-green-500/15 border-green-500",
+    text: "text-green-500",
+    glow: "shadow-green-500/30",
+  },
+};
+
+export const DEFAULT_EVENT = {
+  label: "Update",
+  icon: Bell,
+  color: "#94a3b8",
+  bg: "rgba(148,163,184,0.10)",
+};
+

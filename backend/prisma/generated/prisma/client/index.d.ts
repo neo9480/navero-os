@@ -343,7 +343,10 @@ export const ShipmentEventType: {
   IN_TRANSIT: 'IN_TRANSIT',
   CUSTOMS_HOLD: 'CUSTOMS_HOLD',
   DELIVERED: 'DELIVERED',
-  DELAYED: 'DELAYED'
+  DELAYED: 'DELAYED',
+  LOCATION_UPDATE: 'LOCATION_UPDATE',
+  PICKED_UP: 'PICKED_UP',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY'
 };
 
 export type ShipmentEventType = (typeof ShipmentEventType)[keyof typeof ShipmentEventType]
@@ -588,7 +591,7 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
@@ -805,8 +808,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.7.0
-   * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+   * Prisma Client JS version: 7.8.0
+   * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
    */
   export type PrismaVersion = {
     client: string
@@ -9466,8 +9469,24 @@ export namespace Prisma {
 
   export type AggregateShipment = {
     _count: ShipmentCountAggregateOutputType | null
+    _avg: ShipmentAvgAggregateOutputType | null
+    _sum: ShipmentSumAggregateOutputType | null
     _min: ShipmentMinAggregateOutputType | null
     _max: ShipmentMaxAggregateOutputType | null
+  }
+
+  export type ShipmentAvgAggregateOutputType = {
+    originLat: number | null
+    originLng: number | null
+    destLat: number | null
+    destLng: number | null
+  }
+
+  export type ShipmentSumAggregateOutputType = {
+    originLat: number | null
+    originLng: number | null
+    destLat: number | null
+    destLng: number | null
   }
 
   export type ShipmentMinAggregateOutputType = {
@@ -9484,6 +9503,11 @@ export namespace Prisma {
     exporterId: string | null
     brokerId: string | null
     serviceId: string | null
+    carrierTrackingId: string | null
+    originLat: number | null
+    originLng: number | null
+    destLat: number | null
+    destLng: number | null
   }
 
   export type ShipmentMaxAggregateOutputType = {
@@ -9500,6 +9524,11 @@ export namespace Prisma {
     exporterId: string | null
     brokerId: string | null
     serviceId: string | null
+    carrierTrackingId: string | null
+    originLat: number | null
+    originLng: number | null
+    destLat: number | null
+    destLng: number | null
   }
 
   export type ShipmentCountAggregateOutputType = {
@@ -9516,9 +9545,28 @@ export namespace Prisma {
     exporterId: number
     brokerId: number
     serviceId: number
+    carrierTrackingId: number
+    originLat: number
+    originLng: number
+    destLat: number
+    destLng: number
     _all: number
   }
 
+
+  export type ShipmentAvgAggregateInputType = {
+    originLat?: true
+    originLng?: true
+    destLat?: true
+    destLng?: true
+  }
+
+  export type ShipmentSumAggregateInputType = {
+    originLat?: true
+    originLng?: true
+    destLat?: true
+    destLng?: true
+  }
 
   export type ShipmentMinAggregateInputType = {
     id?: true
@@ -9534,6 +9582,11 @@ export namespace Prisma {
     exporterId?: true
     brokerId?: true
     serviceId?: true
+    carrierTrackingId?: true
+    originLat?: true
+    originLng?: true
+    destLat?: true
+    destLng?: true
   }
 
   export type ShipmentMaxAggregateInputType = {
@@ -9550,6 +9603,11 @@ export namespace Prisma {
     exporterId?: true
     brokerId?: true
     serviceId?: true
+    carrierTrackingId?: true
+    originLat?: true
+    originLng?: true
+    destLat?: true
+    destLng?: true
   }
 
   export type ShipmentCountAggregateInputType = {
@@ -9566,6 +9624,11 @@ export namespace Prisma {
     exporterId?: true
     brokerId?: true
     serviceId?: true
+    carrierTrackingId?: true
+    originLat?: true
+    originLng?: true
+    destLat?: true
+    destLng?: true
     _all?: true
   }
 
@@ -9607,6 +9670,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ShipmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShipmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ShipmentMinAggregateInputType
@@ -9637,6 +9712,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ShipmentCountAggregateInputType | true
+    _avg?: ShipmentAvgAggregateInputType
+    _sum?: ShipmentSumAggregateInputType
     _min?: ShipmentMinAggregateInputType
     _max?: ShipmentMaxAggregateInputType
   }
@@ -9655,7 +9732,14 @@ export namespace Prisma {
     exporterId: string
     brokerId: string | null
     serviceId: string | null
+    carrierTrackingId: string | null
+    originLat: number | null
+    originLng: number | null
+    destLat: number | null
+    destLng: number | null
     _count: ShipmentCountAggregateOutputType | null
+    _avg: ShipmentAvgAggregateOutputType | null
+    _sum: ShipmentSumAggregateOutputType | null
     _min: ShipmentMinAggregateOutputType | null
     _max: ShipmentMaxAggregateOutputType | null
   }
@@ -9688,6 +9772,11 @@ export namespace Prisma {
     exporterId?: boolean
     brokerId?: boolean
     serviceId?: boolean
+    carrierTrackingId?: boolean
+    originLat?: boolean
+    originLng?: boolean
+    destLat?: boolean
+    destLng?: boolean
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
     broker?: boolean | Shipment$brokerArgs<ExtArgs>
@@ -9712,6 +9801,11 @@ export namespace Prisma {
     exporterId?: boolean
     brokerId?: boolean
     serviceId?: boolean
+    carrierTrackingId?: boolean
+    originLat?: boolean
+    originLng?: boolean
+    destLat?: boolean
+    destLng?: boolean
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
     broker?: boolean | Shipment$brokerArgs<ExtArgs>
@@ -9732,6 +9826,11 @@ export namespace Prisma {
     exporterId?: boolean
     brokerId?: boolean
     serviceId?: boolean
+    carrierTrackingId?: boolean
+    originLat?: boolean
+    originLng?: boolean
+    destLat?: boolean
+    destLng?: boolean
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
     broker?: boolean | Shipment$brokerArgs<ExtArgs>
@@ -9752,9 +9851,14 @@ export namespace Prisma {
     exporterId?: boolean
     brokerId?: boolean
     serviceId?: boolean
+    carrierTrackingId?: boolean
+    originLat?: boolean
+    originLng?: boolean
+    destLat?: boolean
+    destLng?: boolean
   }
 
-  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "carrier" | "etd" | "eta" | "origin" | "destination" | "createdAt" | "operationId" | "importerId" | "exporterId" | "brokerId" | "serviceId", ExtArgs["result"]["shipment"]>
+  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "carrier" | "etd" | "eta" | "origin" | "destination" | "createdAt" | "operationId" | "importerId" | "exporterId" | "brokerId" | "serviceId" | "carrierTrackingId" | "originLat" | "originLng" | "destLat" | "destLng", ExtArgs["result"]["shipment"]>
   export type ShipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     importer?: boolean | UserDefaultArgs<ExtArgs>
     exporter?: boolean | UserDefaultArgs<ExtArgs>
@@ -9803,6 +9907,11 @@ export namespace Prisma {
       exporterId: string
       brokerId: string | null
       serviceId: string | null
+      carrierTrackingId: string | null
+      originLat: number | null
+      originLng: number | null
+      destLat: number | null
+      destLng: number | null
     }, ExtArgs["result"]["shipment"]>
     composites: {}
   }
@@ -10246,6 +10355,11 @@ export namespace Prisma {
     readonly exporterId: FieldRef<"Shipment", 'String'>
     readonly brokerId: FieldRef<"Shipment", 'String'>
     readonly serviceId: FieldRef<"Shipment", 'String'>
+    readonly carrierTrackingId: FieldRef<"Shipment", 'String'>
+    readonly originLat: FieldRef<"Shipment", 'Float'>
+    readonly originLng: FieldRef<"Shipment", 'Float'>
+    readonly destLat: FieldRef<"Shipment", 'Float'>
+    readonly destLng: FieldRef<"Shipment", 'Float'>
   }
     
 
@@ -10781,8 +10895,20 @@ export namespace Prisma {
 
   export type AggregateShipmentEvent = {
     _count: ShipmentEventCountAggregateOutputType | null
+    _avg: ShipmentEventAvgAggregateOutputType | null
+    _sum: ShipmentEventSumAggregateOutputType | null
     _min: ShipmentEventMinAggregateOutputType | null
     _max: ShipmentEventMaxAggregateOutputType | null
+  }
+
+  export type ShipmentEventAvgAggregateOutputType = {
+    lat: number | null
+    lng: number | null
+  }
+
+  export type ShipmentEventSumAggregateOutputType = {
+    lat: number | null
+    lng: number | null
   }
 
   export type ShipmentEventMinAggregateOutputType = {
@@ -10791,6 +10917,9 @@ export namespace Prisma {
     userId: string | null
     type: $Enums.ShipmentEventType | null
     message: string | null
+    lat: number | null
+    lng: number | null
+    location: string | null
     createdAt: Date | null
   }
 
@@ -10800,6 +10929,9 @@ export namespace Prisma {
     userId: string | null
     type: $Enums.ShipmentEventType | null
     message: string | null
+    lat: number | null
+    lng: number | null
+    location: string | null
     createdAt: Date | null
   }
 
@@ -10809,10 +10941,23 @@ export namespace Prisma {
     userId: number
     type: number
     message: number
+    lat: number
+    lng: number
+    location: number
     createdAt: number
     _all: number
   }
 
+
+  export type ShipmentEventAvgAggregateInputType = {
+    lat?: true
+    lng?: true
+  }
+
+  export type ShipmentEventSumAggregateInputType = {
+    lat?: true
+    lng?: true
+  }
 
   export type ShipmentEventMinAggregateInputType = {
     id?: true
@@ -10820,6 +10965,9 @@ export namespace Prisma {
     userId?: true
     type?: true
     message?: true
+    lat?: true
+    lng?: true
+    location?: true
     createdAt?: true
   }
 
@@ -10829,6 +10977,9 @@ export namespace Prisma {
     userId?: true
     type?: true
     message?: true
+    lat?: true
+    lng?: true
+    location?: true
     createdAt?: true
   }
 
@@ -10838,6 +10989,9 @@ export namespace Prisma {
     userId?: true
     type?: true
     message?: true
+    lat?: true
+    lng?: true
+    location?: true
     createdAt?: true
     _all?: true
   }
@@ -10880,6 +11034,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ShipmentEventAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShipmentEventSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ShipmentEventMinAggregateInputType
@@ -10910,6 +11076,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ShipmentEventCountAggregateInputType | true
+    _avg?: ShipmentEventAvgAggregateInputType
+    _sum?: ShipmentEventSumAggregateInputType
     _min?: ShipmentEventMinAggregateInputType
     _max?: ShipmentEventMaxAggregateInputType
   }
@@ -10920,8 +11088,13 @@ export namespace Prisma {
     userId: string | null
     type: $Enums.ShipmentEventType
     message: string | null
+    lat: number | null
+    lng: number | null
+    location: string | null
     createdAt: Date
     _count: ShipmentEventCountAggregateOutputType | null
+    _avg: ShipmentEventAvgAggregateOutputType | null
+    _sum: ShipmentEventSumAggregateOutputType | null
     _min: ShipmentEventMinAggregateOutputType | null
     _max: ShipmentEventMaxAggregateOutputType | null
   }
@@ -10946,6 +11119,9 @@ export namespace Prisma {
     userId?: boolean
     type?: boolean
     message?: boolean
+    lat?: boolean
+    lng?: boolean
+    location?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     user?: boolean | ShipmentEvent$userArgs<ExtArgs>
@@ -10957,6 +11133,9 @@ export namespace Prisma {
     userId?: boolean
     type?: boolean
     message?: boolean
+    lat?: boolean
+    lng?: boolean
+    location?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     user?: boolean | ShipmentEvent$userArgs<ExtArgs>
@@ -10968,6 +11147,9 @@ export namespace Prisma {
     userId?: boolean
     type?: boolean
     message?: boolean
+    lat?: boolean
+    lng?: boolean
+    location?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     user?: boolean | ShipmentEvent$userArgs<ExtArgs>
@@ -10979,10 +11161,13 @@ export namespace Prisma {
     userId?: boolean
     type?: boolean
     message?: boolean
+    lat?: boolean
+    lng?: boolean
+    location?: boolean
     createdAt?: boolean
   }
 
-  export type ShipmentEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "userId" | "type" | "message" | "createdAt", ExtArgs["result"]["shipmentEvent"]>
+  export type ShipmentEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "userId" | "type" | "message" | "lat" | "lng" | "location" | "createdAt", ExtArgs["result"]["shipmentEvent"]>
   export type ShipmentEventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     user?: boolean | ShipmentEvent$userArgs<ExtArgs>
@@ -11008,6 +11193,9 @@ export namespace Prisma {
       userId: string | null
       type: $Enums.ShipmentEventType
       message: string | null
+      lat: number | null
+      lng: number | null
+      location: string | null
       createdAt: Date
     }, ExtArgs["result"]["shipmentEvent"]>
     composites: {}
@@ -11439,6 +11627,9 @@ export namespace Prisma {
     readonly userId: FieldRef<"ShipmentEvent", 'String'>
     readonly type: FieldRef<"ShipmentEvent", 'ShipmentEventType'>
     readonly message: FieldRef<"ShipmentEvent", 'String'>
+    readonly lat: FieldRef<"ShipmentEvent", 'Float'>
+    readonly lng: FieldRef<"ShipmentEvent", 'Float'>
+    readonly location: FieldRef<"ShipmentEvent", 'String'>
     readonly createdAt: FieldRef<"ShipmentEvent", 'DateTime'>
   }
     
@@ -22353,7 +22544,12 @@ export namespace Prisma {
     importerId: 'importerId',
     exporterId: 'exporterId',
     brokerId: 'brokerId',
-    serviceId: 'serviceId'
+    serviceId: 'serviceId',
+    carrierTrackingId: 'carrierTrackingId',
+    originLat: 'originLat',
+    originLng: 'originLng',
+    destLat: 'destLat',
+    destLng: 'destLng'
   };
 
   export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
@@ -22365,6 +22561,9 @@ export namespace Prisma {
     userId: 'userId',
     type: 'type',
     message: 'message',
+    lat: 'lat',
+    lng: 'lng',
+    location: 'location',
     createdAt: 'createdAt'
   };
 
@@ -23260,6 +23459,11 @@ export namespace Prisma {
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
     serviceId?: StringNullableFilter<"Shipment"> | string | null
+    carrierTrackingId?: StringNullableFilter<"Shipment"> | string | null
+    originLat?: FloatNullableFilter<"Shipment"> | number | null
+    originLng?: FloatNullableFilter<"Shipment"> | number | null
+    destLat?: FloatNullableFilter<"Shipment"> | number | null
+    destLng?: FloatNullableFilter<"Shipment"> | number | null
     importer?: XOR<UserScalarRelationFilter, UserWhereInput>
     exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
     broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -23283,6 +23487,11 @@ export namespace Prisma {
     exporterId?: SortOrder
     brokerId?: SortOrderInput | SortOrder
     serviceId?: SortOrderInput | SortOrder
+    carrierTrackingId?: SortOrderInput | SortOrder
+    originLat?: SortOrderInput | SortOrder
+    originLng?: SortOrderInput | SortOrder
+    destLat?: SortOrderInput | SortOrder
+    destLng?: SortOrderInput | SortOrder
     importer?: UserOrderByWithRelationInput
     exporter?: UserOrderByWithRelationInput
     broker?: UserOrderByWithRelationInput
@@ -23309,6 +23518,11 @@ export namespace Prisma {
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
     serviceId?: StringNullableFilter<"Shipment"> | string | null
+    carrierTrackingId?: StringNullableFilter<"Shipment"> | string | null
+    originLat?: FloatNullableFilter<"Shipment"> | number | null
+    originLng?: FloatNullableFilter<"Shipment"> | number | null
+    destLat?: FloatNullableFilter<"Shipment"> | number | null
+    destLng?: FloatNullableFilter<"Shipment"> | number | null
     importer?: XOR<UserScalarRelationFilter, UserWhereInput>
     exporter?: XOR<UserScalarRelationFilter, UserWhereInput>
     broker?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -23332,9 +23546,16 @@ export namespace Prisma {
     exporterId?: SortOrder
     brokerId?: SortOrderInput | SortOrder
     serviceId?: SortOrderInput | SortOrder
+    carrierTrackingId?: SortOrderInput | SortOrder
+    originLat?: SortOrderInput | SortOrder
+    originLng?: SortOrderInput | SortOrder
+    destLat?: SortOrderInput | SortOrder
+    destLng?: SortOrderInput | SortOrder
     _count?: ShipmentCountOrderByAggregateInput
+    _avg?: ShipmentAvgOrderByAggregateInput
     _max?: ShipmentMaxOrderByAggregateInput
     _min?: ShipmentMinOrderByAggregateInput
+    _sum?: ShipmentSumOrderByAggregateInput
   }
 
   export type ShipmentScalarWhereWithAggregatesInput = {
@@ -23354,6 +23575,11 @@ export namespace Prisma {
     exporterId?: StringWithAggregatesFilter<"Shipment"> | string
     brokerId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
     serviceId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    carrierTrackingId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    originLat?: FloatNullableWithAggregatesFilter<"Shipment"> | number | null
+    originLng?: FloatNullableWithAggregatesFilter<"Shipment"> | number | null
+    destLat?: FloatNullableWithAggregatesFilter<"Shipment"> | number | null
+    destLng?: FloatNullableWithAggregatesFilter<"Shipment"> | number | null
   }
 
   export type ShipmentEventWhereInput = {
@@ -23365,6 +23591,9 @@ export namespace Prisma {
     userId?: StringNullableFilter<"ShipmentEvent"> | string | null
     type?: EnumShipmentEventTypeFilter<"ShipmentEvent"> | $Enums.ShipmentEventType
     message?: StringNullableFilter<"ShipmentEvent"> | string | null
+    lat?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    lng?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    location?: StringNullableFilter<"ShipmentEvent"> | string | null
     createdAt?: DateTimeFilter<"ShipmentEvent"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -23376,6 +23605,9 @@ export namespace Prisma {
     userId?: SortOrderInput | SortOrder
     type?: SortOrder
     message?: SortOrderInput | SortOrder
+    lat?: SortOrderInput | SortOrder
+    lng?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     shipment?: ShipmentOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -23390,6 +23622,9 @@ export namespace Prisma {
     userId?: StringNullableFilter<"ShipmentEvent"> | string | null
     type?: EnumShipmentEventTypeFilter<"ShipmentEvent"> | $Enums.ShipmentEventType
     message?: StringNullableFilter<"ShipmentEvent"> | string | null
+    lat?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    lng?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    location?: StringNullableFilter<"ShipmentEvent"> | string | null
     createdAt?: DateTimeFilter<"ShipmentEvent"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -23401,10 +23636,15 @@ export namespace Prisma {
     userId?: SortOrderInput | SortOrder
     type?: SortOrder
     message?: SortOrderInput | SortOrder
+    lat?: SortOrderInput | SortOrder
+    lng?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ShipmentEventCountOrderByAggregateInput
+    _avg?: ShipmentEventAvgOrderByAggregateInput
     _max?: ShipmentEventMaxOrderByAggregateInput
     _min?: ShipmentEventMinOrderByAggregateInput
+    _sum?: ShipmentEventSumOrderByAggregateInput
   }
 
   export type ShipmentEventScalarWhereWithAggregatesInput = {
@@ -23416,6 +23656,9 @@ export namespace Prisma {
     userId?: StringNullableWithAggregatesFilter<"ShipmentEvent"> | string | null
     type?: EnumShipmentEventTypeWithAggregatesFilter<"ShipmentEvent"> | $Enums.ShipmentEventType
     message?: StringNullableWithAggregatesFilter<"ShipmentEvent"> | string | null
+    lat?: FloatNullableWithAggregatesFilter<"ShipmentEvent"> | number | null
+    lng?: FloatNullableWithAggregatesFilter<"ShipmentEvent"> | number | null
+    location?: StringNullableWithAggregatesFilter<"ShipmentEvent"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ShipmentEvent"> | Date | string
   }
 
@@ -24651,6 +24894,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -24674,6 +24922,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
@@ -24689,6 +24942,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -24712,6 +24970,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
@@ -24731,6 +24994,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
   }
 
   export type ShipmentUpdateManyMutationInput = {
@@ -24743,6 +25011,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ShipmentUncheckedUpdateManyInput = {
@@ -24759,12 +25032,20 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ShipmentEventCreateInput = {
     id?: string
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
     shipment: ShipmentCreateNestedOneWithoutEventsInput
     user?: UserCreateNestedOneWithoutShipmentEventsInput
@@ -24776,6 +25057,9 @@ export namespace Prisma {
     userId?: string | null
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -24783,6 +25067,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipment?: ShipmentUpdateOneRequiredWithoutEventsNestedInput
     user?: UserUpdateOneWithoutShipmentEventsNestedInput
@@ -24794,6 +25081,9 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24803,6 +25093,9 @@ export namespace Prisma {
     userId?: string | null
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -24810,6 +25103,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24819,6 +25115,9 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26166,6 +26465,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -26190,6 +26500,18 @@ export namespace Prisma {
     exporterId?: SortOrder
     brokerId?: SortOrder
     serviceId?: SortOrder
+    carrierTrackingId?: SortOrder
+    originLat?: SortOrder
+    originLng?: SortOrder
+    destLat?: SortOrder
+    destLng?: SortOrder
+  }
+
+  export type ShipmentAvgOrderByAggregateInput = {
+    originLat?: SortOrder
+    originLng?: SortOrder
+    destLat?: SortOrder
+    destLng?: SortOrder
   }
 
   export type ShipmentMaxOrderByAggregateInput = {
@@ -26206,6 +26528,11 @@ export namespace Prisma {
     exporterId?: SortOrder
     brokerId?: SortOrder
     serviceId?: SortOrder
+    carrierTrackingId?: SortOrder
+    originLat?: SortOrder
+    originLng?: SortOrder
+    destLat?: SortOrder
+    destLng?: SortOrder
   }
 
   export type ShipmentMinOrderByAggregateInput = {
@@ -26222,6 +26549,18 @@ export namespace Prisma {
     exporterId?: SortOrder
     brokerId?: SortOrder
     serviceId?: SortOrder
+    carrierTrackingId?: SortOrder
+    originLat?: SortOrder
+    originLng?: SortOrder
+    destLat?: SortOrder
+    destLng?: SortOrder
+  }
+
+  export type ShipmentSumOrderByAggregateInput = {
+    originLat?: SortOrder
+    originLng?: SortOrder
+    destLat?: SortOrder
+    destLng?: SortOrder
   }
 
   export type EnumShipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -26248,6 +26587,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type EnumShipmentEventTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentEventType | EnumShipmentEventTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentEventType[] | ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
@@ -26266,7 +26621,15 @@ export namespace Prisma {
     userId?: SortOrder
     type?: SortOrder
     message?: SortOrder
+    lat?: SortOrder
+    lng?: SortOrder
+    location?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type ShipmentEventAvgOrderByAggregateInput = {
+    lat?: SortOrder
+    lng?: SortOrder
   }
 
   export type ShipmentEventMaxOrderByAggregateInput = {
@@ -26275,6 +26638,9 @@ export namespace Prisma {
     userId?: SortOrder
     type?: SortOrder
     message?: SortOrder
+    lat?: SortOrder
+    lng?: SortOrder
+    location?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -26284,7 +26650,15 @@ export namespace Prisma {
     userId?: SortOrder
     type?: SortOrder
     message?: SortOrder
+    lat?: SortOrder
+    lng?: SortOrder
+    location?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type ShipmentEventSumOrderByAggregateInput = {
+    lat?: SortOrder
+    lng?: SortOrder
   }
 
   export type EnumShipmentEventTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -28227,6 +28601,14 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput = {
     create?: XOR<UserCreateWithoutShipmentsAsImporterInput, UserUncheckedCreateWithoutShipmentsAsImporterInput>
     connectOrCreate?: UserCreateOrConnectWithoutShipmentsAsImporterInput
@@ -28953,6 +29335,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumShipmentEventTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentEventType | EnumShipmentEventTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentEventType[] | ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
@@ -29401,6 +29799,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
@@ -29422,6 +29825,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
@@ -29447,6 +29855,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
@@ -29468,6 +29881,11 @@ export namespace Prisma {
     importerId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
@@ -29493,6 +29911,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     service?: ServiceCreateNestedOneWithoutShipmentsInput
@@ -29514,6 +29937,11 @@ export namespace Prisma {
     importerId: string
     exporterId: string
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
@@ -29533,6 +29961,9 @@ export namespace Prisma {
     id?: string
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
     shipment: ShipmentCreateNestedOneWithoutEventsInput
   }
@@ -29542,6 +29973,9 @@ export namespace Prisma {
     shipmentId: string
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -30123,6 +30557,11 @@ export namespace Prisma {
     exporterId?: StringFilter<"Shipment"> | string
     brokerId?: StringNullableFilter<"Shipment"> | string | null
     serviceId?: StringNullableFilter<"Shipment"> | string | null
+    carrierTrackingId?: StringNullableFilter<"Shipment"> | string | null
+    originLat?: FloatNullableFilter<"Shipment"> | number | null
+    originLng?: FloatNullableFilter<"Shipment"> | number | null
+    destLat?: FloatNullableFilter<"Shipment"> | number | null
+    destLng?: FloatNullableFilter<"Shipment"> | number | null
   }
 
   export type ShipmentUpsertWithWhereUniqueWithoutExporterInput = {
@@ -30182,6 +30621,9 @@ export namespace Prisma {
     userId?: StringNullableFilter<"ShipmentEvent"> | string | null
     type?: EnumShipmentEventTypeFilter<"ShipmentEvent"> | $Enums.ShipmentEventType
     message?: StringNullableFilter<"ShipmentEvent"> | string | null
+    lat?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    lng?: FloatNullableFilter<"ShipmentEvent"> | number | null
+    location?: StringNullableFilter<"ShipmentEvent"> | string | null
     createdAt?: DateTimeFilter<"ShipmentEvent"> | Date | string
   }
 
@@ -30551,6 +30993,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -30572,6 +31019,11 @@ export namespace Prisma {
     importerId: string
     exporterId: string
     brokerId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
@@ -32034,6 +32486,9 @@ export namespace Prisma {
     id?: string
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
     user?: UserCreateNestedOneWithoutShipmentEventsInput
   }
@@ -32043,6 +32498,9 @@ export namespace Prisma {
     userId?: string | null
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -32428,6 +32886,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -32450,6 +32913,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -32557,6 +33025,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -32579,6 +33052,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -32830,6 +33308,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -32852,6 +33335,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
     shipmentsInOperation?: OperationsUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -33077,6 +33565,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -33099,6 +33592,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -34553,6 +35051,11 @@ export namespace Prisma {
     destination: string
     createdAt?: Date | string
     operationId: string
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     importer: UserCreateNestedOneWithoutShipmentsAsImporterInput
     exporter: UserCreateNestedOneWithoutShipmentsAsExporterInput
     broker?: UserCreateNestedOneWithoutShipmentsAsBrokerInput
@@ -34575,6 +35078,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     events?: ShipmentEventUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -35047,6 +35555,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -35069,6 +35582,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -35206,6 +35724,11 @@ export namespace Prisma {
     exporterId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
   }
 
   export type ShipmentCreateManyExporterInput = {
@@ -35221,6 +35744,11 @@ export namespace Prisma {
     importerId: string
     brokerId?: string | null
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
   }
 
   export type ShipmentCreateManyBrokerInput = {
@@ -35236,6 +35764,11 @@ export namespace Prisma {
     importerId: string
     exporterId: string
     serviceId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
   }
 
   export type ShipmentEventCreateManyUserInput = {
@@ -35243,6 +35776,9 @@ export namespace Prisma {
     shipmentId: string
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -35633,6 +36169,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
@@ -35654,6 +36195,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
@@ -35672,6 +36218,11 @@ export namespace Prisma {
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ShipmentUpdateWithoutExporterInput = {
@@ -35684,6 +36235,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
@@ -35705,6 +36261,11 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
@@ -35723,6 +36284,11 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ShipmentUpdateWithoutBrokerInput = {
@@ -35735,6 +36301,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     service?: ServiceUpdateOneWithoutShipmentsNestedInput
@@ -35756,6 +36327,11 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
@@ -35774,12 +36350,20 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ShipmentEventUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipment?: ShipmentUpdateOneRequiredWithoutEventsNestedInput
   }
@@ -35789,6 +36373,9 @@ export namespace Prisma {
     shipmentId?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35797,6 +36384,9 @@ export namespace Prisma {
     shipmentId?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -36119,6 +36709,11 @@ export namespace Prisma {
     importerId: string
     exporterId: string
     brokerId?: string | null
+    carrierTrackingId?: string | null
+    originLat?: number | null
+    originLng?: number | null
+    destLat?: number | null
+    destLng?: number | null
   }
 
   export type BookingCreateManyServiceInput = {
@@ -36150,6 +36745,11 @@ export namespace Prisma {
     destination?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     operationId?: StringFieldUpdateOperationsInput | string
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     importer?: UserUpdateOneRequiredWithoutShipmentsAsImporterNestedInput
     exporter?: UserUpdateOneRequiredWithoutShipmentsAsExporterNestedInput
     broker?: UserUpdateOneWithoutShipmentsAsBrokerNestedInput
@@ -36171,6 +36771,11 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     events?: ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput
     shipmentsInOperation?: OperationsUncheckedUpdateManyWithoutShipmentNestedInput
@@ -36189,6 +36794,11 @@ export namespace Prisma {
     importerId?: StringFieldUpdateOperationsInput | string
     exporterId?: StringFieldUpdateOperationsInput | string
     brokerId?: NullableStringFieldUpdateOperationsInput | string | null
+    carrierTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    originLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    originLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    destLng?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type BookingUpdateWithoutServiceInput = {
@@ -36354,6 +36964,9 @@ export namespace Prisma {
     userId?: string | null
     type: $Enums.ShipmentEventType
     message?: string | null
+    lat?: number | null
+    lng?: number | null
+    location?: string | null
     createdAt?: Date | string
   }
 
@@ -36411,6 +37024,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneWithoutShipmentEventsNestedInput
   }
@@ -36420,6 +37036,9 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -36428,6 +37047,9 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumShipmentEventTypeFieldUpdateOperationsInput | $Enums.ShipmentEventType
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    lat?: NullableFloatFieldUpdateOperationsInput | number | null
+    lng?: NullableFloatFieldUpdateOperationsInput | number | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
