@@ -10,7 +10,7 @@ const safeUserSelect = {
   address: true,
   createdAt: true,
   updatedAt: true,
-  subscription: true, 
+  subscription: true,
 };
 
 async function createUser(

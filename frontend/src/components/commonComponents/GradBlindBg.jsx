@@ -1,4 +1,4 @@
-import GradientBlinds from "@/components/shadcnComponents/GradientBlinds";
+import GradientBlinds from "@/components/reactBitsComponents/GradientBlinds";
 
 const GradBlindBg = () => {
   return (

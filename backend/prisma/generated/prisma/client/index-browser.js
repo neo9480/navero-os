@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.0.1
- * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-  client: "7.0.1",
-  engine: "f09f2815f091dbba658cdcd2264306d88bb5bda6"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -180,15 +180,22 @@ exports.Prisma.LCScalarFieldEnum = {
 exports.Prisma.ShipmentScalarFieldEnum = {
   id: 'id',
   status: 'status',
-  vesselName: 'vesselName',
-  airwayBill: 'airwayBill',
+  carrier: 'carrier',
   etd: 'etd',
   eta: 'eta',
+  origin: 'origin',
+  destination: 'destination',
   createdAt: 'createdAt',
+  operationId: 'operationId',
   importerId: 'importerId',
   exporterId: 'exporterId',
   brokerId: 'brokerId',
-  serviceId: 'serviceId'
+  serviceId: 'serviceId',
+  carrierTrackingId: 'carrierTrackingId',
+  originLat: 'originLat',
+  originLng: 'originLng',
+  destLat: 'destLat',
+  destLng: 'destLng'
 };
 
 exports.Prisma.ShipmentEventScalarFieldEnum = {
@@ -197,6 +204,9 @@ exports.Prisma.ShipmentEventScalarFieldEnum = {
   userId: 'userId',
   type: 'type',
   message: 'message',
+  lat: 'lat',
+  lng: 'lng',
+  location: 'location',
   createdAt: 'createdAt'
 };
 
@@ -298,6 +308,18 @@ exports.Prisma.OTPScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.OperationsScalarFieldEnum = {
+  id: 'id',
+  importerId: 'importerId',
+  exporterId: 'exporterId',
+  brokerId: 'brokerId',
+  serviceId: 'serviceId',
+  bankId: 'bankId',
+  logisticsId: 'logisticsId',
+  shipmentId: 'shipmentId',
+  status: 'status'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -344,21 +366,13 @@ exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
 };
 
 exports.ShipmentEventType = exports.$Enums.ShipmentEventType = {
-  BOOKED: 'BOOKED',
-  CARGO_RECEIVED: 'CARGO_RECEIVED',
-  LOADED: 'LOADED',
-  DEPARTED: 'DEPARTED',
   IN_TRANSIT: 'IN_TRANSIT',
-  ARRIVED_PORT: 'ARRIVED_PORT',
-  DISCHARGED: 'DISCHARGED',
-  AT_CFS: 'AT_CFS',
   CUSTOMS_HOLD: 'CUSTOMS_HOLD',
-  DOCUMENT_VERIFIED: 'DOCUMENT_VERIFIED',
-  CUSTOMS_CLEARED: 'CUSTOMS_CLEARED',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
   DELIVERED: 'DELIVERED',
   DELAYED: 'DELAYED',
-  EXCEPTION: 'EXCEPTION'
+  LOCATION_UPDATE: 'LOCATION_UPDATE',
+  PICKED_UP: 'PICKED_UP',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY'
 };
 
 exports.DocumentType = exports.$Enums.DocumentType = {
@@ -589,6 +603,12 @@ exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
   EXPIRED: 'EXPIRED'
 };
 
+exports.OperationStatus = exports.$Enums.OperationStatus = {
+  INITIATED: 'INITIATED',
+  ON_GOING: 'ON_GOING',
+  COMPLETED: 'COMPLETED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Service: 'Service',
@@ -604,7 +624,8 @@ exports.Prisma.ModelName = {
   Booking: 'Booking',
   DailyStats: 'DailyStats',
   Subscription: 'Subscription',
-  OTP: 'OTP'
+  OTP: 'OTP',
+  Operations: 'Operations'
 };
 
 /**

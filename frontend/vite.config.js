@@ -13,8 +13,16 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "react": path.resolve(__dirname, "./node_modules/react"),
+      react: path.resolve(__dirname, "./node_modules/react"),
       "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+    },
+  },
+  optimizeDeps: {
+    include: ["searoute-js"],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/searoute-js/, /node_modules/],
     },
   },
 });

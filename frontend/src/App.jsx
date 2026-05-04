@@ -13,6 +13,11 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
+import Subscriptions from "./pages/Subscriptions";
+import Invoices from "./pages/Invoices";
+import useAuthStore from "./store/useAuthStore";
+import ProtectedRoute from "./components/commonComponents/ProtectedRoute";
+import ShadowLoader from "./components/commonComponents/ShadowLoader";
 
 const App = () => {
   useEffect(() => {
@@ -25,8 +30,11 @@ const App = () => {
 
   // Loader only on first load of "/"
   const [showLoader, setShowLoader] = useState(pathname === "/");
-
   const [displayLocation, setDisplayLocation] = useState(location);
+
+  const { refresh } = useAuthStore();
+  const [isBooting, setIsBooting] = useState(true);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDisplayLocation(location);
@@ -34,6 +42,18 @@ const App = () => {
 
     return () => clearTimeout(timeout);
   }, [location]);
+
+  useEffect(() => {
+    refresh().finally(() => setIsBooting(false)); // ✅ wait for refresh to finish
+
+    const timeout = setTimeout(
+      async () => {
+        await refresh();
+      },
+      4 * 60 * 1000,
+    );
+    return () => clearTimeout(timeout);
+  }, [refresh]);
 
   // LocomotiveScroll: create once, destroy properly
 
@@ -75,17 +95,95 @@ const App = () => {
         <>
           <PageTransition />
           <Cursor />
-          <Routes location={displayLocation}>
-            <Route path="/*" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/marketplace" element={<MarketplacePage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/shipments" element={<ShipmentsPage />} />
-          </Routes>
+          {isBooting ?
+            <div className="flex justify-center bg-space_indigo-100 items-center h-full text-platinum-500 text-2xl">
+              <ShadowLoader />
+            </div>
+          : <Routes location={displayLocation}>
+              <Route path="/*" element={<LandingPage />} />
+              <Route path="/load" element={<ProtectedRoute />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <AnalyticsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/documents"
+                element={
+                  <ProtectedRoute>
+                    <DocumentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/marketplace"
+                element={
+                  <ProtectedRoute>
+                    <MarketplacePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shipments"
+                element={
+                  <ProtectedRoute>
+                    <ShipmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subscriptions"
+                element={
+                  <ProtectedRoute>
+                    <Subscriptions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/invoices"
+                element={
+                  <ProtectedRoute>
+                    <Invoices />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          }
         </>
       )}
     </main>
