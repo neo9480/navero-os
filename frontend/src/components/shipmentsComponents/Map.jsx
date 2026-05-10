@@ -73,15 +73,12 @@ const destIcon = L.divIcon({
   const liveIcon = L.divIcon({
     className: "",
     html: `
-      <div style="position:relative;width:40px;height:40px;">
+      <div style="width:40px;height:40px;">
         <img 
           src="/markers/flat_ship-removebg-preview.png" 
           style="
             width:36px;
             height:36px;
-            position:absolute;
-            top:50%;
-            left:50%;
             transform-origin: center;
             transition: transform 0.4s linear;
             pointer-events: none;
@@ -150,22 +147,34 @@ const Map = () => {
     return null;
   }, [selectedShipment]);
 
-const routePoints = useMemo(() => {
-  if (!origin || !destination) return [];
-  return getSeaRoute(origin, destination).map((p) => [p.lat, p.lng]);
-}, [origin, destination]);
+  const routePoints = useMemo(() => {
+    if (!origin || !destination) return [];
+    return getSeaRoute(origin, destination).map((p) => [p.lat, p.lng]);
+  }, [origin, destination]);
 
   const completedRoute = useMemo(() => {
-    if (!liveLocation) return [];
-    const idx = routePoints.findIndex(
-      ([lat, lng]) => lat === liveLocation.lat && lng === liveLocation.lng,
-    );
-    return idx >= 0 ? routePoints.slice(0, idx + 1) : routePoints;
+    if (!liveLocation || routePoints.length === 0) return [];
+
+    // Find the closest point on the route to the live location
+    let closestIdx = 0;
+    let minDist = Infinity;
+
+    routePoints.forEach(([lat, lng], idx) => {
+      const dist =
+        Math.pow(lat - liveLocation.lat, 2) +
+        Math.pow(lng - liveLocation.lng, 2);
+      if (dist < minDist) {
+        minDist = dist;
+        closestIdx = idx;
+      }
+    });
+
+    return routePoints.slice(0, closestIdx + 1);
   }, [routePoints, liveLocation]);
 
   const remainingRoute = useMemo(() => {
     if (!liveLocation || completedRoute.length === 0) return routePoints;
-    return routePoints.slice(completedRoute.length - 1);
+    return routePoints.slice(completedRoute.length - 1); // starts from last completed point
   }, [routePoints, completedRoute, liveLocation]);
 
   const boundsPoints = useMemo(() => {
@@ -175,6 +184,26 @@ const routePoints = useMemo(() => {
     if (liveLocation) pts.push(liveLocation);
     return pts;
   }, [origin, destination, liveLocation]);
+
+  // Add this — the snapped position on the route
+  const snappedLivePosition = useMemo(() => {
+    if (!liveLocation || routePoints.length === 0) return null;
+
+    let closestIdx = 0;
+    let minDist = Infinity;
+
+    routePoints.forEach(([lat, lng], idx) => {
+      const dist =
+        Math.pow(lat - liveLocation.lat, 2) +
+        Math.pow(lng - liveLocation.lng, 2);
+      if (dist < minDist) {
+        minDist = dist;
+        closestIdx = idx;
+      }
+    });
+
+    return { lat: routePoints[closestIdx][0], lng: routePoints[closestIdx][1] };
+  }, [routePoints, liveLocation]);
 
   // ── Overview: all shipments that have geocoded coords ───────────────────────
   const overviewShipments = useMemo(() => {
@@ -240,7 +269,7 @@ const routePoints = useMemo(() => {
                   }}
                 />
                 {/* Dashed line between origin and destination */}
-                
+
                 {/* Origin dot */}
                 <Marker
                   position={[s.originLat, s.originLng]}
@@ -356,9 +385,9 @@ const routePoints = useMemo(() => {
               </Marker>
             )}
 
-            {liveLocation && (
+            {snappedLivePosition && (
               <Marker
-                position={[liveLocation.lat, liveLocation.lng]}
+                position={[snappedLivePosition.lat, snappedLivePosition.lng]}
                 icon={liveIcon}>
                 <Popup>
                   <div style={{ fontFamily: "sans-serif", fontSize: 13 }}>
@@ -419,6 +448,6 @@ const routePoints = useMemo(() => {
       </div>
     </Card>
   );
-};
+};;
 
 export default Map;

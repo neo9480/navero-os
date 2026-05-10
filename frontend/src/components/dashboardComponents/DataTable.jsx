@@ -29,9 +29,9 @@ const DataTable = ({ tableData, onRowClick, selectedId }) => {
   const [filter1, setFilter1] = useState(new Set());
   const [filter2, setFilter2] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(0);
-  const [ pageSize, setPageSize ] = useState( 10 );
-  
-  const Icon = statusIcon
+  const [pageSize, setPageSize] = useState(10);
+
+  const Icon = statusIcon;
 
   const totalDataForTable = tableData.length;
   const pageLength = Math.ceil(totalDataForTable / pageSize);
@@ -66,7 +66,14 @@ const DataTable = ({ tableData, onRowClick, selectedId }) => {
     });
   };
 
-  
+  const formatEventType = (type) => {
+    if (!type) return "—";
+    return type
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
   return (
     <div className="w-full bg-zinc-950 border gap-5 flex flex-col  rounded-xl p-5">
       <div className="flex justify-between items-center">
@@ -114,8 +121,17 @@ const DataTable = ({ tableData, onRowClick, selectedId }) => {
               {tableData
                 .slice(dataStart, dataEnd)
                 .map(
-                  ({ id, origin, destination, status, carrier, eta, docs }) => {
+                  ({
+                    id,
+                    origin,
+                    destination,
+                    events = [],
+                    carrier,
+                    eta,
+                    docs,
+                  }) => {
                     const isSelected = selectedId === id;
+                    console.log(events[0]);
                     return (
                       <TableRow
                         key={id}
@@ -124,7 +140,7 @@ const DataTable = ({ tableData, onRowClick, selectedId }) => {
                             id,
                             origin,
                             destination,
-                            status,
+                            events,
                             carrier,
                             eta,
                             docs,
@@ -136,20 +152,36 @@ const DataTable = ({ tableData, onRowClick, selectedId }) => {
                           : "hover:bg-zinc-900"
                         }`}>
                         <TableCell>{id}</TableCell>
-                        <TableCell>{origin}</TableCell> 
+                        <TableCell>{origin}</TableCell>
                         <TableCell>{destination}</TableCell>
                         <TableCell>
                           <Badge
-                            className={`flex gap-1 items-center ${status === "In Transit" && statusColor.inTransit} ${status === "Customs Hold" && statusColor.customsHold} ${status === "Pending" && statusColor.pending} ${status === "Delivered" && statusColor.delivered}`}>
-                            {status === "In Transit" ?
+                            className={`flex gap-1 items-center 
+                              ${events[0]?.type === "IN_TRANSIT" && statusColor.inTransit} 
+                              ${events[0]?.type === "CUSTOMS_HOLD" && statusColor.customsHold} 
+                              ${events[0]?.type === "DELAYED" && statusColor.delayed} 
+                              ${events[0]?.type === "DELIVERED" && statusColor.delivered}
+                              ${events[0]?.type === "LOCATION_UPDATE" && statusColor.locationUpdate}
+                              ${events[0]?.type === "PICKED_UP" && statusColor.pickedUp}
+                              ${events[0]?.type === "OUT_FOR_DELIVERY" && statusColor.outForDelivery}
+                            `}>
+                            {events[0]?.type === "IN_TRANSIT" ?
                               <Icon.inTransit />
-                            : status === "Customs Hold" ?
+                            : events[0]?.type === "CUSTOMS_HOLD" ?
                               <Icon.customsHold />
-                            : status === "Pending" ?
-                              <Icon.pending />
-                            : status === "Delivered" && <Icon.delivered />
+                            : events[0]?.type === "DELAYED" ?
+                              <Icon.delayed />
+                            : events[0]?.type === "DELIVERED" ?
+                              <Icon.delivered />
+                            : events[0]?.type === "LOCATION_UPDATE" ?
+                              <Icon.locationUpdate />
+                            : events[0]?.type === "PICKED_UP" ?
+                              <Icon.pickedUp />
+                            : events[0]?.type === "OUT_FOR_DELIVERY" && (
+                                <Icon.outForDelivery />
+                              )
                             }
-                            {status}
+                            {formatEventType(events[0]?.type)}
                           </Badge>
                         </TableCell>
                         <TableCell>{carrier}</TableCell>

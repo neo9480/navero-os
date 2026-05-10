@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Bell, Check, CheckCircle2, Clock, MapPin, Package, TriangleAlert, Truck } from "lucide-react";
+import { ArrowLeftRight, Bell, Check, CheckCircle2, Clock, MapPin, Package, PackageCheck, TriangleAlert, Truck } from "lucide-react";
 import { ClockIcon } from "lucide-react";
 import { ArrowRightCircle } from "lucide-react";
 import { PauseCircle } from "lucide-react";
@@ -570,7 +570,10 @@ export const statusColor = {
   inTransit: "bg-[#0E1731] text-[#50A2F2] border border-[#1B325B]",
   customsHold: "bg-[#2D0D0E] text-[#F26467] border border-[#571E20]",
   delivered: "bg-[#061E18] text-[#02D492] border border-[#054230]",
-  pending: "bg-[#2B1508] text-[#FFB900] border border-[#553606]",
+  delayed: "bg-[#2B1508] text-[#FFB900] border border-[#553606]",
+  locationUpdate: "bg-[#0F1A2E] text-[#7B9ECC] border border-[#1C3050]",
+  pickedUp: "bg-[#1A0E2B] text-[#A78BFA] border border-[#3B1F6B]",
+  outForDelivery: "bg-[#0D1F17] text-[#34D399] border border-[#0A3D28]",
 };
 ;
 
@@ -578,7 +581,10 @@ export const statusIcon = {
   inTransit: ArrowRightCircle,
   customsHold: PauseCircle,
   delivered: CheckCircle2,
-  pending: ClockIcon,
+  delayed: ClockIcon,
+  locationUpdate: MapPin,
+  pickedUp: PackageCheck,
+  outForDelivery: Truck,
 };
 
 export const EVENT_CONFIG = {

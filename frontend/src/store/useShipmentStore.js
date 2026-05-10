@@ -153,7 +153,7 @@ const useShipmentStore = create((set, get) => ({
   selectShipment: (shipment) => {
     set({
       selectedShipment: shipment,
-      trackingEvents: [],
+      trackingEvents: shipment.events ?? [],
       liveLocation: null,
       eta: null,
     });

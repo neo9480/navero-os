@@ -47,11 +47,11 @@ const ShipmentsPage = () => {
   };
 
   const tableData = shipments.map(
-    ({ id, origin, destination, status, carrier, eta }) => ({
+    ({ id, origin, destination, events = [], carrier, eta }) => ({
       id,
       origin,
       destination,
-      status,
+      events: events,
       carrier,
       eta: eta ? new Date(eta).toLocaleDateString() : "—",
       docs: "—", // placeholder until you have a docs field

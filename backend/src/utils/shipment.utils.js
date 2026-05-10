@@ -51,12 +51,72 @@ async function getShipments() {
 async function getImporterShipments(userId) {
   return prisma.shipment.findMany({
     where: { importerId: userId },
+    include: {
+      importer: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+
+        }
+      },
+      exporter: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+
+        }
+      },
+      broker: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        }
+      },
+      service: true,
+      documents: true,
+      events: true,
+    },
   });
 }
 
 async function getExporterShipments(userId) {
   return prisma.shipment.findMany({
     where: { exporterId: userId },
+    include: {
+      importer: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
+      exporter: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
+      broker: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
+      service: true,
+      documents: true,
+      events: true,
+    },
   });
 }
 
@@ -64,12 +124,33 @@ async function getBrokerShipments(userId) {
   return prisma.shipment.findMany({
     where: { brokerId: userId },
     include: {
-      importer: true,
-      exporter: true,
-      broker: true,
+      importer: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
+      exporter: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
+      broker: {
+        select: {
+          email: true,
+          address: true,
+          phone: true,
+          companyName: true,
+        },
+      },
       service: true,
-      events: true,
       documents: true,
+      events: true,
     },
   });
 }
