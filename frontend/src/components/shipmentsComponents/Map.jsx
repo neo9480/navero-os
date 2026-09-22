@@ -217,7 +217,7 @@ const Map = () => {
   const defaultZoom = 2;
 
   return (
-    <Card className="relative overflow-hidden bg-space_indigo-100 h-[75vh] w-full p-0 border-0">
+    <Card className="relative overflow-hidden bg-space_indigo-100 h-[75vh] w-full p-0 border">
       {/* ── Non-blocking hint banner (replaces the old full-screen overlay) ── */}
       {noShipment && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-full px-4 py-1.5 pointer-events-none">

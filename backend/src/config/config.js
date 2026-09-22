@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 
 dotenv.config();
-if ( !process.env.PORT ) {
-  throw new Error("PORT is not defined in enviornmental variables")
+if (!process.env.PORT) {
+  throw new Error("PORT is not defined in enviornmental variables");
 }
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not defined in enviornmental variables");
@@ -101,7 +101,7 @@ const config = {
   IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
   IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
   IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
-  
+
   NODE_ENV: process.env.NODE_ENV,
 };
 

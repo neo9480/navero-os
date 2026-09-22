@@ -18,6 +18,7 @@ import Invoices from "./pages/Invoices";
 import useAuthStore from "./store/useAuthStore";
 import ProtectedRoute from "./components/commonComponents/ProtectedRoute";
 import ShadowLoader from "./components/commonComponents/ShadowLoader";
+import OperationsPage from "./pages/OperationsPage";
 
 const App = () => {
   useEffect(() => {
@@ -131,6 +132,14 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <MarketplacePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/operations"
+                element={
+                  <ProtectedRoute>
+                    <OperationsPage />
                   </ProtectedRoute>
                 }
               />
