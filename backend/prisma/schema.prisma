@@ -309,21 +309,13 @@ enum ShipmentStatus {
 }
 
 enum ShipmentEventType {
-  BOOKED // Freight booking confirmed with carrier
-  CARGO_RECEIVED // Cargo received at origin CFS / terminal
-  LOADED // Container loaded onto vessel / aircraft
-  DEPARTED // Vessel / aircraft departed origin port
   IN_TRANSIT // Active ocean / air transit in progress
-  ARRIVED_PORT // Vessel arrived at destination port
-  DISCHARGED // Container discharged from vessel to terminal
-  AT_CFS // Container moved to Container Freight Station
   CUSTOMS_HOLD // Held for customs examination or query
-  DOCUMENT_VERIFIED // Customs verified the docs
-  CUSTOMS_CLEARED // Out-of-Charge order issued — free to collect
-  OUT_FOR_DELIVERY // On last-mile truck for delivery to warehouse
   DELIVERED // Goods delivered and GRN signed at warehouse
   DELAYED
-  EXCEPTION // Damage, loss, delay, or other exception event
+  LOCATION_UPDATE
+  PICKED_UP
+  OUT_FOR_DELIVERY
 }
 
 enum TransactionType {
@@ -368,6 +360,12 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum OperationStatus {
+  INITIATED
+  ON_GOING
+  COMPLETED
+}
+
 //////////////////////////////
 // MODELS
 //////////////////////////////
@@ -390,7 +388,6 @@ model User {
   uploadedDocuments Document[] @relation("UploadedDocuments")
   verifiedDocuments Document[] @relation("VerifiedDocuments")
 
-  // Everything else stays unchanged...
   services                  Service[]
   quoteRequests             QuoteRequest[]  @relation("ImporterQuoteRequests")
   quoteResponses            QuoteResponse[]
@@ -407,6 +404,11 @@ model User {
   bookings                  Booking[]
   otp                       OTP[]
   subscription              Subscription?
+  operationsAsImporter Operations[] @relation("ImporterOperations")
+  operationsAsExporter Operations[] @relation("ExporterOperations")
+  operationsAsBank Operations[] @relation("BankOperations")
+  operationsAsBroker Operations[] @relation("BrokerOperations")
+  operationsAsLogistics Operations[] @relation("LogisticsOperations")
 }
 
 // Services created by brokers or freight providers
@@ -422,6 +424,8 @@ model Service {
   // ADD THIS
   shipments Shipment[]
   bookings  Booking[]
+
+  operations Operations[] @relation("ServiceOperations")
 
   createdAt DateTime @default(now())
 }
@@ -480,16 +484,24 @@ model LC {
 model Shipment {
   id         String         @id @default(cuid())
   status     ShipmentStatus @default(CREATED)
-  vesselName String?
-  airwayBill String?
+  carrier String
   etd        DateTime?
   eta        DateTime?
+  origin String
+  destination String
   createdAt  DateTime       @default(now())
 
+  operationId String
   importerId String
   exporterId String
   brokerId   String?
   serviceId  String?
+
+  carrierTrackingId String?
+  originLat Float?
+  originLng Float?
+  destLat Float?
+  destLng Float?
 
   importer User     @relation("ImporterShipments", fields: [importerId], references: [id])
   exporter User     @relation("ExporterShipments", fields: [exporterId], references: [id])
@@ -498,6 +510,7 @@ model Shipment {
 
   documents Document[]
   events    ShipmentEvent[]
+  shipmentsInOperation Operations[] @relation("ShipmentsInOperations")
 }
 
 // Events emitted by customs or system for tracking
@@ -507,6 +520,9 @@ model ShipmentEvent {
   userId     String?
   type       ShipmentEventType
   message    String?
+  lat Float?
+  lng Float?
+  location String?
   createdAt  DateTime          @default(now())
 
   shipment Shipment @relation(fields: [shipmentId], references: [id])
@@ -634,4 +650,26 @@ model OTP {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Operations {
+  id String @id @default(cuid())
+  importerId String
+  exporterId String
+  brokerId String?
+  serviceId String?
+  bankId String?
+  logisticsId String?
+  shipmentId String?
+
+  status OperationStatus @default(INITIATED)
+
+  importer User @relation("ImporterOperations", fields: [importerId], references: [id])
+  exporter User @relation("ExporterOperations", fields: [exporterId], references: [id])
+  bank User? @relation("BankOperations", fields: [bankId], references: [id])
+  broker User? @relation("BrokerOperations", fields: [brokerId], references: [id])
+  logistics User? @relation("LogisticsOperations", fields: [logisticsId], references: [id])
+  shipment Shipment? @relation("ShipmentsInOperations", fields: [shipmentId], references: [id])
+  service Service? @relation("ServiceOperations", fields: [serviceId], references: [id])
+
 }

@@ -1,4 +1,4 @@
-import ColorBends from "@/components/shadcnComponents/ColorBends";
+import ColorBends from "@/components/reactBitsComponents/ColorBends";
 
 const ABgLight = () => {
   return (

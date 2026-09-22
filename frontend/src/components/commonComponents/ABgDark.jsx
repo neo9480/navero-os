@@ -1,4 +1,4 @@
-import ColorBends from "@/components/shadcnComponents/ColorBends";
+import ColorBends from "@/components/reactBitsComponents/ColorBends";
 
 const ABgDark = () => {
   return (
@@ -20,6 +20,6 @@ const ABgDark = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ABgDark;

@@ -1,5 +1,5 @@
 import express from "express"
-import operatorController from "../controllers/operators.controller"
+import operatorController from "../controllers/operators.controller.js"
 const router = express.Router()
 
 // include all the routes for operators needed for calculations.

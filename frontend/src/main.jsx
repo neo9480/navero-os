@@ -1,16 +1,17 @@
+import "leaflet/dist/leaflet.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
-
-
+import { ScrollArea } from "./components/ui/scroll-area";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <ScrollArea onWheel={(e) => e.stopPropagation()}>
+        <App />
+      </ScrollArea>
     </BrowserRouter>
   </StrictMode>,
 );
-
