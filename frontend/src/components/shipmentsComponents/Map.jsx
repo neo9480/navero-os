@@ -243,7 +243,7 @@ const Map = () => {
         style={{ height: "100%", width: "100%", background: "#0f172a" }}
         zoomControl={false}>
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url={`https://api.maptiler.com/maps/dataviz-dark/{z}/{x}/{y}.png?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
           maxZoom={19}
           noWrap={true}
         />

@@ -48,7 +48,7 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div>
-      <ABgDark />
+      {/* <ABgDark /> */}
       <div className="bg-zinc-900/70 text-platinum-500 font-host_grotesk z-10 backdrop-blur-xl w-full h-screen flex overflow-hidden">
         {collapsed ?
           <nav className="h-full w-[5vw]">

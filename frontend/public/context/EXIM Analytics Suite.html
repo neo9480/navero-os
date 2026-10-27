@@ -1,0 +1,1440 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>EXIM Analytics Suite</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Serif+Display&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+/* ─── Design tokens ─── */
+/* Layout: sticky top nav + full-width tabbed sections, 12-col inner grid */
+:root {
+  --bg:          #F7F8FA;
+  --surface:     #FFFFFF;
+  --surface-2:   #F0F2F6;
+  --border:      #E2E6ED;
+  --text:        #111827;
+  --text-muted:  #6B7280;
+  --text-faint:  #9CA3AF;
+
+  /* Persona accents */
+  --exp:   #1A6EBF;  /* exporter  – steel blue   */
+  --imp:   #14785A;  /* importer  – forest green  */
+  --log:   #B45309;  /* logistics – amber         */
+  --bnk:   #5B4FCC;  /* bank      – indigo        */
+  --cst:   #C0392B;  /* customs   – crimson       */
+  --brk:   #A0297D;  /* broker    – magenta       */
+
+  --up:    #0F7547;
+  --dn:    #C0392B;
+  --warn:  #D97706;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-ui:      'Inter', system-ui, sans-serif;
+  --radius:       10px;
+  --radius-sm:    6px;
+  --shadow:       0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:         #0F1117;
+    --surface:    #1A1D27;
+    --surface-2:  #232636;
+    --border:     #2D3148;
+    --text:       #E8EBF2;
+    --text-muted: #8B92A8;
+    --text-faint: #555D74;
+    --exp:   #4DA0F0;
+    --imp:   #34C48A;
+    --log:   #F59E3B;
+    --bnk:   #8B82F5;
+    --cst:   #F26354;
+    --brk:   #D95FBB;
+    --up:    #34C48A;
+    --dn:    #F26354;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:         #0F1117;
+  --surface:    #1A1D27;
+  --surface-2:  #232636;
+  --border:     #2D3148;
+  --text:       #E8EBF2;
+  --text-muted: #8B92A8;
+  --text-faint: #555D74;
+  --exp:   #4DA0F0;
+  --imp:   #34C48A;
+  --log:   #F59E3B;
+  --bnk:   #8B82F5;
+  --cst:   #F26354;
+  --brk:   #D95FBB;
+  --up:    #34C48A;
+  --dn:    #F26354;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  min-height: 100%;
+}
+
+/* ─── Top bar ─── */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  gap: 16px;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.brand-kpmg {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: .01em;
+  color: var(--text);
+}
+.brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text-faint);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge-live {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--up);
+  letter-spacing: .04em;
+}
+.badge-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--up);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .3; }
+}
+.date-label {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Persona nav ─── */
+.persona-nav {
+  display: flex;
+  gap: 6px;
+  padding: 16px 24px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.persona-nav::-webkit-scrollbar { display: none; }
+.p-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+  position: relative;
+  bottom: 0;
+}
+.p-tab:hover { color: var(--text); }
+.p-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.p-tab .p-icon { font-size: 14px; }
+
+/* ─── Layout ─── */
+.main { padding: 24px 24px 48px; max-width: 1280px; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ─── Section header ─── */
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.2;
+}
+.section-desc {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+.section-stamp {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 3px 10px;
+  flex-shrink: 0;
+}
+
+/* ─── KPI row ─── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 700px) {
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.kpi-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-faint);
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1.1;
+}
+.kpi-delta {
+  font-size: 12px;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-delta.up { color: var(--up); }
+.kpi-delta.dn { color: var(--dn); }
+.kpi-delta.flat { color: var(--text-faint); }
+
+/* ─── Chart grid ─── */
+.chart-grid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.g-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.g-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.g-2-1 { grid-template-columns: 2fr 1fr; }
+@media (max-width: 900px) {
+  .g-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .g-2-1 { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .g-3, .g-2 { grid-template-columns: 1fr; }
+}
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 18px 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.chart-card.span-2 { grid-column: span 2; }
+@media (max-width: 900px) { .chart-card.span-2 { grid-column: span 1; } }
+
+.chart-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.chart-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.chart-card-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.chart-type-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text-faint);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.chart-wrap {
+  position: relative;
+  flex: 1;
+}
+.chart-wrap canvas {
+  width: 100% !important;
+}
+
+/* Field pills */
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.field-pill {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* ─── Accent helper (set per persona via JS) ─── */
+.p-accent { color: var(--accent); }
+
+/* ─── Divider ─── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* ─── Footer note ─── */
+.footer-note {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-faint);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+</style>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-kpmg">KPMG</span>
+    <span class="brand-sub">Export-Import Analytics Suite</span>
+  </div>
+  <div class="topbar-right">
+    <span class="badge-live">LIVE</span>
+    <span class="date-label">Oct 27, 2026 · Q4</span>
+  </div>
+</div>
+
+<!-- PERSONA NAV -->
+<nav class="persona-nav" id="persona-nav">
+  <button class="p-tab active" data-persona="exporter"   data-accent="var(--exp)" onclick="switchPersona(this)"><span class="p-icon">📦</span> Exporter</button>
+  <button class="p-tab"       data-persona="importer"   data-accent="var(--imp)" onclick="switchPersona(this)"><span class="p-icon">🏭</span> Importer</button>
+  <button class="p-tab"       data-persona="logistics"  data-accent="var(--log)" onclick="switchPersona(this)"><span class="p-icon">🚢</span> Logistics</button>
+  <button class="p-tab"       data-persona="bank"       data-accent="var(--bnk)" onclick="switchPersona(this)"><span class="p-icon">🏦</span> Bank / Financer</button>
+  <button class="p-tab"       data-persona="customs"    data-accent="var(--cst)" onclick="switchPersona(this)"><span class="p-icon">🛃</span> Customs</button>
+  <button class="p-tab"       data-persona="broker"     data-accent="var(--brk)" onclick="switchPersona(this)"><span class="p-icon">🤝</span> Broker</button>
+</nav>
+
+<div class="main">
+
+<!-- ════════════════════════════════════════════════════════════
+     1. EXPORTER
+═════════════════════════════════════════════════════════════ -->
+<section class="section active" id="sec-exporter">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Exporter Intelligence</div>
+      <div class="section-desc">Revenue performance · Market reach · Shipment execution · FX exposure</div>
+    </div>
+    <span class="section-stamp">Exporter</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Export Revenue YTD</div><div class="kpi-value">$48.3M</div><div class="kpi-delta up">↑ 12.4% vs prior year</div></div>
+    <div class="kpi-card"><div class="kpi-label">Active Markets</div><div class="kpi-value">34</div><div class="kpi-delta up">↑ 3 new this year</div></div>
+    <div class="kpi-card"><div class="kpi-label">Shipments On-Time</div><div class="kpi-value">87.2%</div><div class="kpi-delta dn">↓ 2.1 pp — monitor</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Realisation Price</div><div class="kpi-value">$312/MT</div><div class="kpi-delta up">↑ 5.7% above benchmark</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Monthly Revenue vs. Volume</div><div class="chart-card-sub">Invoice value (USD) vs. shipped volume (MT) — detects price-volume decoupling</div></div>
+        <span class="chart-type-tag">Dual-Axis</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-exp-rev"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">shipment_month</span><span class="field-pill">invoice_value_usd</span><span class="field-pill">net_weight_mt</span><span class="field-pill">currency_code</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Buyer Concentration</div><div class="chart-card-sub">Top 8 buyers by revenue; cumulative % line reveals 80/20 exposure</div></div>
+        <span class="chart-type-tag">Pareto</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-exp-pareto"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">buyer_name</span><span class="field-pill">total_invoice_value</span><span class="field-pill">cumulative_pct</span><span class="field-pill">payment_terms</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Product Mix by Revenue</div><div class="chart-card-sub">HS chapter breakdown — size = revenue, color = YoY growth</div></div>
+        <span class="chart-type-tag">Doughnut</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-exp-mix"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">hs_chapter</span><span class="field-pill">hs_code_6d</span><span class="field-pill">export_value_usd</span><span class="field-pill">yoy_growth_pct</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Receivables Aging</div><div class="chart-card-sub">Outstanding by aging bucket — immediate credit risk signal</div></div>
+        <span class="chart-type-tag">Stacked Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-exp-aging"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">buyer_name</span><span class="field-pill">outstanding_usd</span><span class="field-pill">aging_bucket</span><span class="field-pill">due_date</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">FX Exposure vs. Hedging</div><div class="chart-card-sub">Natural exposure vs. hedged notional by currency</div></div>
+        <span class="chart-type-tag">Grouped Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-exp-fx"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">invoice_currency</span><span class="field-pill">gross_exposure_usd</span><span class="field-pill">hedged_amount_usd</span><span class="field-pill">spot_rate</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     2. IMPORTER
+═════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-importer">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Importer Control Centre</div>
+      <div class="section-desc">Landed cost decomposition · Supplier risk · Duty optimisation · Port dwell</div>
+    </div>
+    <span class="section-stamp">Importer</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Total Import Spend YTD</div><div class="kpi-value">$62.1M</div><div class="kpi-delta dn">↑ 8.9% — review sourcing</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Landed Cost</div><div class="kpi-value">$418/MT</div><div class="kpi-delta up">↓ 3.2% optimised</div></div>
+    <div class="kpi-card"><div class="kpi-label">Duty Paid YTD</div><div class="kpi-value">$4.7M</div><div class="kpi-delta dn">FTA utilisation 61%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Active Suppliers</div><div class="kpi-value">127</div><div class="kpi-delta flat">Across 18 countries</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Landed Cost Waterfall</div><div class="chart-card-sub">CIF → duty → IGST → port charges → last-mile → total landed — shows exactly where cost accumulates</div></div>
+        <span class="chart-type-tag">Waterfall</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-imp-waterfall"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">cif_value_usd</span><span class="field-pill">basic_customs_duty_usd</span><span class="field-pill">igst_usd</span><span class="field-pill">port_charges_usd</span><span class="field-pill">last_mile_freight_usd</span><span class="field-pill">total_landed_cost_usd</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Country-of-Origin Mix</div><div class="chart-card-sub">Import value by country — reveals single-source concentration risk</div></div>
+        <span class="chart-type-tag">Doughnut</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-imp-coo"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">country_of_origin</span><span class="field-pill">import_value_usd</span><span class="field-pill">volume_mt</span><span class="field-pill">concentration_index</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">FTA vs. MFN Duty Gap</div><div class="chart-card-sub">Savings left on table per HS code — each pair is MFN rate vs. available FTA rate</div></div>
+        <span class="chart-type-tag">Grouped Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-imp-fta"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">hs_code_8d</span><span class="field-pill">mfn_duty_rate_pct</span><span class="field-pill">fta_duty_rate_pct</span><span class="field-pill">applicable_fta</span><span class="field-pill">potential_saving_usd</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Import Volume Trend</div><div class="chart-card-sub">24-month stacked area by product category — tracks mix shift and seasonality</div></div>
+        <span class="chart-type-tag">Stacked Area</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-imp-trend"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">import_month</span><span class="field-pill">product_category</span><span class="field-pill">quantity_mt</span><span class="field-pill">port_of_entry</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Port Dwell Time Heatmap</div><div class="chart-card-sub">Avg. dwell days per port × month — spots congestion patterns</div></div>
+        <span class="chart-type-tag">Heatmap</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-imp-dwell"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">port_of_entry</span><span class="field-pill">arrival_date</span><span class="field-pill">out_of_charge_date</span><span class="field-pill">dwell_time_days</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     3. LOGISTICS
+═════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-logistics">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Logistics Operations Hub</div>
+      <div class="section-desc">Fleet utilisation · Route profitability · SLA performance · Delay root-cause</div>
+    </div>
+    <span class="section-stamp">Logistics</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Fleet Utilisation</div><div class="kpi-value">84.3%</div><div class="kpi-delta up">↑ 4.1 pp this quarter</div></div>
+    <div class="kpi-card"><div class="kpi-label">On-Time Delivery</div><div class="kpi-value">91.2%</div><div class="kpi-delta dn">↓ 0.8 pp — Asia-Pacific</div></div>
+    <div class="kpi-card"><div class="kpi-label">Revenue / TEU</div><div class="kpi-value">$1,240</div><div class="kpi-delta up">↑ 6.3% vs prior Q</div></div>
+    <div class="kpi-card"><div class="kpi-label">Claims Ratio</div><div class="kpi-value">0.43%</div><div class="kpi-delta up">↓ 0.12 pp improved</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Freight Rate vs. Spot Market</div><div class="chart-card-sub">Contracted rate line vs. SCFI/CCFI spot index — shaded band = spot range; gap = hedge opportunity</div></div>
+        <span class="chart-type-tag">Line + Band</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-log-rate"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">rate_date</span><span class="field-pill">contracted_rate_usd</span><span class="field-pill">scfi_index</span><span class="field-pill">trade_lane</span><span class="field-pill">commodity_type</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Delay Root-Cause Pareto</div><div class="chart-card-sub">Top delay causes by shipment count — cumulative line shows 80% threshold</div></div>
+        <span class="chart-type-tag">Pareto</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-log-delay"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">delay_reason_code</span><span class="field-pill">delay_hours</span><span class="field-pill">carrier_code</span><span class="field-pill">shipment_count</span><span class="field-pill">cumulative_pct</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Shipment Status Pipeline</div><div class="chart-card-sub">Funnel from booking to delivered — width = count, dropoffs = exceptions</div></div>
+        <span class="chart-type-tag">Funnel</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-log-funnel"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">bl_number</span><span class="field-pill">current_status</span><span class="field-pill">exception_flag</span><span class="field-pill">exception_type</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Monthly Volume by Lane</div><div class="chart-card-sub">TEU volume stacked by trade lane over 12 months</div></div>
+        <span class="chart-type-tag">Stacked Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-log-volume"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">trade_lane</span><span class="field-pill">teu_volume</span><span class="field-pill">shipment_month</span><span class="field-pill">pol_port</span><span class="field-pill">pod_port</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Customer SLA Scorecard</div><div class="chart-card-sub">Radar across 6 SLA axes per top customer</div></div>
+        <span class="chart-type-tag">Radar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-log-radar"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">customer_id</span><span class="field-pill">ontime_pct</span><span class="field-pill">damage_rate</span><span class="field-pill">doc_accuracy</span><span class="field-pill">avg_transit_days</span><span class="field-pill">claim_resolution_days</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     4. BANK / FINANCER
+═════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-bank">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Trade Finance Command</div>
+      <div class="section-desc">Exposure concentration · LC maturity profile · Risk grading · Revenue attribution</div>
+    </div>
+    <span class="section-stamp">Bank</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Trade Finance Book</div><div class="kpi-value">$2.14B</div><div class="kpi-delta up">↑ 9.2% YoY growth</div></div>
+    <div class="kpi-card"><div class="kpi-label">NPA Ratio</div><div class="kpi-value">1.8%</div><div class="kpi-delta up">↓ 0.3 pp — improving</div></div>
+    <div class="kpi-card"><div class="kpi-label">LC Utilisation</div><div class="kpi-value">73.4%</div><div class="kpi-delta flat">Of sanctioned limits</div></div>
+    <div class="kpi-card"><div class="kpi-label">Revenue Yield</div><div class="kpi-value">3.12%</div><div class="kpi-delta up">↑ 8 bps quarter-on-quarter</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Exposure by Sector</div><div class="chart-card-sub">Outstanding exposure by industry sector — color intensity = internal risk grade</div></div>
+        <span class="chart-type-tag">Horizontal Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-bnk-sector"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">industry_sector</span><span class="field-pill">outstanding_exposure_usd</span><span class="field-pill">internal_risk_grade</span><span class="field-pill">facility_type</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Revenue Attribution</div><div class="chart-card-sub">NII breakdown: LC commission, BG fees, forex spread, PCF interest net of credit cost</div></div>
+        <span class="chart-type-tag">Doughnut</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-bnk-rev"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">lc_commission_usd</span><span class="field-pill">bg_fee_usd</span><span class="field-pill">forex_spread_usd</span><span class="field-pill">pcf_interest_usd</span><span class="field-pill">credit_cost_usd</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">LC Maturity Ladder</div><div class="chart-card-sub">Maturities bucketed by tenor — stacked by currency for liquidity gap view</div></div>
+        <span class="chart-type-tag">Stacked Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-bnk-lc"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">lc_currency</span><span class="field-pill">lc_amount_usd</span><span class="field-pill">tenor_bucket</span><span class="field-pill">expiry_date</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Discrepancy Rates by Bank</div><div class="chart-card-sub">LC document discrepancy rate by presenting bank over 12 months</div></div>
+        <span class="chart-type-tag">Bar + Line</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-bnk-disc"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">presenting_bank</span><span class="field-pill">documents_presented</span><span class="field-pill">discrepancies_raised</span><span class="field-pill">discrepancy_type</span><span class="field-pill">waiver_flag</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">PCF Limit Utilisation</div><div class="chart-card-sub">Sanctioned vs. drawn amount for top borrowers — headroom visibility</div></div>
+        <span class="chart-type-tag">Grouped Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-bnk-pcf"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">borrower_id</span><span class="field-pill">sanctioned_limit_usd</span><span class="field-pill">drawn_amount_usd</span><span class="field-pill">utilization_pct</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     5. CUSTOMS
+═════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-customs">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Customs Intelligence Platform</div>
+      <div class="section-desc">Revenue collection · Risk channel distribution · Clearance efficiency · Valuation compliance</div>
+    </div>
+    <span class="section-stamp">Customs</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Duty Collected MTD</div><div class="kpi-value">₹842 Cr</div><div class="kpi-delta up">↑ 14.2% vs target</div></div>
+    <div class="kpi-card"><div class="kpi-label">Declarations Today</div><div class="kpi-value">18,432</div><div class="kpi-delta up">↑ 3% vs yesterday</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Clearance Time</div><div class="kpi-value">6.4 hrs</div><div class="kpi-delta up">↓ 0.9 hrs improved</div></div>
+    <div class="kpi-card"><div class="kpi-label">Seizure Value MTD</div><div class="kpi-value">₹23.1 Cr</div><div class="kpi-delta dn">3 active alerts</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Revenue Collection vs. Budget</div><div class="chart-card-sub">Monthly duty collection (area) vs. budget target (dashed line) — cumulative surplus/shortfall</div></div>
+        <span class="chart-type-tag">Area + Target</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-cst-rev"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">collection_date</span><span class="field-pill">duty_collected_inr</span><span class="field-pill">budget_target_inr</span><span class="field-pill">duty_head_code</span><span class="field-pill">port_commissionerate</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Risk Score Distribution</div><div class="chart-card-sub">Declarations by risk score bin — tail = red channel exam queue</div></div>
+        <span class="chart-type-tag">Histogram</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-cst-risk"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">be_number</span><span class="field-pill">risk_score</span><span class="field-pill">risk_channel</span><span class="field-pill">importer_iec</span><span class="field-pill">hs_code</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">HS Revenue Concentration</div><div class="chart-card-sub">Duty collected by HS section — reveals which chapters drive the book</div></div>
+        <span class="chart-type-tag">Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-cst-hs"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">hs_section</span><span class="field-pill">hs_chapter</span><span class="field-pill">duty_collected_inr</span><span class="field-pill">declaration_count</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Clearance Time by Channel</div><div class="chart-card-sub">Green / Orange / Red channel clearance time comparison</div></div>
+        <span class="chart-type-tag">Grouped Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-cst-tat"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">risk_channel</span><span class="field-pill">filing_dt</span><span class="field-pill">out_of_charge_dt</span><span class="field-pill">clearance_hours</span><span class="field-pill">examining_officer_id</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Under-Valuation Detection</div><div class="chart-card-sub">Declared vs. assessed unit value — points below regression = suspected evasion</div></div>
+        <span class="chart-type-tag">Scatter</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-cst-val"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">be_number</span><span class="field-pill">hs_code</span><span class="field-pill">declared_unit_value_usd</span><span class="field-pill">assessed_unit_value_usd</span><span class="field-pill">differential_pct</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     6. BROKER
+═════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-broker">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Broker Performance Centre</div>
+      <div class="section-desc">Client portfolio · Filing accuracy · Duty savings delivered · Compliance exposure</div>
+    </div>
+    <span class="section-stamp">Broker</span>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Active Clients</div><div class="kpi-value">214</div><div class="kpi-delta up">↑ 18 new this year</div></div>
+    <div class="kpi-card"><div class="kpi-label">Filings This Month</div><div class="kpi-value">3,812</div><div class="kpi-delta up">↑ 7.4% month-on-month</div></div>
+    <div class="kpi-card"><div class="kpi-label">Discrepancy Rate</div><div class="kpi-value">1.2%</div><div class="kpi-delta up">↓ 0.4 pp — improving</div></div>
+    <div class="kpi-card"><div class="kpi-label">Broker Revenue MTD</div><div class="kpi-value">₹1.84 Cr</div><div class="kpi-delta up">↑ 11.3% vs prior month</div></div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card span-2">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Client Revenue Pareto</div><div class="chart-card-sub">Top clients by fee revenue — cumulative line reveals revenue concentration risk</div></div>
+        <span class="chart-type-tag">Pareto</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-brk-pareto"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">client_iec</span><span class="field-pill">client_name</span><span class="field-pill">filing_count</span><span class="field-pill">broker_fee_inr</span><span class="field-pill">cumulative_revenue_pct</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Filing Accuracy SPC</div><div class="chart-card-sub">Monthly discrepancy rate with UCL/LCL — points outside limits = out-of-control signal</div></div>
+        <span class="chart-type-tag">Control Chart</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-brk-spc"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">filing_month</span><span class="field-pill">discrepancy_rate_pct</span><span class="field-pill">ucl</span><span class="field-pill">lcl</span><span class="field-pill">centre_line</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid g-3">
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">HS Classification Accuracy</div><div class="chart-card-sub">Correct first-filing vs. amendments vs. reassessments per HS chapter</div></div>
+        <span class="chart-type-tag">Stacked Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-brk-hs"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">hs_chapter</span><span class="field-pill">correct_filings</span><span class="field-pill">amended_filings</span><span class="field-pill">reassessment_orders</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Clearance TAT vs. Target</div><div class="chart-card-sub">Actual vs. target TAT per port — red bars indicate SLA breach</div></div>
+        <span class="chart-type-tag">Grouped Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-brk-tat"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">port_code</span><span class="field-pill">target_tat_hours</span><span class="field-pill">actual_tat_hours</span><span class="field-pill">sla_breach_flag</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div><div class="chart-card-title">Duty Savings Delivered</div><div class="chart-card-sub">Savings via FTA utilisation + reclassification + exemptions per quarter</div></div>
+        <span class="chart-type-tag">Stacked Bar</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="c-brk-savings"></canvas></div>
+      <div class="fields">
+        <span class="field-pill">quarter</span><span class="field-pill">fta_savings_inr</span><span class="field-pill">reclassification_savings_inr</span><span class="field-pill">exemption_savings_inr</span><span class="field-pill">roi_multiple</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer-note">
+  <span>KPMG Advisory — Export-Import Analytics Suite · Confidential</span>
+  <span>Data as of 27 Oct 2026 · Q4 2026</span>
+</div>
+
+</div><!-- /.main -->
+
+<script>
+/* ─── Persona switching ─── */
+function switchPersona(btn) {
+  document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const persona = btn.dataset.persona;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + persona).classList.add('active');
+  document.documentElement.style.setProperty('--accent', btn.dataset.accent);
+}
+// Set initial accent
+document.documentElement.style.setProperty('--accent', 'var(--exp)');
+
+/* ─── Theme helpers ─── */
+function isDark() {
+  const dt = document.documentElement.getAttribute('data-theme');
+  if (dt === 'dark') return true;
+  if (dt === 'light') return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function t(light, dark) { return isDark() ? dark : light; }
+const cs = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ─── Shared palette builders ─── */
+function textColor()   { return t('#111827','#E8EBF2'); }
+function mutedColor()  { return t('#6B7280','#8B92A8'); }
+function borderColor() { return t('#E2E6ED','#2D3148'); }
+function gridColor()   { return t('rgba(0,0,0,.06)','rgba(255,255,255,.06)'); }
+
+/* Chart.js global defaults */
+Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+Chart.defaults.font.size   = 11;
+Chart.defaults.color       = mutedColor();
+
+function baseOpts(extra = {}) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+    scales: {
+      x: { grid: { color: gridColor() }, ticks: { color: mutedColor() } },
+      y: { grid: { color: gridColor() }, ticks: { color: mutedColor() } }
+    },
+    ...extra
+  };
+}
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ══════ EXPORTER ══════ */
+new Chart('c-exp-rev', {
+  type: 'bar',
+  data: {
+    labels: MONTHS,
+    datasets: [
+      { label: 'Revenue $M', data: [3.2,3.8,4.1,3.6,4.8,4.4,5.1,4.7,5.5,4.9,6.2,5.9],
+        backgroundColor: t('#93C4EF88','#1A6EBF88'), borderColor: t('#1A6EBF','#4DA0F0'), borderWidth: 1.5, yAxisID: 'y', order: 2 },
+      { label: 'Volume MT', data: [9800,11200,12000,10500,13100,12600,14200,13000,15100,13800,16900,16200],
+        type: 'line', tension: .35, yAxisID: 'y1', borderColor: t('#B45309','#F59E3B'), borderWidth: 2,
+        pointRadius: 2.5, pointBackgroundColor: t('#B45309','#F59E3B'), fill: false, order: 1 }
+    ]
+  },
+  options: { ...baseOpts(), scales: {
+    x: { grid:{color:gridColor()}, ticks:{color:mutedColor()} },
+    y: { grid:{color:gridColor()}, ticks:{color:mutedColor(), callback: v=>'$'+v+'M'}, title:{display:true,text:'Revenue USD',color:mutedColor()} },
+    y1: { position:'right', grid:{display:false}, ticks:{color:mutedColor(), callback:v=>(v/1000)+'k MT'}, title:{display:true,text:'Volume MT',color:mutedColor()} }
+  }}
+});
+
+new Chart('c-exp-pareto', {
+  type: 'bar',
+  data: {
+    labels: ['Buyer A','Buyer B','Buyer C','Buyer D','Buyer E','Buyer F','Buyer G','Buyer H'],
+    datasets: [
+      { label: 'Revenue $M', data: [12.4,8.1,5.9,4.2,3.1,2.4,1.8,1.2],
+        backgroundColor: t('#93C4EF88','#1A6EBF88'), borderColor: t('#1A6EBF','#4DA0F0'), borderWidth: 1.5, order: 2 },
+      { label: 'Cumulative %', data: [32,53,68,79,87,93,97,100], type:'line',
+        yAxisID:'y1', tension:.2, borderColor: t('#C0392B','#F26354'), borderWidth:2,
+        pointRadius:3, fill:false, order:1 }
+    ]
+  },
+  options: { ...baseOpts(), scales: {
+    x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+    y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}},
+    y1:{position:'right',grid:{display:false},ticks:{color:mutedColor(),callback:v=>v+'%'},min:0,max:100}
+  }}
+});
+
+new Chart('c-exp-mix', {
+  type: 'doughnut',
+  data: {
+    labels: ['Chemicals','Engineering','Textiles','Agriculture','Pharma','Other'],
+    datasets: [{ data: [28,22,18,16,10,6],
+      backgroundColor: [t('#93C4EF','#1A6EBF'),t('#6EC9A6','#14785A'),t('#FAC875','#B45309'),t('#B8A3F5','#5B4FCC'),t('#F79E9D','#C0392B'),t('#CBCFD8','#555D74')],
+      borderWidth: 2, borderColor: t('#FFFFFF','#1A1D27') }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, cutout:'60%',
+    plugins: { legend:{display:true, position:'right', labels:{font:{size:10}, color:mutedColor(), boxWidth:10}} } }
+});
+
+new Chart('c-exp-aging', {
+  type: 'bar',
+  data: {
+    labels: ['Buyer A','Buyer B','Buyer C','Buyer D','Buyer E'],
+    datasets: [
+      {label:'0–30d',data:[2.1,1.4,0.8,0.5,0.3],backgroundColor:t('#6EC9A688','#14785A88'),borderWidth:0},
+      {label:'31–60d',data:[0.8,0.9,0.4,0.2,0.1],backgroundColor:t('#FAC87588','#B4530988'),borderWidth:0},
+      {label:'61–90d',data:[0.4,0.3,0.2,0.1,0.05],backgroundColor:t('#F79E9D88','#C0392B88'),borderWidth:0},
+      {label:'90+d',data:[0.2,0.4,0.1,0.05,0.02],backgroundColor:t('#C0392B','#F26354'),borderWidth:0}
+    ]
+  },
+  options: { ...baseOpts({indexAxis:'y'}),
+    scales: { x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}},
+              y:{stacked:true,grid:{display:false},ticks:{color:mutedColor()}} },
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}},tooltip:{mode:'index'}}
+  }
+});
+
+new Chart('c-exp-fx', {
+  type: 'bar',
+  data: {
+    labels: ['USD','EUR','GBP','JPY','AED'],
+    datasets: [
+      {label:'Gross Exposure',data:[18.2,8.4,4.1,2.3,1.8],backgroundColor:t('#93C4EF88','#1A6EBF88'),borderColor:t('#1A6EBF','#4DA0F0'),borderWidth:1.5},
+      {label:'Hedged',data:[14.1,6.2,3.8,1.1,1.4],backgroundColor:t('#6EC9A688','#14785A88'),borderColor:t('#14785A','#34C48A'),borderWidth:1.5}
+    ]
+  },
+  options: { ...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+/* ══════ IMPORTER ══════ */
+// Waterfall
+(function(){
+  const labels = ['CIF Value','Customs Duty','IGST','Port Charges','Last-Mile','Landed Cost'];
+  const raw =    [280,  42,  38,  18,  12,  390];
+  const bases =  [  0, 280, 322, 360, 378,   0];
+  const colors = labels.map((l,i)=> i===5 ? t('#14785A88','#34C48A88') : t('#93C4EF88','#1A6EBF88'));
+  const borders= labels.map((l,i)=> i===5 ? t('#14785A','#34C48A') : t('#1A6EBF','#4DA0F0'));
+  new Chart('c-imp-waterfall',{
+    type:'bar',
+    data:{ labels,
+      datasets:[
+        {label:'Base',data:bases,backgroundColor:'transparent',borderWidth:0,stack:'s'},
+        {label:'Value $M',data:raw,backgroundColor:colors,borderColor:borders,borderWidth:1.5,stack:'s'}
+      ]
+    },
+    options:{...baseOpts(),
+      scales:{x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}},
+              y:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}}},
+      plugins:{legend:{display:false}}
+    }
+  });
+})();
+
+new Chart('c-imp-coo', {
+  type:'doughnut',
+  data:{
+    labels:['China','Germany','USA','Japan','South Korea','Others'],
+    datasets:[{data:[34,18,14,12,8,14],
+      backgroundColor:[t('#93C4EF','#1A6EBF'),t('#6EC9A6','#14785A'),t('#FAC875','#B45309'),t('#B8A3F5','#5B4FCC'),t('#F79E9D','#C0392B'),t('#CBCFD8','#555D74')],
+      borderWidth:2,borderColor:t('#FFFFFF','#1A1D27')}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+    plugins:{legend:{display:true,position:'right',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}}
+});
+
+new Chart('c-imp-fta', {
+  type:'bar',
+  data:{
+    labels:['8471','8517','8703','7208','3004','2709','5208'],
+    datasets:[
+      {label:'MFN Rate %',data:[10,15,25,7.5,5,2.5,20],backgroundColor:t('#F79E9D88','#C0392B88'),borderColor:t('#C0392B','#F26354'),borderWidth:1.5},
+      {label:'FTA Rate %',data:[0,5,10,2.5,0,0,8],backgroundColor:t('#6EC9A688','#14785A88'),borderColor:t('#14785A','#34C48A'),borderWidth:1.5}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'%'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-imp-trend', {
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Machinery',data:[420,440,510,480,560,530,610,580,650,620,710,680],fill:true,backgroundColor:t('#93C4EF33','#1A6EBF44'),borderColor:t('#1A6EBF','#4DA0F0'),borderWidth:1.5,tension:.4,stack:'s'},
+      {label:'Raw Materials',data:[380,360,400,420,390,410,430,460,420,450,480,460],fill:true,backgroundColor:t('#6EC9A633','#14785A44'),borderColor:t('#14785A','#34C48A'),borderWidth:1.5,tension:.4,stack:'s'},
+      {label:'Consumer Goods',data:[180,200,220,190,230,210,250,240,260,250,280,270],fill:true,backgroundColor:t('#FAC87533','#B4530944'),borderColor:t('#B45309','#F59E3B'),borderWidth:1.5,tension:.4,stack:'s'}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'MT'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+// Dwell heatmap via matrix-style bar chart
+(function(){
+  const ports = ['JNPT','Mundra','Chennai','Kolkata','Vizag'];
+  const months = ['May','Jun','Jul','Aug','Sep','Oct'];
+  const data = [[4.2,5.1,6.3,5.8,4.9,4.1],[5.5,6.8,8.2,7.1,5.9,5.2],[3.8,4.2,5.0,4.7,3.9,3.5],[6.1,7.3,9.1,8.4,7.0,6.2],[4.5,5.0,5.8,5.3,4.6,4.0]];
+  const palette = isDark() ? ['#2D3148','#3B6D11','#B45309','#C0392B','#7B1D1D'] : ['#EAF3DE','#97C459','#F59E3B','#F09595','#FCA5A5'];
+  function dColor(v) {
+    if(v < 5) return isDark()? '#34C48A44':'#6EC9A688';
+    if(v < 7) return isDark()? '#F59E3B66':'#FAC87599';
+    return isDark()? '#F2635466':'#F09595AA';
+  }
+  const ds = ports.map((p,pi)=>({
+    label:p, data:months.map((_,mi)=>data[pi][mi]),
+    backgroundColor:months.map((_,mi)=>dColor(data[pi][mi])),
+    borderWidth:1, borderColor:borderColor()
+  }));
+  new Chart('c-imp-dwell',{type:'bar',data:{labels:months,datasets:ds},
+    options:{...baseOpts(),
+      scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+              y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'d'}}},
+      plugins:{legend:{display:true,position:'right',labels:{font:{size:9},color:mutedColor(),boxWidth:8}}}
+    }
+  });
+})();
+
+/* ══════ LOGISTICS ══════ */
+const logMonths = MONTHS;
+new Chart('c-log-rate', {
+  type:'line',
+  data:{
+    labels:logMonths,
+    datasets:[
+      {label:'Contracted Rate',data:[1100,1120,1090,1140,1160,1180,1200,1210,1230,1220,1240,1255],
+        borderColor:t('#B45309','#F59E3B'),borderWidth:2.5,tension:.4,fill:false,pointRadius:3},
+      {label:'SCFI Spot High',data:[1280,1310,1260,1340,1420,1380,1450,1400,1480,1390,1410,1430],
+        borderColor:'transparent',fill:'+1',backgroundColor:t('#FAC87522','#B4530922'),tension:.4},
+      {label:'SCFI Spot Low',data:[980,1010,960,1020,1100,1060,1120,1070,1140,1060,1090,1100],
+        borderColor:t('#94A3B8','#555D74'),borderWidth:1,borderDash:[4,3],tension:.4,fill:false,pointRadius:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-log-delay', {
+  type:'bar',
+  data:{
+    labels:['Port Congestion','Doc Error','Vessel Delay','Customs Hold','Weather','Other'],
+    datasets:[
+      {label:'Shipments',data:[142,98,76,54,38,22],backgroundColor:t('#FAC87588','#B4530988'),borderColor:t('#B45309','#F59E3B'),borderWidth:1.5,order:2},
+      {label:'Cumulative %',data:[33,56,74,86,95,100],type:'line',yAxisID:'y1',tension:.2,
+        borderColor:t('#C0392B','#F26354'),borderWidth:2,pointRadius:3,fill:false,order:1}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y1:{position:'right',grid:{display:false},ticks:{color:mutedColor(),callback:v=>v+'%'},min:0,max:100}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-log-funnel', {
+  type:'bar',
+  data:{
+    labels:['Booked','Origin Pickup','At Sea','Destination Port','Delivered'],
+    datasets:[{label:'Shipments',data:[2840,2710,2680,2520,2340],
+      backgroundColor:[t('#93C4EF','#4DA0F0'),t('#7EC8B4','#34C48A'),t('#FAC875','#F59E3B'),t('#F5A87A','#D97706'),t('#6EC9A6','#14785A')],
+      borderWidth:0,borderRadius:4}]
+  },
+  options:{...baseOpts({indexAxis:'y'}),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{display:false},ticks:{color:mutedColor()}}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-log-volume', {
+  type:'bar',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Asia-Europe',data:[820,760,890,840,920,870,950,900,980,930,1020,990],backgroundColor:t('#93C4EF88','#1A6EBF88'),borderWidth:0},
+      {label:'Trans-Pacific',data:[640,620,680,650,720,690,760,730,790,770,820,800],backgroundColor:t('#6EC9A688','#14785A88'),borderWidth:0},
+      {label:'Intra-Asia',data:[380,360,410,390,440,420,470,450,490,470,510,500],backgroundColor:t('#FAC87588','#B4530988'),borderWidth:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+' TEU'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-log-radar', {
+  type:'radar',
+  data:{
+    labels:['On-Time %','Doc Accuracy','Damage Rate','Transit Days','Tracking Freq','Claim Res.'],
+    datasets:[
+      {label:'Client A',data:[91,96,98,80,85,82],borderColor:t('#B45309','#F59E3B'),backgroundColor:t('#FAC87522','#B4530933'),pointBackgroundColor:t('#B45309','#F59E3B'),borderWidth:2},
+      {label:'Client B',data:[84,90,95,72,78,70],borderColor:t('#1A6EBF','#4DA0F0'),backgroundColor:t('#93C4EF22','#1A6EBF33'),pointBackgroundColor:t('#1A6EBF','#4DA0F0'),borderWidth:2,borderDash:[4,3]}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{r:{grid:{color:gridColor()},pointLabels:{color:mutedColor(),font:{size:10}},ticks:{display:false},min:60,max:100}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+/* ══════ BANK ══════ */
+new Chart('c-bnk-sector', {
+  type:'bar',
+  data:{
+    labels:['Commodities','Manufacturing','Textiles','Chemicals','Auto & Parts','Pharma','Agri'],
+    datasets:[{label:'Exposure $M',data:[420,310,240,180,160,130,90],
+      backgroundColor:[t('#B8A3F5','#5B4FCC'),t('#B8A3F5','#5B4FCC'),t('#FAC875','#B45309'),t('#F79E9D','#C0392B'),t('#93C4EF','#1A6EBF'),t('#6EC9A6','#14785A'),t('#CBCFD8','#555D74')].map(c=>c+'88'),
+      borderColor:[t('#5B4FCC','#8B82F5'),t('#5B4FCC','#8B82F5'),t('#B45309','#F59E3B'),t('#C0392B','#F26354'),t('#1A6EBF','#4DA0F0'),t('#14785A','#34C48A'),t('#6B7280','#8B92A8')],
+      borderWidth:1.5}]
+  },
+  options:{...baseOpts({indexAxis:'y'}),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}},
+            y:{grid:{display:false},ticks:{color:mutedColor()}}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-bnk-rev', {
+  type:'doughnut',
+  data:{
+    labels:['LC Commission','BG Fees','Forex Spread','PCF Interest','Bill Discounting'],
+    datasets:[{data:[32,18,24,16,10],
+      backgroundColor:[t('#B8A3F5','#5B4FCC'),t('#93C4EF','#1A6EBF'),t('#6EC9A6','#14785A'),t('#FAC875','#B45309'),t('#CBCFD8','#555D74')],
+      borderWidth:2,borderColor:t('#FFFFFF','#1A1D27')}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',
+    plugins:{legend:{display:true,position:'right',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}}
+});
+
+new Chart('c-bnk-lc', {
+  type:'bar',
+  data:{
+    labels:['Sight','30d','60d','90d','180d'],
+    datasets:[
+      {label:'USD',data:[380,240,180,140,90],backgroundColor:t('#93C4EF88','#1A6EBF88'),borderWidth:0},
+      {label:'EUR',data:[180,140,100,80,40],backgroundColor:t('#6EC9A688','#14785A88'),borderWidth:0},
+      {label:'GBP',data:[80,60,40,30,20],backgroundColor:t('#FAC87588','#B4530988'),borderWidth:0},
+      {label:'Other',data:[40,30,20,15,10],backgroundColor:t('#B8A3F588','#5B4FCC88'),borderWidth:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-bnk-disc', {
+  type:'bar',
+  data:{
+    labels:['BNP Paribas','HSBC','SBI','DBS','Citi','StanChart','ICICI'],
+    datasets:[
+      {label:'Discrepancy Rate %',data:[3.2,2.1,4.8,1.9,2.7,1.4,5.2],
+        backgroundColor:function(ctx){const v=ctx.raw;return v>4?(isDark()?'#F2635488':'#F09595AA'):(isDark()?'#8B82F588':'#B8A3F588');},
+        borderColor:function(ctx){const v=ctx.raw;return v>4?(isDark()?'#F26354':'#C0392B'):(isDark()?'#8B82F5':'#5B4FCC');},
+        borderWidth:1.5}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'%'}}},
+    plugins:{legend:{display:false},annotation:{annotations:{line:{type:'line',yMin:3,yMax:3,borderColor:t('#C0392B','#F26354'),borderWidth:1.5,borderDash:[5,4]}}}}
+  }
+});
+
+new Chart('c-bnk-pcf', {
+  type:'bar',
+  data:{
+    labels:['Borrower A','Borrower B','Borrower C','Borrower D','Borrower E'],
+    datasets:[
+      {label:'Sanctioned $M',data:[80,65,50,40,30],backgroundColor:t('#CBCFD833','#555D7433'),borderColor:t('#9CA3AF','#555D74'),borderWidth:1.5},
+      {label:'Drawn $M',data:[62,48,41,22,28],backgroundColor:t('#B8A3F588','#5B4FCC88'),borderColor:t('#5B4FCC','#8B82F5'),borderWidth:1.5}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'$'+v+'M'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+/* ══════ CUSTOMS ══════ */
+new Chart('c-cst-rev', {
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Collected ₹Cr',data:[58,62,70,66,74,71,78,75,82,80,88,84],
+        fill:true,backgroundColor:t('#F79E9D33','#C0392B33'),borderColor:t('#C0392B','#F26354'),borderWidth:2,tension:.4,pointRadius:2.5},
+      {label:'Budget ₹Cr',data:[60,60,65,65,70,70,75,75,80,80,85,85],
+        borderColor:t('#6B7280','#8B92A8'),borderWidth:1.5,borderDash:[6,4],tension:.2,fill:false,pointRadius:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'₹'+v+'Cr'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-cst-risk', {
+  type:'bar',
+  data:{
+    labels:['0–10','11–20','21–30','31–40','41–50','51–60','61–70','71–80','81–90','91–100'],
+    datasets:[{label:'Declarations',
+      data:[3200,4100,5800,6200,4900,3800,2400,1600,900,420],
+      backgroundColor:['#6EC9A688','#6EC9A688','#6EC9A688','#6EC9A688','#FAC87588','#FAC87588','#F79E9D88','#F09595AA','#C0392BAA','#7B1D1DAA'],
+      borderColor:['#14785A','#14785A','#14785A','#14785A','#B45309','#B45309','#C0392B','#C0392B','#7B1D1D','#7B1D1D'],
+      borderWidth:1.5}]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()},title:{display:true,text:'Risk Score',color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor()}}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-cst-hs', {
+  type:'bar',
+  data:{
+    labels:['Sec I Agri','Sec II Food','Sec VI Chem','Sec XI Textile','Sec XV Metal','Sec XVI Mach','Sec XVII Veh'],
+    datasets:[{label:'Duty ₹Cr',data:[82,64,148,96,134,186,122],
+      backgroundColor:t('#F79E9D88','#C0392B88'),borderColor:t('#C0392B','#F26354'),borderWidth:1.5,borderRadius:3}]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor(),maxRotation:30}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'₹'+v+'Cr'}}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-cst-tat', {
+  type:'bar',
+  data:{
+    labels:['Green','Orange','Red'],
+    datasets:[
+      {label:'Target Hrs',data:[4,12,24],backgroundColor:t('#6EC9A688','#14785A88'),borderColor:t('#14785A','#34C48A'),borderWidth:1.5},
+      {label:'Actual Hrs',data:[3.8,14.2,31.6],backgroundColor:function(ctx){const actual=[3.8,14.2,31.6],target=[4,12,24];return actual[ctx.dataIndex]>target[ctx.dataIndex]?(isDark()?'#F2635488':'#F09595AA'):(isDark()?'#34C48A88':'#6EC9A688');},borderColor:function(ctx){const actual=[3.8,14.2,31.6],target=[4,12,24];return actual[ctx.dataIndex]>target[ctx.dataIndex]?(isDark()?'#F26354':'#C0392B'):(isDark()?'#34C48A':'#14785A');},borderWidth:1.5}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'h'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-cst-val', {
+  type:'scatter',
+  data:{
+    datasets:[
+      {label:'Normal',data:[{x:100,y:102},{x:250,y:248},{x:180,y:183},{x:320,y:318},{x:80,y:81},{x:420,y:425},{x:150,y:154},{x:280,y:276},{x:360,y:362}],
+        backgroundColor:t('#93C4EFaa','#4DA0F0aa'),pointRadius:4},
+      {label:'Suspected',data:[{x:200,y:140},{x:380,y:230},{x:290,y:185}],
+        backgroundColor:t('#C0392Baa','#F26354aa'),pointRadius:6,pointStyle:'triangle'}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{grid:{color:gridColor()},ticks:{color:mutedColor()},title:{display:true,text:'Declared Unit Value $',color:mutedColor()}},
+      y:{grid:{color:gridColor()},ticks:{color:mutedColor()},title:{display:true,text:'Assessed Unit Value $',color:mutedColor()}}
+    },
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ($${ctx.raw.x}, $${ctx.raw.y})`}}}
+  }
+});
+
+/* ══════ BROKER ══════ */
+new Chart('c-brk-pareto', {
+  type:'bar',
+  data:{
+    labels:['Tata Steel','Reliance','L&T','Vedanta','JSW','ONGC','Cipla','Sun Pharma','HUL','Others'],
+    datasets:[
+      {label:'Fee ₹L',data:[32,24,18,14,11,8,7,5,4,18],backgroundColor:t('#ED93B188','#A0297D88'),borderColor:t('#A0297D','#D95FBB'),borderWidth:1.5,order:2},
+      {label:'Cumulative %',data:[24,42,55,66,74,80,85,89,92,100],type:'line',yAxisID:'y1',tension:.2,borderColor:t('#C0392B','#F26354'),borderWidth:2,pointRadius:3,fill:false,order:1}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor(),maxRotation:30}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'₹'+v+'L'}},
+            y1:{position:'right',grid:{display:false},ticks:{color:mutedColor(),callback:v=>v+'%'},min:0,max:100}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+new Chart('c-brk-spc', {
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Discrepancy Rate',data:[1.8,2.1,1.6,1.9,1.4,1.7,1.3,4.2,1.5,1.2,1.4,1.1],
+        borderColor:t('#A0297D','#D95FBB'),borderWidth:2,tension:.2,pointRadius:4,
+        pointBackgroundColor:function(ctx){return ctx.raw>3.5?(isDark()?'#F26354':'#C0392B'):(isDark()?'#D95FBB':'#A0297D');}},
+      {label:'UCL',data:Array(12).fill(3.5),borderColor:t('#C0392B','#F26354'),borderWidth:1,borderDash:[5,4],fill:false,pointRadius:0},
+      {label:'CL',data:Array(12).fill(1.8),borderColor:t('#9CA3AF','#555D74'),borderWidth:1,borderDash:[3,3],fill:false,pointRadius:0},
+      {label:'LCL',data:Array(12).fill(0.2),borderColor:t('#14785A','#34C48A'),borderWidth:1,borderDash:[5,4],fill:false,pointRadius:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'%'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-brk-hs', {
+  type:'bar',
+  data:{
+    labels:['Ch 27','Ch 72','Ch 84','Ch 85','Ch 87','Ch 29','Ch 52'],
+    datasets:[
+      {label:'Correct',data:[680,520,460,390,310,280,240],backgroundColor:t('#6EC9A688','#14785A88'),borderWidth:0},
+      {label:'Amended',data:[42,68,34,55,28,48,62],backgroundColor:t('#FAC87588','#B4530988'),borderWidth:0},
+      {label:'Reassessed',data:[8,14,6,18,4,12,22],backgroundColor:t('#F79E9D88','#C0392B88'),borderWidth:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-brk-tat', {
+  type:'bar',
+  data:{
+    labels:['JNPT','Mundra','Chennai','Delhi ICD','Kolkata'],
+    datasets:[
+      {label:'Target hrs',data:[8,8,10,12,14],backgroundColor:t('#ED93B133','#A0297D33'),borderColor:t('#A0297D','#D95FBB'),borderWidth:1.5},
+      {label:'Actual hrs',data:[9.2,7.4,13.8,11.1,18.4],
+        backgroundColor:function(ctx){const a=[9.2,7.4,13.8,11.1,18.4],g=[8,8,10,12,14];return a[ctx.dataIndex]>g[ctx.dataIndex]?(isDark()?'#F2635488':'#F09595AA'):(isDark()?'#34C48A88':'#6EC9A688');},
+        borderColor:function(ctx){const a=[9.2,7.4,13.8,11.1,18.4],g=[8,8,10,12,14];return a[ctx.dataIndex]>g[ctx.dataIndex]?(isDark()?'#F26354':'#C0392B'):(isDark()?'#34C48A':'#14785A');},
+        borderWidth:1.5}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>v+'h'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+
+new Chart('c-brk-savings', {
+  type:'bar',
+  data:{
+    labels:['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026','Q3 2026'],
+    datasets:[
+      {label:'FTA Savings',data:[28,32,38,35,42,48,52],backgroundColor:t('#6EC9A688','#14785A88'),borderWidth:0},
+      {label:'Reclassification',data:[8,11,13,10,15,18,20],backgroundColor:t('#93C4EF88','#1A6EBF88'),borderWidth:0},
+      {label:'Exemptions',data:[4,5,6,8,9,11,12],backgroundColor:t('#FAC87588','#B4530988'),borderWidth:0}
+    ]
+  },
+  options:{...baseOpts(),
+    scales:{x:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor()}},
+            y:{stacked:true,grid:{color:gridColor()},ticks:{color:mutedColor(),callback:v=>'₹'+v+'L'}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},color:mutedColor(),boxWidth:10}}}
+  }
+});
+</script>
+
+</body></html>
