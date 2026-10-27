@@ -60,7 +60,7 @@ const AnimBtn = ({
           {/* ── 1. Dark wipe — enters bottom, exits top ── */}
           <Motion.div
             aria-hidden
-            className={`absolute bottom-0 -left-[20%] w-[140%] h-[140%] ${hoverColor} -mb-3 origin-center pointer-events-none`}
+            className={`absolute bottom-0 left-[-20%] w-[140%] h-[140%] ${hoverColor} -mb-3 origin-center pointer-events-none`}
             style={{
               borderRadius: "50%",
               y: darkY,
@@ -70,7 +70,7 @@ const AnimBtn = ({
           {/* ── 2. Light wipe — rises bottom on leave to restore bg ── */}
           <Motion.div
             aria-hidden
-            className="absolute bottom-0 -left-[20%] w-[140%] h-[140%] bg-transparent pointer-events-none"
+            className="absolute bottom-0 left-[-20%] w-[140%] h-[140%] bg-transparent pointer-events-none"
             style={{
               y: lightY,
               zIndex: 1,
